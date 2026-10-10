@@ -1,0 +1,21 @@
+# build
+dist/
+.astro/
+.vercel/
+
+# deps
+node_modules/
+
+# logs
+npm-debug.log*
+
+# secrets — ne jamais committer
+.env
+.env.*
+!.env.example
+
+# os / éditeurs
+.DS_Store
+.idea/
+.vscode/
+screenshots/
