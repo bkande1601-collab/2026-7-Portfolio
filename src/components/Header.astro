@@ -1,0 +1,54 @@
+---
+import { t, href, type Lang } from '../content';
+import { site } from '../config/site';
+
+interface Props {
+  lang: Lang;
+  page: string;
+  otherHref: string;
+}
+const { lang, page, otherHref } = Astro.props;
+const c = t(lang);
+
+const links = [
+  { slug: 'automations', label: c.nav.automations },
+  { slug: 'offers', label: c.nav.offers },
+  { slug: 'journey', label: c.nav.journey },
+  { slug: 'faq', label: c.nav.faq },
+];
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="logo" href={href(lang)} aria-label={`${site.brand} — ${c.nav.home}`}>
+      <i aria-hidden="true"></i>{site.brand}
+    </a>
+
+    <button
+      class="menu-btn"
+      id="menu-btn"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+    >
+      {c.nav.menu}
+    </button>
+
+    <nav class="nav" id="site-nav" data-open="false" aria-label="Navigation">
+      {
+        links.map((l) => (
+          <a class="link" href={href(lang, l.slug)} aria-current={page === l.slug ? 'page' : undefined}>
+            {l.label}
+          </a>
+        ))
+      }
+      <div class="nav-tools">
+        <a class="lang" href={otherHref} hreflang={lang === 'fr' ? 'en' : 'fr'} lang={lang === 'fr' ? 'en' : 'fr'} title={c.switchLang.title}>
+          {c.switchLang.label}
+        </a>
+        <a class="btn btn-ghost btn-sm" href={href(lang, 'contact')}>{c.cta.message}</a>
+        <a class="btn btn-primary btn-sm" href={href(lang, 'book')}>{c.cta.book}</a>
+      </div>
+    </nav>
+  </div>
+</header>

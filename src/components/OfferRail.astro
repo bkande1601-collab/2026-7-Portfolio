@@ -1,0 +1,39 @@
+---
+/** Les offres sur une seule ligne (accueil). */
+import { t, type Lang } from '../content';
+import { formatPrice as fmt, type PriceKey } from '../config/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+
+const stops: { key: PriceKey; name: string }[] = [
+  { key: 'audit', name: c.offers.ladder[0].name },
+  { key: 'sprint', name: c.offers.ladder[1].name },
+  { key: 'agent', name: c.offers.ladder[2].name },
+  { key: 'tool', name: c.offers.ladder[3].name },
+  { key: 'run', name: 'Run' },
+];
+---
+
+<div class="rail-wrap" tabindex="0" role="region" aria-label={c.home.offersTitle}>
+  <div class="rail">
+    {
+      stops.map((s) => {
+        const p = fmt(s.key, lang);
+        return (
+          <div class="stop">
+            <span class="f">{p.from ? c.offers.from : s.key === 'audit' ? c.offers.flat : ' '}</span>
+            <span class="p">
+              {p.amount}
+              {p.per === 'month' && <small>{c.offers.perMonth}</small>}
+            </span>
+            <span class="n">{s.name}</span>
+          </div>
+        );
+      })
+    }
+  </div>
+</div>

@@ -1,0 +1,32 @@
+---
+import { em } from '../content';
+
+interface Props {
+  data: {
+    kicker: string;
+    title: string;
+    beforeLabel: string;
+    afterLabel: string;
+    before: string[];
+    after: string[];
+    caption: string;
+  };
+}
+const { data } = Astro.props;
+---
+
+<div class="section-head reveal">
+  <span class="kicker">{data.kicker}</span>
+  <h2 set:html={em(data.title)} />
+</div>
+<div class="ba reveal">
+  <div class="ba-col before">
+    <div class="ba-label">{data.beforeLabel}</div>
+    <ol>{data.before.map((s) => <li>{s}</li>)}</ol>
+  </div>
+  <div class="ba-col after">
+    <div class="ba-label">{data.afterLabel}</div>
+    <ol>{data.after.map((s) => <li>{s}</li>)}</ol>
+  </div>
+</div>
+<p class="ba-caption reveal">{data.caption}</p>

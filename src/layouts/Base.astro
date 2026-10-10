@@ -1,0 +1,93 @@
+---
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/inter';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/instrument-serif/400.css';
+import '../styles/global.css';
+import { t, href, type Lang } from '../content';
+import { site } from '../config/site';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  lang: Lang;
+  /** slug de la page ('' = accueil), sert au sélecteur de langue et au SEO */
+  page?: string;
+  title?: string;
+  description?: string;
+}
+const { lang, page = '', title, description } = Astro.props;
+const c = t(lang);
+const other: Lang = lang === 'fr' ? 'en' : 'fr';
+const pageTitle = title ? `${title} — ${site.name}` : c.meta.title;
+const pageDesc = description ?? c.meta.description;
+const origin = Astro.site ? Astro.site.origin : '';
+---
+
+<!doctype html>
+<html lang={c.htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDesc} />
+    <meta name="theme-color" content="#14100d" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" hreflang="fr" href={`${origin}${href('fr', page)}`} />
+    <link rel="alternate" hreflang="en" href={`${origin}${href('en', page)}`} />
+    <link rel="canonical" href={`${origin}${href(lang, page)}`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:locale" content={c.locale} />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">{c.nav.skip}</a>
+    <Header lang={lang} page={page} otherHref={href(other, page)} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+
+    <script>
+      // apparition douce au scroll
+      const items = document.querySelectorAll('.reveal, .lab-items');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add('in');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+        );
+        items.forEach((el) => io.observe(el));
+      } else {
+        items.forEach((el) => el.classList.add('in'));
+      }
+
+      // menu mobile
+      const btn = document.getElementById('menu-btn');
+      const nav = document.getElementById('site-nav');
+      if (btn && nav) {
+        const set = (open: boolean) => {
+          nav.dataset.open = String(open);
+          btn.setAttribute('aria-expanded', String(open));
+        };
+        btn.addEventListener('click', () => set(nav.dataset.open !== 'true'));
+        nav.addEventListener('click', (e) => {
+          if ((e.target as HTMLElement).closest('a')) set(false);
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') set(false);
+        });
+      }
+    </script>
+  </body>
+</html>

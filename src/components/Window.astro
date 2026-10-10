@@ -1,0 +1,43 @@
+---
+/** Maquette de fenêtre applicative avec l'assistant IA. `modules` est facultatif. */
+interface Props {
+  title: string;
+  modules?: string[];
+  q: string;
+  a: string;
+  src: string;
+  lock: string;
+}
+const { title, modules, q, a, src, lock } = Astro.props;
+const showSide = Array.isArray(modules) && modules.length > 0;
+const active = showSide ? modules!.length - 1 : -1;
+---
+
+<div class="win" role="img" aria-label={`${title}: ${q} — ${a}`}>
+  <div class="win-bar" aria-hidden="true">
+    <i></i><i></i><i></i>
+    <span class="lock">
+      <svg width="11" height="13" viewBox="0 0 11 13" fill="none" aria-hidden="true">
+        <rect x="1" y="5.5" width="9" height="7" rx="1.5" stroke="currentColor" />
+        <path d="M3 5.5V4a2.5 2.5 0 0 1 5 0v1.5" stroke="currentColor" />
+      </svg>
+      {lock}
+    </span>
+  </div>
+  <div class="win-body" style={showSide ? undefined : 'grid-template-columns:1fr;min-height:0'} aria-hidden="true">
+    {
+      showSide && (
+        <div class="win-side">
+          {modules!.map((m, i) => <span class={i === active ? 'on' : ''}>{m}</span>)}
+        </div>
+      )
+    }
+    <div class="chat">
+      <div class="bubble q">{q}</div>
+      <div class="bubble a">
+        <span class="typing">{a}</span>
+        <small>{src}</small>
+      </div>
+    </div>
+  </div>
+</div>

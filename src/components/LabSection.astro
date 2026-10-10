@@ -1,0 +1,90 @@
+---
+import { t, em, type Lang } from '../content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang).home.lab;
+---
+
+<div class="lab">
+  <div class="reveal">
+    <span class="kicker">{c.kicker}</span>
+    <h2 set:html={em(c.title)} />
+    <p class="lead" style="margin-top:20px">{c.sub}</p>
+
+    <form
+      class="inline-form"
+      id="lab-form"
+      novalidate
+      data-lang={lang}
+      data-ok={c.ok}
+      data-err={c.err}
+      data-invalid={c.invalid}
+      data-sending={c.sending}
+      data-submit={c.submit}
+    >
+      <label class="sr-only" for="lab-email">{c.label}</label>
+      <input id="lab-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder={c.placeholder} required />
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <button class="btn btn-primary btn-sm" type="submit">{c.submit}</button>
+    </form>
+    <p class="form-msg" id="lab-msg" role="status" aria-live="polite"></p>
+  </div>
+
+  <ul class="lab-items reveal">
+    {
+      c.items.map((it) => (
+        <li>
+          <div class="lab-row">
+            <b>{it.name}</b>
+            <span class="lab-state">{c.inProgress} · {it.state}</span>
+          </div>
+          <div class="bar-track" aria-hidden="true">
+            <div class="bar-fill" style={`width:${it.progress}%`} />
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  const form = document.getElementById('lab-form') as HTMLFormElement | null;
+  const msg = document.getElementById('lab-msg');
+  if (form && msg) {
+    const btn = form.querySelector('button')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const d = form.dataset;
+      const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+      const website = (form.elements.namedItem('website') as HTMLInputElement).value;
+      msg.className = 'form-msg';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        msg.textContent = d.invalid ?? '';
+        msg.classList.add('err');
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = d.sending ?? '…';
+      try {
+        const res = await fetch('/api/lab', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, website, lang: d.lang }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        msg.textContent = d.ok ?? '';
+        msg.classList.add('ok');
+        form.reset();
+      } catch {
+        msg.textContent = d.err ?? '';
+        msg.classList.add('err');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = d.submit ?? '';
+      }
+    });
+  }
+</script>

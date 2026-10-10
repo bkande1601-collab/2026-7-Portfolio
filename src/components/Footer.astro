@@ -1,0 +1,23 @@
+---
+import { t, href, type Lang } from '../content';
+import { site } from '../config/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap foot">
+    <p>© {year} {site.name}. {c.footer.rights}</p>
+    <div class="foot-links">
+      <a href={href(lang, 'faq')}>{c.nav.faq}</a>
+      <a href={href(lang, 'contact')}>{c.cta.message}</a>
+      {site.links.github && <a href={site.links.github} rel="noopener noreferrer" target="_blank">{c.footer.github}</a>}
+      {site.links.linkedin && <a href={site.links.linkedin} rel="noopener noreferrer" target="_blank">{c.footer.linkedin}</a>}
+    </div>
+  </div>
+</footer>

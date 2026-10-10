@@ -1,0 +1,24 @@
+---
+import { t, href, em, type Lang } from '../content';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  text?: string;
+}
+const { lang, title, text } = Astro.props;
+const c = t(lang);
+---
+
+<section class="cta-band">
+  <div class="wrap cta-inner">
+    <div class="reveal">
+      <h2 set:html={em(title)} />
+      {text && <p>{text}</p>}
+    </div>
+    <div class="btn-row reveal">
+      <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
+      <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+    </div>
+  </div>
+</section>

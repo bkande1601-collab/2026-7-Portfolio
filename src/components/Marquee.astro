@@ -1,0 +1,20 @@
+---
+import { tools } from '../content';
+
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<div class="marquee">
+  <div class="wrap marquee-label"><span class="kicker" style="margin:0">{label}</span></div>
+  <div class="marquee-track">
+    <div class="marquee-group">
+      {tools.map((x) => <span class="tool">{x}</span>)}
+    </div>
+    <div class="marquee-group" aria-hidden="true">
+      {tools.map((x) => <span class="tool">{x}</span>)}
+    </div>
+  </div>
+</div>
