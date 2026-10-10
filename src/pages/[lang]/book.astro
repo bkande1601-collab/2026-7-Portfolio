@@ -1,0 +1,318 @@
+---
+import Base from '../../layouts/Base.astro';
+import { t, em, href, langs, type Lang } from '../../content';
+import { booking } from '../../config/site';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const b = c.book;
+
+// textes et libellés passés au script du navigateur
+const i18n = {
+  lang,
+  duration: booking.durationMin,
+  needs: Object.fromEntries(b.needs.map((n) => [n.v, n.t])),
+  budgets: Object.fromEntries(b.budgets.map((n) => [n.v, n.t])),
+  ...b,
+};
+---
+
+<Base lang={lang} page="book" title={c.cta.book} description={b.hero.sub}>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="kicker">{b.hero.kicker}</span>
+      <h1 set:html={em(b.hero.title)} />
+      <p class="lead">{b.hero.sub}</p>
+    </div>
+  </section>
+
+  <section style="padding-top:clamp(16px,3vw,32px)">
+    <div class="wrap booking-layout">
+      <ol class="stepper" id="stepper" aria-label="Progression">
+        {b.steps.map((s, i) => <li data-i={i}><b>{i + 1}</b>{s}</li>)}
+      </ol>
+
+      <!-- Étape 1 : questionnaire -->
+      <form class="form" id="step-1" novalidate>
+        <div class="two">
+          <div class="field">
+            <label for="b-name">{b.fields.name}</label>
+            <input id="b-name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="b-email">{b.fields.email}</label>
+            <input id="b-email" name="email" type="email" inputmode="email" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="b-company">{b.fields.company} <span>({b.fields.optional})</span></label>
+          <input id="b-company" name="company" type="text" autocomplete="organization" />
+        </div>
+        <div class="two">
+          <div class="field">
+            <label for="b-need">{b.fields.need}</label>
+            <select id="b-need" name="need" required>
+              <option value="" disabled selected>—</option>
+              {b.needs.map((n) => <option value={n.v}>{n.t}</option>)}
+            </select>
+          </div>
+          <div class="field">
+            <label for="b-budget">{b.fields.budget} <span>({b.fields.optional})</span></label>
+            <select id="b-budget" name="budget">
+              <option value="" selected>—</option>
+              {b.budgets.map((n) => <option value={n.v}>{n.t}</option>)}
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="b-message">{b.fields.message} <span>({b.fields.optional})</span></label>
+          <textarea id="b-message" name="message" placeholder={b.fields.messagePlaceholder}></textarea>
+        </div>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <p class="form-msg" id="b-msg1" role="alert"></p>
+        <div class="btn-row">
+          <button class="btn btn-primary" type="submit"><span class="arrow">{b.next}&nbsp;</span></button>
+        </div>
+        <p class="tz" style="margin:0">{b.privacy}</p>
+      </form>
+
+      <!-- Étape 2 : jour et heure -->
+      <div id="step-2" hidden>
+        <div class="notice" id="preview-note" hidden style="margin-bottom:24px">{b.preview}</div>
+        <p id="loading" class="lead">{b.loading}</p>
+        <p id="no-slots" class="lead" hidden>{b.noSlotsAll}</p>
+        <div id="picker" hidden>
+          <span class="sub-label">{b.pickDay}</span>
+          <div class="days" id="days" role="group" aria-label={b.pickDay}></div>
+          <span class="sub-label">{b.pickTime}</span>
+          <div class="times" id="times" role="group" aria-label={b.pickTime}></div>
+          <p class="tz" id="tz"></p>
+        </div>
+        <div class="btn-row between">
+          <button class="btn btn-ghost" type="button" id="back-2">{b.back}</button>
+          <button class="btn btn-primary" type="button" id="next-2" disabled><span class="arrow">{b.recap}&nbsp;</span></button>
+        </div>
+      </div>
+
+      <!-- Étape 3 : confirmation -->
+      <div id="step-3" hidden>
+        <h2 style="font-size:1.6rem;margin-bottom:20px">{b.recap}</h2>
+        <dl class="recap" id="recap"></dl>
+        <div class="notice" id="preview-note-3" hidden style="margin-bottom:20px">{b.preview}</div>
+        <p class="form-msg" id="b-msg3" role="alert"></p>
+        <div class="btn-row between" style="margin-top:12px">
+          <button class="btn btn-ghost" type="button" id="back-3">{b.back}</button>
+          <button class="btn btn-primary" type="button" id="confirm">{b.confirm}</button>
+        </div>
+      </div>
+
+      <!-- Succès -->
+      <div class="success" id="done" hidden tabindex="-1">
+        <h2>{b.successTitle}</h2>
+        <p id="done-text">{b.successText}</p>
+        <div class="btn-row" style="margin-top:24px">
+          <a class="btn btn-ghost" href={href(lang)}>{c.nav.home}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="application/json" id="b-i18n" set:html={JSON.stringify(i18n)} />
+</Base>
+
+<script>
+  type Slot = string; // ISO UTC
+  const t = JSON.parse(document.getElementById('b-i18n')!.textContent || '{}');
+  const $ = (id: string) => document.getElementById(id)!;
+  const steps = [$('step-1'), $('step-2'), $('step-3')];
+  const stepper = $('stepper');
+  const lang = t.lang as string;
+  const locale = lang === 'fr' ? 'fr-FR' : 'en-GB';
+  const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  let preview = false;
+  let slots: Slot[] = [];
+  let chosenDay = '';
+  let chosen: Slot | '' = '';
+  let loaded = false;
+  const answers: Record<string, string> = {};
+
+  function show(i: number) {
+    steps.forEach((el, k) => (el.hidden = k !== i));
+    stepper.querySelectorAll('li').forEach((li, k) => {
+      li.toggleAttribute('aria-current', k === i);
+      if (k === i) li.setAttribute('aria-current', 'step');
+      li.classList.toggle('done', k < i);
+    });
+    window.scrollTo({ top: stepper.getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' });
+  }
+  show(0);
+
+  const dayKey = (iso: string) =>
+    new Intl.DateTimeFormat('en-CA', { timeZone: userTz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso));
+  const fmtTime = (iso: string) =>
+    new Intl.DateTimeFormat(locale, { timeZone: userTz, hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+  const fmtLong = (iso: string) =>
+    new Intl.DateTimeFormat(locale, { timeZone: userTz, weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+
+  // ---- étape 1
+  $('step-1').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target as HTMLFormElement);
+    f.forEach((v, k) => (answers[k] = String(v).trim()));
+    const m = $('b-msg1');
+    m.className = 'form-msg';
+    if (!answers.name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(answers.email || '') || !answers.need) {
+      m.textContent = t.errorFields;
+      m.classList.add('err');
+      return;
+    }
+    m.textContent = '';
+    show(1);
+    if (!loaded) loadSlots();
+  });
+
+  // ---- étape 2
+  async function loadSlots() {
+    $('loading').hidden = false;
+    $('picker').hidden = true;
+    $('no-slots').hidden = true;
+    try {
+      const res = await fetch('/api/availability');
+      const data = await res.json();
+      preview = Boolean(data.preview);
+      slots = Array.isArray(data.slots) ? data.slots : [];
+      loaded = true;
+    } catch {
+      slots = [];
+    }
+    $('loading').hidden = true;
+    $('preview-note').hidden = !preview;
+    if (!slots.length) {
+      $('no-slots').hidden = false;
+      return;
+    }
+    renderDays();
+    $('picker').hidden = false;
+    $('tz').textContent = `${t.tz} ${userTz.replace('_', ' ')}`;
+  }
+
+  function renderDays() {
+    const days = Array.from(new Set(slots.map(dayKey)));
+    const box = $('days');
+    box.innerHTML = '';
+    days.forEach((d) => {
+      const first = slots.find((s) => dayKey(s) === d)!;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'day';
+      b.setAttribute('aria-pressed', 'false');
+      const wd = new Intl.DateTimeFormat(locale, { timeZone: userTz, weekday: 'short' }).format(new Date(first));
+      const dn = new Intl.DateTimeFormat(locale, { timeZone: userTz, day: 'numeric' }).format(new Date(first));
+      const mo = new Intl.DateTimeFormat(locale, { timeZone: userTz, month: 'short' }).format(new Date(first));
+      b.innerHTML = `<small></small><b></b><small></small>`;
+      const parts = b.children;
+      parts[0].textContent = wd;
+      parts[1].textContent = dn;
+      parts[2].textContent = mo;
+      b.addEventListener('click', () => pickDay(d, b));
+      box.appendChild(b);
+    });
+    $('times').innerHTML = '';
+  }
+
+  function pickDay(d: string, el: HTMLElement) {
+    chosenDay = d;
+    chosen = '';
+    ($('next-2') as HTMLButtonElement).disabled = true;
+    $('days').querySelectorAll('.day').forEach((x) => x.setAttribute('aria-pressed', String(x === el)));
+    const box = $('times');
+    box.innerHTML = '';
+    const list = slots.filter((s) => dayKey(s) === d);
+    if (!list.length) {
+      box.textContent = t.noSlotsDay;
+      return;
+    }
+    list.forEach((s) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'time';
+      b.setAttribute('aria-pressed', 'false');
+      b.textContent = fmtTime(s);
+      b.addEventListener('click', () => {
+        chosen = s;
+        box.querySelectorAll('.time').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        ($('next-2') as HTMLButtonElement).disabled = false;
+      });
+      box.appendChild(b);
+    });
+  }
+
+  $('back-2').addEventListener('click', () => show(0));
+  $('next-2').addEventListener('click', () => {
+    if (!chosen) return;
+    renderRecap();
+    show(2);
+  });
+
+  // ---- étape 3
+  function renderRecap() {
+    const rows: [string, string][] = [
+      [t.fields.name, answers.name],
+      [t.fields.email, answers.email],
+      ...(answers.company ? ([[t.fields.company, answers.company]] as [string, string][]) : []),
+      [t.fields.need, t.needs[answers.need] || answers.need],
+      ...(answers.budget ? ([[t.fields.budget, t.budgets[answers.budget] || answers.budget]] as [string, string][]) : []),
+      ...(answers.message ? ([[t.fields.message, answers.message]] as [string, string][]) : []),
+      ['⏱', `${fmtLong(chosen as string)} · ${t.duration} min`],
+    ];
+    const dl = $('recap');
+    dl.innerHTML = '';
+    rows.forEach(([k, v]) => {
+      const d = document.createElement('div');
+      const dt = document.createElement('dt');
+      const dd = document.createElement('dd');
+      dt.textContent = k;
+      dd.textContent = v;
+      d.append(dt, dd);
+      dl.appendChild(d);
+    });
+    $('preview-note-3').hidden = !preview;
+  }
+
+  $('back-3').addEventListener('click', () => show(1));
+  $('confirm').addEventListener('click', async () => {
+    const btn = $('confirm') as HTMLButtonElement;
+    const m = $('b-msg3');
+    m.className = 'form-msg';
+    m.textContent = '';
+    btn.disabled = true;
+    const label = btn.textContent;
+    btn.textContent = t.sending;
+    try {
+      const res = await fetch('/api/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...answers, slot: chosen, lang, tz: userTz }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || String(res.status));
+      steps.forEach((el) => (el.hidden = true));
+      stepper.hidden = true;
+      $('done').hidden = false;
+      if (data.preview) $('done-text').textContent = t.successPreview;
+      $('done').focus();
+      window.scrollTo({ top: $('done').getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' });
+    } catch {
+      m.textContent = t.error;
+      m.classList.add('err');
+      btn.disabled = false;
+      btn.textContent = label;
+      // le créneau a peut-être été pris : on recharge les disponibilités
+      loaded = false;
+    }
+  });
+</script>

@@ -1,0 +1,26 @@
+---
+// La racine envoie vers la langue du navigateur (FR par défaut).
+// Page statique : la redirection se fait côté navigateur.
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Binta Kande</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="/fr" />
+    <noscript><meta http-equiv="refresh" content="0; url=/fr" /></noscript>
+    <script is:inline>
+      var l = (navigator.language || 'fr').toLowerCase().indexOf('fr') === 0 ? 'fr' : 'en';
+      location.replace('/' + l);
+    </script>
+    <style>
+      body { background: #14100d; color: #f1e8de; font-family: system-ui, sans-serif; }
+    </style>
+  </head>
+  <body>
+    <p><a href="/fr">Français</a> · <a href="/en">English</a></p>
+  </body>
+</html>

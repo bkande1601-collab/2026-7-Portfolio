@@ -1,0 +1,48 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { t, em, langs, type Lang } from '../../content';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const f = c.faq;
+
+// données structurées FAQ (SEO)
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: f.items.map((i) => ({
+    '@type': 'Question',
+    name: i.q,
+    acceptedAnswer: { '@type': 'Answer', text: i.a },
+  })),
+};
+---
+
+<Base lang={lang} page="faq" title={c.nav.faq}>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="kicker">{f.hero.kicker}</span>
+      <h1 set:html={em(f.hero.title)} />
+    </div>
+  </section>
+
+  <section style="padding-top:clamp(16px,3vw,32px)">
+    <div class="wrap"><div class="faq-list" style="max-width:860px">
+      {
+        f.items.map((i, n) => (
+          <details open={n === 0}>
+            <summary>{i.q}</summary>
+            <p>{i.a}</p>
+          </details>
+        ))
+      }
+    </div></div>
+  </section>
+
+  <CtaBand lang={lang} title={f.finalTitle} />
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+</Base>

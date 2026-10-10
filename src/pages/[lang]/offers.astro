@@ -1,0 +1,111 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { t, em, href, langs, type Lang } from '../../content';
+import { formatPrice, type PriceKey } from '../../config/site';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const o = c.offers;
+
+const price = (k: PriceKey) => formatPrice(k, lang);
+---
+
+<Base lang={lang} page="offers" title={c.nav.offers} description={o.hero.sub}>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="kicker">{o.hero.kicker}</span>
+      <h1 set:html={em(o.hero.title)} />
+      <p class="lead">{o.hero.sub}</p>
+    </div>
+  </section>
+
+  <!-- L'échelle : Audit → Sprint → Agent IA → Outil interne -->
+  <section style="padding-top:clamp(24px,4vw,48px)">
+    <div class="wrap">
+      <ol class="ladder">
+        {
+          o.ladder.map((r, i) => {
+            const p = price(r.key as PriceKey);
+            return (
+              <li class="rung reveal" style={`--i:${i}`}>
+                <div class="name"><h3>{r.name}</h3></div>
+                <p class="line">{r.line}</p>
+                <p class="out">{r.out}</p>
+                <div class="price">
+                  <span class="price-f">{p.from ? o.from : o.flat}</span>
+                  <span class="price-n">{p.amount}</span>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ol>
+      <p class="price-quote">{o.quote}</p>
+    </div>
+  </section>
+
+  <!-- Abonnement mensuel -->
+  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+    <div class="wrap run">
+      <div class="reveal">
+        <span class="kicker">{o.runKicker}</span>
+        <h2 set:html={em(o.runTitle)} />
+        <p class="lead">{o.runText}</p>
+      </div>
+      <div class="run-plans reveal">
+        {
+          o.runPlans.map((r) => {
+            const p = price(r.key as PriceKey);
+            return (
+              <div class="run-plan">
+                <h3>{r.name}</h3>
+                <div class="price-n">{p.amount}<small> {o.perMonth}</small></div>
+                <p>{r.line}</p>
+              </div>
+            );
+          })
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Services secondaires -->
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{o.otherKicker}</span>
+      </div>
+      <ul class="other-list">
+        {
+          o.other.map((s) => {
+            const p = s.key ? price(s.key as PriceKey) : null;
+            return (
+              <li class="reveal">
+                <div>
+                  <h3>{s.name}</h3>
+                  <p>{s.line}</p>
+                </div>
+                <div class="price-n">
+                  {p ? (
+                    <>
+                      <small style="display:block;font-size:.5em;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:400">{o.from}</small>
+                      {p.amount}<small> {o.perMonth}</small>
+                    </>
+                  ) : (
+                    <span style="font-size:.8em">{(s as { custom?: string }).custom}</span>
+                  )}
+                </div>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={o.finalTitle} text={o.finalText} />
+</Base>

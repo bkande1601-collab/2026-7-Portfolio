@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import { t } from '../content';
+
+// Page 404 : on devine la langue depuis l'URL demandée.
+const lang = Astro.url.pathname.startsWith('/en') ? 'en' : 'fr';
+const c = t(lang);
+---
+
+<Base lang={lang} page="" title="404">
+  <section class="page-hero" style="min-height:60vh">
+    <div class="wrap">
+      <span class="kicker">404</span>
+      <h1>{c.notFound.title}</h1>
+      <p class="lead" style="margin-bottom:32px">{c.notFound.text}</p>
+      <a class="btn btn-primary" href={`/${lang}`}>{c.notFound.back}</a>
+    </div>
+  </section>
+</Base>

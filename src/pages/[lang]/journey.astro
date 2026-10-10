@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import Marquee from '../../components/Marquee.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { t, em, langs, type Lang } from '../../content';
+import { site } from '../../config/site';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const j = c.journey;
+---
+
+<Base lang={lang} page="journey" title={c.nav.journey} description={j.hero.sub}>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="kicker">{j.hero.kicker}</span>
+      <h1 set:html={em(j.hero.title)} />
+      <p class="lead">{j.hero.sub}</p>
+    </div>
+  </section>
+
+  <section style="padding-top:clamp(24px,4vw,48px)">
+    <div class="wrap journey">
+      <!-- Photo : voir `photo` dans src/config/site.ts -->
+      <div class="photo reveal">
+        {
+          site.photo ? (
+            <img src={site.photo} alt={j.photoAlt} width="640" height="800" loading="lazy" />
+          ) : (
+            <span>{j.photoNote}</span>
+          )
+        }
+      </div>
+      <ol class="timeline">
+        {
+          j.items.map((it) => (
+            <li class={`reveal${it.todo ? ' todo' : ''}`}>
+              <span class="when">{it.when}</span>
+              <h3>
+                {it.title}
+                {it.todo && <span class="todo-tag">{j.todo}</span>}
+              </h3>
+              <p>{it.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <Marquee label={j.stackTitle} />
+  <CtaBand lang={lang} title={c.home.finalTitle} text={c.home.finalText} />
+</Base>

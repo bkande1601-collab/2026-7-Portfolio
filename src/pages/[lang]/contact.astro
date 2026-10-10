@@ -1,0 +1,106 @@
+---
+import Base from '../../layouts/Base.astro';
+import { t, em, href, langs, type Lang } from '../../content';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const k = c.contact;
+const i18n = { ok: k.okTitle, err: k.err, invalid: k.invalid, sending: k.sending, send: k.send };
+---
+
+<Base lang={lang} page="contact" title={c.cta.message} description={k.hero.sub}>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="kicker">{k.hero.kicker}</span>
+      <h1 set:html={em(k.hero.title)} />
+      <p class="lead">{k.hero.sub}</p>
+    </div>
+  </section>
+
+  <section style="padding-top:clamp(16px,3vw,32px)">
+    <div class="wrap">
+      <form class="form" id="contact-form" novalidate data-lang={lang}>
+        <div class="two">
+          <div class="field">
+            <label for="c-name">{k.fields.name}</label>
+            <input id="c-name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="c-email">{k.fields.email}</label>
+            <input id="c-email" name="email" type="email" inputmode="email" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="c-subject">{k.fields.subject} <span>({c.book.fields.optional})</span></label>
+          <input id="c-subject" name="subject" type="text" />
+        </div>
+        <div class="field">
+          <label for="c-message">{k.fields.message}</label>
+          <textarea id="c-message" name="message" placeholder={k.fields.messagePlaceholder} required></textarea>
+        </div>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <p class="form-msg" id="c-msg" role="alert" aria-live="polite"></p>
+        <div class="btn-row">
+          <button class="btn btn-primary" type="submit" id="c-submit">{k.send}</button>
+          <a class="btn btn-ghost" href={href(lang, 'book')}>{c.cta.book}</a>
+        </div>
+      </form>
+
+      <div class="success" id="c-success" hidden tabindex="-1">
+        <h2>{k.okTitle}</h2>
+        <p>{k.okText}</p>
+        <div class="btn-row" style="margin-top:24px">
+          <a class="btn btn-ghost" href={href(lang, 'book')}>{c.cta.book}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="application/json" id="c-i18n" set:html={JSON.stringify(i18n)} />
+</Base>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const msg = document.getElementById('c-msg')!;
+  const success = document.getElementById('c-success')!;
+  const btn = document.getElementById('c-submit') as HTMLButtonElement | null;
+  const t = JSON.parse(document.getElementById('c-i18n')!.textContent || '{}');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = new FormData(form);
+    const body = Object.fromEntries(f.entries()) as Record<string, string>;
+    body.lang = form.dataset.lang || 'fr';
+    msg.className = 'form-msg';
+    if (!body.name?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email || '') || !body.message?.trim()) {
+      msg.textContent = t.invalid;
+      msg.classList.add('err');
+      return;
+    }
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = t.sending;
+    }
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      form.hidden = true;
+      success.hidden = false;
+      success.focus();
+    } catch {
+      msg.textContent = t.err;
+      msg.classList.add('err');
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = t.send;
+      }
+    }
+  });
+</script>

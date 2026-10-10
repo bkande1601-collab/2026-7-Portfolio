@@ -1,0 +1,112 @@
+---
+import Base from '../../layouts/Base.astro';
+import HeroVisual from '../../components/HeroVisual.astro';
+import Marquee from '../../components/Marquee.astro';
+import BeforeAfter from '../../components/BeforeAfter.astro';
+import Window from '../../components/Window.astro';
+import OfferRail from '../../components/OfferRail.astro';
+import LabSection from '../../components/LabSection.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { t, em, href, langs, type Lang } from '../../content';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const h = c.home;
+---
+
+<Base lang={lang} page="">
+  <!-- 1. Accroche + emplacement vidéo -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="kicker">{h.hero.eyebrow}</span>
+        <h1 set:html={em(h.hero.title)} />
+        <p class="lead">{h.hero.sub}</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
+          <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+        </div>
+      </div>
+      <HeroVisual label={h.hero.videoLabel} pending={h.hero.videoPending} />
+    </div>
+  </section>
+
+  <!-- 2. Les infos clés d'un coup d'œil -->
+  <div class="wrap" style="padding-block:0">
+    <div class="facts">
+      {h.facts.map((f) => <div><b>{f.k}</b><span>{f.v}</span></div>)}
+    </div>
+  </div>
+
+  <!-- 3. Bande d'outils -->
+  <Marquee label={h.toolsTitle} />
+
+  <!-- 4. Avant / après -->
+  <section>
+    <div class="wrap">
+      <BeforeAfter data={h.beforeAfter} />
+    </div>
+  </section>
+
+  <!-- 5. La plateforme interne chiffrée -->
+  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+    <div class="wrap platform">
+      <div class="reveal">
+        <span class="kicker">{h.platform.kicker}</span>
+        <h2 set:html={em(h.platform.title)} />
+        <p class="lead">{h.platform.text}</p>
+        <p class="stack-line">{h.platform.stack}</p>
+      </div>
+      <div class="reveal">
+        <Window
+          title={h.platform.chat.title}
+          modules={h.platform.modules}
+          q={h.platform.chat.q}
+          a={h.platform.chat.a}
+          src={h.platform.chat.src}
+          lock={h.platform.chat.lock}
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Mon rôle -->
+  <section>
+    <div class="wrap role">
+      <div class="reveal">
+        <span class="kicker">{h.role.kicker}</span>
+        <h2 set:html={em(h.role.title)} />
+      </div>
+      <div class="reveal">
+        <p>{h.role.text}</p>
+        <a class="textlink" href={href(lang, 'journey')}><span class="arrow">{h.role.link}&nbsp;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Offres sur une seule ligne -->
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{c.nav.offers}</span>
+        <h2>{h.offersTitle}</h2>
+      </div>
+      <div class="reveal"><OfferRail lang={lang} /></div>
+      <p class="rail-foot reveal">
+        <a class="textlink" href={href(lang, 'offers')}><span class="arrow">{h.offersLink}&nbsp;</span></a>
+      </p>
+    </div>
+  </section>
+
+  <!-- 8. Dans le labo -->
+  <section style="background:var(--bg-2);border-block:1px solid var(--line)" id="labo">
+    <div class="wrap">
+      <LabSection lang={lang} />
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={h.finalTitle} text={h.finalText} />
+</Base>
