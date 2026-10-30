@@ -809,7 +809,7 @@ export const en: Content = {
       invalid: 'This email address looks incorrect.',
       err: 'Could not send right now. Please try again in a moment.',
       titles: {
-        'taches-a-automatiser': 'Checklist: the 10 tasks to automate first',
+        'taches-a-automatiser': 'The entrepreneur’s checklist: where you lose time, and where to start',
         'calendrier-contenu': 'Template: your 4-week content calendar',
         'retroplanning-webinaire': 'Webinar countdown plan: from D-14 to D+7',
         'choisir-un-llm': 'Grid: choosing the right LLM for your case',
@@ -818,6 +818,20 @@ export const en: Content = {
     },
     allPosts: 'All articles',
     ctaText: '30 minutes to see what applies to you.',
+  },
+
+  welcome: {
+    title: 'A little welcome',
+    listen: 'Listen',
+    pause: 'Pause',
+    resume: 'Resume',
+    close: 'Close',
+    note: 'AI voice, in English',
+    chips: [
+      { t: 'Marketing', slug: 'marketing' },
+      { t: 'Automation', slug: 'automations' },
+      { t: 'Just looking', slug: 'journey' },
+    ],
   },
 
   chat: {

@@ -807,7 +807,7 @@ export const fr = {
       invalid: 'Cette adresse e-mail semble incorrecte.',
       err: 'Impossible d’envoyer pour l’instant. Réessayez dans un instant.',
       titles: {
-        'taches-a-automatiser': 'Checklist : les 10 tâches à automatiser en priorité',
+        'taches-a-automatiser': 'Checklist de l’entrepreneur : où vous perdez du temps, et par où commencer',
         'calendrier-contenu': 'Modèle : votre calendrier de contenu sur 4 semaines',
         'retroplanning-webinaire': 'Rétroplanning d’un webinaire : de J-14 à J+7',
         'choisir-un-llm': 'Grille : choisir le bon LLM pour votre cas',
@@ -816,6 +816,20 @@ export const fr = {
     },
     allPosts: 'Tous les articles',
     ctaText: '30 minutes pour voir ce qui s’applique à vous.',
+  },
+
+  welcome: {
+    title: 'Un petit mot de bienvenue',
+    listen: 'Écouter',
+    pause: 'Pause',
+    resume: 'Reprendre',
+    close: 'Fermer',
+    note: 'Voix d’IA, en anglais',
+    chips: [
+      { t: 'Marketing', slug: 'marketing' },
+      { t: 'Automatisation', slug: 'automations' },
+      { t: 'Je me renseigne', slug: 'journey' },
+    ],
   },
 
   chat: {

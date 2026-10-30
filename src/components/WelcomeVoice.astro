@@ -1,0 +1,153 @@
+---
+/**
+ * Petit mot de bienvenue, dit par une voix d'IA en anglais, une seule fois par visite.
+ * Les navigateurs bloquent souvent le son automatique : dans ce cas, la voix démarre
+ * au premier clic ou à la première touche, et un bouton « Écouter » est toujours visible.
+ * Les fichiers audio sont dans public/audio/welcome-1.m4a à welcome-6.m4a (une phrase chacun).
+ * Pour changer la voix : remplacez ces fichiers et gardez les sous-titres ci-dessous à jour.
+ */
+import { t, href, type Lang } from '../content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+const w = c.welcome;
+
+const lines = [
+  { src: '/audio/welcome-1.m4a', en: 'Hey! Welcome to Binta’s site.', fr: 'Hey ! Bienvenue sur le site de Binta.' },
+  { src: '/audio/welcome-2.m4a', en: 'You’re in the right place.', fr: 'Vous êtes au bon endroit.' },
+  { src: '/audio/welcome-3.m4a', en: 'Fun fact: you’re probably French.', fr: 'Petite anecdote : vous êtes probablement français.' },
+  { src: '/audio/welcome-4.m4a', en: 'But Binta doesn’t like French AI voices, so that’s why I’m speaking English. Ha ha.', fr: 'Mais Binta n’aime pas les voix d’IA en français, c’est pour ça que je parle anglais. Ahah.' },
+  { src: '/audio/welcome-5.m4a', en: 'Are you looking for marketing? Or maybe automation? Or do you just want to find out more?', fr: 'Vous cherchez du marketing ? Ou plutôt de l’automatisation ? Ou simplement vous renseigner ?' },
+  { src: '/audio/welcome-6.m4a', en: 'I’ll let you browse the pages at your own pace.', fr: 'Je vous laisse parcourir les pages tranquillement.' },
+];
+const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr : l.en })), listen: w.listen, pause: w.pause, resume: w.resume };
+---
+
+<aside class="welcome" id="welcome" role="region" aria-label={w.title} hidden>
+  <div class="welcome-head">
+    <span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+    <b>{w.title}</b>
+    <button class="welcome-x" id="welcome-x" type="button" aria-label={w.close}>×</button>
+  </div>
+  <p class="welcome-cap" id="welcome-cap">{lang === 'fr' ? lines[0].fr : lines[0].en}</p>
+  <p class="welcome-note">{w.note}</p>
+  <div class="welcome-row">
+    <button class="btn btn-primary btn-sm" id="welcome-play" type="button">{w.listen}</button>
+  </div>
+  <div class="welcome-chips" id="welcome-chips" hidden>
+    {w.chips.map((x) => <a class="chip" href={href(lang, x.slug)}>{x.t}</a>)}
+  </div>
+</aside>
+
+<script type="application/json" id="welcome-data" set:html={JSON.stringify(data)} />
+
+<script>
+  const KEY = 'welcome-played';
+  const box = document.getElementById('welcome');
+  if (box) {
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem(KEY) === '1';
+    } catch {
+      /* stockage indisponible : on affiche quand même */
+    }
+    if (!seen) {
+      const data = JSON.parse(document.getElementById('welcome-data')!.textContent || '{}');
+      const cap = document.getElementById('welcome-cap')!;
+      const playBtn = document.getElementById('welcome-play') as HTMLButtonElement;
+      const chips = document.getElementById('welcome-chips')!;
+      const audios: HTMLAudioElement[] = data.lines.map((l: { src: string }) => {
+        const a = new Audio(l.src);
+        a.preload = 'auto';
+        return a;
+      });
+      let idx = 0;
+      let started = false;
+      let playing = false;
+
+      const mark = () => {
+        try {
+          sessionStorage.setItem(KEY, '1');
+        } catch {
+          /* ignore */
+        }
+      };
+      const setPlaying = (on: boolean) => {
+        playing = on;
+        box.classList.toggle('playing', on);
+        playBtn.textContent = on ? data.pause : started ? data.resume : data.listen;
+      };
+      const showLine = (i: number) => {
+        cap.textContent = data.lines[i].text;
+      };
+      const finish = () => {
+        setPlaying(false);
+        chips.hidden = false;
+        playBtn.hidden = true;
+      };
+      const playSeg = (i: number) => {
+        idx = i;
+        showLine(i);
+        const a = audios[i];
+        a.currentTime = 0;
+        a.onended = () => {
+          if (i < audios.length - 1) setTimeout(() => playSeg(i + 1), 220);
+          else finish();
+        };
+        return a.play();
+      };
+      const begin = () => {
+        if (started) return;
+        started = true;
+        mark();
+        playSeg(0)
+          .then(() => setPlaying(true))
+          .catch(() => {
+            started = false;
+            setPlaying(false);
+          });
+      };
+
+      box.hidden = false;
+
+      // 1. on essaie de démarrer tout de suite
+      playSeg(0)
+        .then(() => {
+          started = true;
+          mark();
+          setPlaying(true);
+        })
+        .catch(() => {
+          // 2. le navigateur bloque : on démarre au premier clic ou à la première touche
+          const once = () => {
+            ['pointerup', 'keydown', 'touchend'].forEach((e) => window.removeEventListener(e, once));
+            begin();
+          };
+          ['pointerup', 'keydown', 'touchend'].forEach((e) => window.addEventListener(e, once, { once: true, passive: true }));
+        });
+
+      playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!started) return begin();
+        const a = audios[idx];
+        if (playing) {
+          a.pause();
+          setPlaying(false);
+        } else {
+          a.play().then(() => setPlaying(true)).catch(() => {});
+        }
+      });
+      document.getElementById('welcome-x')!.addEventListener('click', () => {
+        audios.forEach((a) => a.pause());
+        mark();
+        box.hidden = true;
+      });
+      chips.addEventListener('click', () => {
+        mark();
+      });
+    }
+  }
+</script>
