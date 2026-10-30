@@ -21,8 +21,9 @@ export const en: Content = {
     home: 'Home',
     marketing: 'Marketing & content',
     automations: 'Automation & AI',
-    products: 'Digital products',
+    products: 'Services',
     offers: 'Pricing',
+    blog: 'Blog',
     journey: 'Journey',
     faq: 'FAQ',
     sub: {
@@ -41,6 +42,9 @@ export const en: Content = {
   },
 
   cta: {
+    talk: 'Let’s talk',
+    bookNote: 'A 30-minute video call',
+    messageNote: 'Your request, by email',
     book: 'Book an audit',
     message: 'Send a message',
   },
@@ -108,6 +112,30 @@ export const en: Content = {
       },
     },
 
+    proof: {
+      kicker: 'What I have done',
+      title: '*Proof*, not promises.',
+      hackathon: {
+        tag: 'Hackathon',
+        title: 'I won the Mirakl x Eugenia School hackathon.',
+        text: 'An AI and data competition. My team presented its project to a jury, and we won.',
+        link: 'See the LinkedIn post',
+        alt: 'Group photo after the jury session of the Mirakl x Eugenia School hackathon',
+        pitchAlt: 'Binta Kande presenting a project with a microphone',
+      },
+      cards: [
+        { t: 'A complete internal platform', d: 'Automated onboarding, GraphRAG, chatbot, OKRs and dashboard, built for WLFG.', slug: 'automations' },
+        { t: 'Social media manager', d: 'Strategy and content on Instagram, TikTok and LinkedIn.', slug: 'marketing' },
+        { t: 'WeTalk Podcast', d: 'An entrepreneurship podcast, from the idea to distribution.', slug: 'journey' },
+      ],
+    },
+
+    tips: {
+      kicker: 'Advice',
+      title: 'What I would tell *a friend* who runs a business.',
+      link: 'See all the advice',
+    },
+
     paths: {
       kicker: 'What are you looking for?',
       title: '3 ways to *work* together.',
@@ -127,7 +155,7 @@ export const en: Content = {
         },
         {
           slug: 'products',
-          name: 'Digital products',
+          name: 'Services',
           line: 'An AI diagnosis of your business and a tailored master prompt, to buy online.',
           price: 'diagnostic',
         },
@@ -200,6 +228,13 @@ export const en: Content = {
         },
       ],
     },
+    built: {
+      kicker: 'What I built',
+      title: 'For WLFG, a *complete* internal platform.',
+      text: 'Automated onboarding, a GraphRAG, a chatbot, OKRs and a whole automation system, with a dashboard to follow everything. I designed and built it myself, and it is used every day.',
+      modules: ['Automated onboarding', 'GraphRAG', 'Chatbot', 'OKRs', 'Automations', 'Dashboard'],
+      videoSoon: 'A demo video is coming soon.',
+    },
     flow: {
       kicker: 'A concrete example',
       title: 'A lead comes in. Nobody touched anything.',
@@ -264,6 +299,12 @@ export const en: Content = {
           slug: 'marketing/webinars',
         },
       ],
+    },
+    building: {
+      kicker: 'Under construction',
+      title: 'A platform that creates content for *entrepreneurs*.',
+      text: 'To back up what I know in digital marketing, I am building a content creation platform for entrepreneurs myself. More very soon.',
+      link: 'Notify me',
     },
     content: {
       kicker: 'What I do for your social media',
@@ -496,6 +537,8 @@ export const en: Content = {
       sub: 'Tell me who you are and what you are looking for. Then pick a video slot, or simply send your request by email.',
     },
     steps: ['Your request', 'Day and time', 'Confirmation'],
+    fromLabel: 'You come from the page',
+    fromMessage: 'Hello, I am writing from the page “{page}”. ',
     mode: {
       label: 'What would you like?',
       meet: 'Book a video call',
@@ -599,43 +642,50 @@ export const en: Content = {
     items: [
       {
         when: 'Nov. 2025 to today',
-        title: 'Chief of Staff, Proplyd Productions and WLFG Consulting',
+        title: 'Chief of Staff',
+        org: 'Proplyd Productions and WLFG Consulting',
         text: 'Right hand to the CEO: strategic and operational priorities, quarterly OKRs, investor materials, business development. I designed and deployed automations and an internal platform there.',
         todo: false,
       },
       {
         when: 'Jul. 2024 to today',
         title: 'Freelance',
+        org: '',
         text: 'Shopify and Framer sites built to convert, digital strategy, automations and AI agents. I also created WeTalk Podcast, an entrepreneurship podcast, and organised networking workshops.',
         todo: false,
       },
       {
         when: 'Jul. to Dec. 2025',
-        title: 'Social media manager, MNGRS.AI',
+        title: 'Social media manager',
+        org: 'MNGRS.AI',
         text: 'Strategy and visual and video content on Instagram, TikTok and LinkedIn, with a weekly report: engagement, reach, conversions.',
         todo: false,
       },
       {
         when: '2025',
-        title: 'Digital marketing manager, La Squadra Paris',
+        title: 'Digital marketing manager',
+        org: 'La Squadra Paris',
         text: 'E-commerce, ads, CRM, social media, analytics: 7 functions in one role. Email marketing and automations for retention.',
         todo: false,
       },
       {
         when: '2025 to 2026',
-        title: 'MSc in AI Applied to Business, Eugenia School',
+        title: 'MSc in AI Applied to Business',
+        org: 'Eugenia School',
         text: 'Business analytics, data visualisation, Python, SQL, PowerBI, HubSpot, Dataiku, GA4.',
         todo: false,
       },
       {
         when: '2024 to 2025',
-        title: 'Bachelor in Digital Project Management, Digital School of Paris',
+        title: 'Bachelor in Digital Project Management',
+        org: 'Digital School of Paris',
         text: 'SEO, Adobe Suite, team management, Scrum.',
         todo: false,
       },
       {
         when: '2023 to 2024',
-        title: 'Bachelor in International Trade, CNAM',
+        title: 'Bachelor in International Trade',
+        org: 'CNAM',
         text: 'Digital marketing, management, macroeconomics, accounting.',
         todo: false,
       },
@@ -676,6 +726,19 @@ export const en: Content = {
       },
     ],
     finalTitle: 'Another question? *Ask it.*',
+  },
+
+  blog: {
+    hero: {
+      kicker: 'Blog',
+      title: '*Concrete* advice, to save time.',
+      sub: 'Automation, social media, webinars: what I apply and what I recommend.',
+    },
+    read: 'Read the article',
+    back: 'All the advice',
+    minutes: 'min read',
+    ctaTitle: 'Want us to look at *your case*?',
+    ctaText: '30 minutes to see what applies to you.',
   },
 
   chat: {

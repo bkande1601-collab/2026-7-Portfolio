@@ -6,6 +6,7 @@ import { ownerBookingMail, sendMail, visitorBookingMail, ownerEmail, type Bookin
 import { clean, isEmail, json, readJson, toLang } from '../../lib/http';
 import { booking, eventTitle, site } from '../../config/site';
 import { t } from '../../content';
+import { sourceText } from '../../lib/source';
 
 export const prerender = false;
 
@@ -26,6 +27,7 @@ export const POST: APIRoute = async ({ request }) => {
   const lastName = clean(body.lastName, 80);
   const name = `${firstName} ${lastName}`.trim();
   const phone = clean(body.phone, 30);
+  const source = clean(body.source, 60).replace(/[^a-z0-9/_-]/gi, '');
   const email = clean(body.email, 254).toLowerCase();
   const need = clean(body.need, 30);
   const budget = clean(body.budget, 20);
@@ -56,6 +58,7 @@ export const POST: APIRoute = async ({ request }) => {
   const data: BookingData = {
     name,
     phone,
+    source,
     email,
     company: clean(body.company, 160),
     need,
@@ -73,6 +76,7 @@ export const POST: APIRoute = async ({ request }) => {
   const description = [
     `${name} <${email}>`,
     `Téléphone : ${phone}`,
+    source && `Venu depuis la page : ${sourceText(source)}`,
     data.company && `Entreprise : ${data.company}`,
     `Besoin : ${needLabel}`,
     `Budget : ${budgetLabel}`,

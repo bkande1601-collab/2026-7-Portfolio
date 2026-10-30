@@ -13,11 +13,14 @@ const p = c.products;
 ---
 
 <Base lang={lang} page="products" title={c.nav.products} description={p.hero.sub}>
-  <section class="page-hero">
-    <div class="wrap">
+  <section class="page-hero has-photo">
+    <div class="wrap hero-split">
+      <div class="hero-text">
       <span class="kicker">{p.hero.kicker}</span>
       <h1 set:html={em(p.hero.title)} />
       <p class="lead">{p.hero.sub}</p>
+      </div>
+      <img class="hero-photo" src="/photos/binta-accueil-violet.webp" alt="Binta Kande en haut violet, les bras croisés" width="1108" height="1313" />
     </div>
   </section>
 

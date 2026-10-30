@@ -1,5 +1,6 @@
 ---
 import { t, href, em, type Lang } from '../content';
+import CtaMenu from './CtaMenu.astro';
 
 interface Props {
   lang: Lang;
@@ -17,8 +18,7 @@ const c = t(lang);
       {text && <p>{text}</p>}
     </div>
     <div class="btn-row reveal">
-      <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
-      <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+      <CtaMenu lang={lang} />
     </div>
   </div>
 </section>

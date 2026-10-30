@@ -1,0 +1,47 @@
+---
+import Base from '../../../layouts/Base.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import Crumb from '../../../components/Crumb.astro';
+import { t, em, href, langs, type Lang } from '../../../content';
+import { posts } from '../../../content/blog';
+
+export function getStaticPaths() {
+  return langs.flatMap((lang) => posts.map((p) => ({ params: { lang, slug: p.slug } })));
+}
+const lang = Astro.params.lang as Lang;
+const slug = Astro.params.slug as string;
+const c = t(lang);
+const b = c.blog;
+const post = posts.find((p) => p.slug === slug)!;
+const x = post[lang];
+const date = new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(post.date));
+---
+
+<Base lang={lang} page={`blog/${slug}`} title={x.title} description={x.excerpt}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumb lang={lang} parent="blog" label={b.back} />
+      <span class="kicker" style="display:flex">{x.tag}</span>
+      <h1>{x.title}</h1>
+      <p class="lead">{x.excerpt}</p>
+      <p class="post-meta">{date} · {post.minutes} {b.minutes}</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <article class="article">
+        {
+          x.sections.map((s) => (
+            <>
+              {s.h && <h2>{s.h}</h2>}
+              {s.p.map((para) => <p>{para}</p>)}
+            </>
+          ))
+        }
+      </article>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={b.ctaTitle} text={b.ctaText} />
+</Base>

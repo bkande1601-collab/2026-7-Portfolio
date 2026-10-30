@@ -2593,7 +2593,7 @@ a:hover > .arrow::after {
 }
 
 /* ---------- assistant du site (chatbot) ---------- */
-.chat {
+.site-chat {
   position: fixed;
   right: clamp(12px, 2vw, 24px);
   bottom: clamp(12px, 2vw, 24px);
@@ -3035,4 +3035,357 @@ a:hover > .arrow::after {
 }
 .cal-times .sub-label::first-letter {
   text-transform: uppercase;
+}
+
+/* ---------- bouton d'action unique ---------- */
+.cta-menu {
+  position: relative;
+  display: inline-block;
+}
+.cta-pop {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 280px;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: 18px;
+  display: none;
+  z-index: 70;
+}
+.cta-menu.open .cta-pop {
+  display: block;
+}
+.cta-menu.up .cta-pop {
+  top: auto;
+  bottom: calc(100% + 10px);
+}
+.cta-pop a {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+}
+.cta-pop a:hover {
+  background: var(--lilas);
+}
+.cta-pop b {
+  display: block;
+  font-family: var(--font-head);
+  color: var(--violet-deep);
+}
+.cta-pop small {
+  color: var(--muted);
+}
+.site-header .cta-menu .cta-pop {
+  left: auto;
+  right: 0;
+}
+@media (max-width: 1180px) {
+  .site-header .cta-menu .cta-pop {
+    left: 0;
+    right: auto;
+  }
+}
+
+.from-note {
+  margin: 0 0 20px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--lilas);
+  color: var(--violet-deep);
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* ==========================================================================
+   PAGES INTÉRIEURES : même ambiance que le haut de l'accueil (cuivre, ivoire, lilas)
+   ========================================================================== */
+.page-hero {
+  background: radial-gradient(120% 110% at 85% 0%, var(--rouille) 0%, var(--rouille-deep) 60%, #3b1405 100%);
+  color: var(--beige);
+  padding-top: clamp(40px, 6vw, 88px);
+  padding-bottom: clamp(44px, 6vw, 88px);
+}
+.page-hero h1,
+.page-hero .lead,
+.page-hero .kicker {
+  color: var(--beige);
+}
+.page-hero .lead {
+  color: rgba(246, 240, 228, 0.92);
+}
+.page-hero h1 em {
+  color: var(--lilas);
+}
+.page-hero .kicker::before {
+  background: var(--lilas);
+}
+.page-hero .crumb {
+  color: var(--beige);
+  border-bottom-color: rgba(246, 240, 228, 0.6);
+}
+.page-hero .crumb:hover {
+  color: var(--lilas);
+  border-bottom-color: var(--lilas);
+}
+.page-hero .btn-primary,
+.page-hero .cta-main {
+  background: var(--lilas);
+  color: var(--violet-deep);
+}
+.page-hero .btn-primary:hover,
+.page-hero .cta-main:hover {
+  background: #fff;
+}
+.page-hero .product-price {
+  color: var(--beige) !important;
+}
+.post-meta {
+  margin-top: 18px;
+  color: rgba(246, 240, 228, 0.8);
+}
+
+/* en-tête avec une photo détourée à droite, posée sur le bord bas */
+.page-hero.has-photo {
+  padding-bottom: 0;
+  overflow-x: clip;
+}
+.hero-split {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: clamp(24px, 5vw, 64px);
+  align-items: end;
+}
+.hero-text {
+  padding-bottom: clamp(44px, 6vw, 88px);
+  align-self: center;
+}
+.hero-photo {
+  width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+  object-position: center bottom;
+  align-self: end;
+}
+@media (max-width: 800px) {
+  .hero-split {
+    grid-template-columns: 1fr;
+  }
+  .hero-text {
+    padding-bottom: 8px;
+  }
+  .hero-photo {
+    max-height: 340px;
+    justify-self: center;
+  }
+}
+
+/* bandes marine : étapes lisibles sur fond sombre */
+.band-marine .pipe-step b {
+  color: #fff;
+}
+.band-marine .pipe-step span {
+  color: rgba(246, 240, 228, 0.82);
+}
+.band-marine .pipe-step .dot {
+  background: var(--violet);
+  border-color: var(--lilas);
+  color: #fff;
+}
+.band-marine .pipe-step::before {
+  border-top-color: rgba(246, 240, 228, 0.5);
+}
+.band-marine .note {
+  color: rgba(246, 240, 228, 0.9);
+  border-left-color: var(--lilas);
+}
+.band-marine .textlink {
+  color: #fff;
+  border-bottom-color: var(--lilas);
+}
+.band-marine .lead,
+.band-marine p {
+  color: rgba(246, 240, 228, 0.9);
+}
+
+/* bande lilas : formule mensuelle */
+.band-lilas .monthly-price {
+  background: var(--rouille);
+}
+.band-lilas .btn-primary {
+  background: var(--violet);
+  color: #fff;
+}
+
+/* ---------- accueil : trois portes sans prix, décalées vers la droite ---------- */
+.path {
+  grid-template-columns: 56px 1fr 32px;
+  padding-left: clamp(12px, 5vw, 72px);
+  padding-right: clamp(8px, 2vw, 24px);
+}
+@media (max-width: 760px) {
+  .path {
+    grid-template-columns: 1fr auto;
+    padding-left: 8px;
+  }
+}
+
+/* ---------- preuves ---------- */
+.proof-feature {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(24px, 5vw, 72px);
+  align-items: center;
+}
+.proof-photos img {
+  width: 100%;
+  border-radius: 22px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.proof-feature h3 {
+  margin: 10px 0 14px;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-stretch: 115%;
+}
+@media (max-width: 800px) {
+  .proof-feature {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- blog ---------- */
+.posts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line-2);
+}
+.posts li {
+  border-bottom: 1px solid var(--line-2);
+}
+.post {
+  display: grid;
+  grid-template-columns: 56px 1fr 32px;
+  gap: clamp(14px, 3vw, 40px);
+  align-items: center;
+  padding: clamp(20px, 3vw, 30px) clamp(8px, 2vw, 24px) clamp(20px, 3vw, 30px) clamp(12px, 4vw, 56px);
+  text-decoration: none;
+  color: var(--text);
+}
+.post:hover {
+  background: var(--lilas);
+}
+.post-n {
+  font-family: var(--font-head);
+  font-weight: 800;
+  color: var(--violet);
+}
+.post-body {
+  display: grid;
+  gap: 4px;
+}
+.post-tag {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rouille);
+  font-weight: 700;
+}
+.post-title {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-stretch: 115%;
+  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+  color: var(--heading);
+}
+.post-ex {
+  color: var(--muted);
+}
+.post-go {
+  color: var(--violet);
+  font-size: 1.4rem;
+}
+@media (max-width: 760px) {
+  .post {
+    grid-template-columns: 1fr auto;
+    padding-left: 8px;
+  }
+  .post-n {
+    display: none;
+  }
+}
+.article {
+  max-width: 68ch;
+  margin-inline: auto;
+}
+.article h2 {
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  margin: 40px 0 14px;
+}
+.article p {
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+  color: var(--text);
+}
+
+/* ---------- automatisations : ce que j'ai construit ---------- */
+.chips {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.chips li {
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--violet);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.video-soon {
+  margin: 14px 0 0;
+  color: var(--violet-deep);
+  font-size: 0.92rem;
+}
+.built-video {
+  width: 100%;
+  border-radius: 22px;
+  background: #000;
+}
+
+/* ---------- parcours : le nom de l'entreprise en italique fin ---------- */
+.org {
+  font-style: italic;
+  font-weight: 300;
+  font-stretch: 100%;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+
+.proof-photos {
+  position: relative;
+  padding-bottom: 28px;
+}
+.proof-pitch {
+  position: absolute;
+  right: -10px;
+  bottom: 0;
+  width: 30% !important;
+  aspect-ratio: auto !important;
+  border: 6px solid #fff;
+  border-radius: 18px !important;
+}
+@media (max-width: 800px) {
+  .proof-pitch {
+    right: 6px;
+  }
 }

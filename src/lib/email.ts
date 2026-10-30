@@ -2,6 +2,7 @@
  * E-mails (Resend, via fetch). Gabarits FR/EN.
  * Tout texte venant d'un visiteur est échappé avant d'entrer dans le HTML.
  */
+import { sourceText } from './source';
 import { env, hasResend } from './env';
 import { site, booking } from '../config/site';
 import { t, type Lang } from '../content';
@@ -205,6 +206,7 @@ const L = {
 export type BookingData = {
   name: string;
   phone: string;
+  source?: string;
   email: string;
   company: string;
   need: string;
@@ -300,6 +302,7 @@ export function ownerBookingMail(d: BookingData, eventLink: string): Mail {
         row(f.phone, `<a href="tel:${esc(d.phone)}">${esc(d.phone)}</a>`) +
         row(f.email, `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) +
         row(f.company, esc(d.company || 'Non renseigné')) +
+        (d.source ? row('Page d’origine', esc(sourceText(d.source))) : '') +
         row(f.need, esc(needLabel)) +
         row(f.budget, esc(budgetLabel)) +
         row(f.message, esc(d.message || 'Non renseigné').replace(/\n/g, '<br>')),
@@ -315,7 +318,7 @@ export function ownerBookingMail(d: BookingData, eventLink: string): Mail {
 }
 
 /* ---------- MESSAGE ---------- */
-export function contactMails(d: { name: string; email: string; subject: string; message: string; lang: Lang; phone?: string; company?: string; need?: string; budget?: string }) {
+export function contactMails(d: { name: string; email: string; subject: string; message: string; lang: Lang; phone?: string; company?: string; need?: string; budget?: string; source?: string }) {
   const needLabel = d.need ? t(d.lang).book.needs.find((n) => n.v === d.need)?.t ?? d.need : '';
   const budgetLabel = d.budget ? t(d.lang).book.budgets.find((n) => n.v === d.budget)?.t ?? d.budget : '';
   const l = L[d.lang];
@@ -347,7 +350,7 @@ export function contactMails(d: { name: string; email: string; subject: string; 
       preheader: `${d.name} vous a écrit.`,
       title: 'Nouveau message',
       body:
-        table(row('Nom', esc(d.name)) + (d.phone ? row('Téléphone', `<a href="tel:${esc(d.phone)}">${esc(d.phone)}</a>`) : '') + (d.company ? row('Entreprise', esc(d.company)) : '') + (needLabel ? row('Besoin', esc(needLabel)) : '') + (budgetLabel ? row('Budget', esc(budgetLabel)) : '') + row('E-mail', `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) + row('Sujet', esc(d.subject || 'Non renseigné')) + row('Langue', d.lang.toUpperCase())) +
+        table(row('Nom', esc(d.name)) + (d.phone ? row('Téléphone', `<a href="tel:${esc(d.phone)}">${esc(d.phone)}</a>`) : '') + (d.company ? row('Entreprise', esc(d.company)) : '') + (needLabel ? row('Besoin', esc(needLabel)) : '') + (budgetLabel ? row('Budget', esc(budgetLabel)) : '') + (d.source ? row('Page d’origine', esc(sourceText(d.source))) : '') + row('E-mail', `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) + row('Sujet', esc(d.subject || 'Non renseigné')) + row('Langue', d.lang.toUpperCase())) +
         `<blockquote style="margin:0;padding:12px 18px;border-left:3px solid ${C.apricot};background:#fbf3ea;">${msgHtml}</blockquote>`,
       footer: 'Répondez directement à cet e-mail pour écrire à la personne.',
     }),

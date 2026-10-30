@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { t, em, href, langs, type Lang } from '../../content';
 import { booking } from '../../config/site';
+import { sourceLabels, sourceNeed } from '../../lib/source';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -13,6 +14,8 @@ const b = c.book;
 // textes et libellés passés au script du navigateur
 const i18n = {
   ...b,
+  sources: sourceLabels(lang),
+  sourceNeed,
   lang,
   duration: booking.durationMin,
   needs: Object.fromEntries(b.needs.map((n) => [n.v, n.t])),
@@ -37,6 +40,8 @@ const i18n = {
 
       <!-- Étape 1 : la demande -->
       <form class="form" id="step-1" novalidate>
+        <p class="from-note" id="from-note" hidden></p>
+        <input type="hidden" name="source" id="b-source" value="" />
         <div class="two">
           <div class="field">
             <label for="b-first">{b.fields.firstName}</label>
@@ -184,6 +189,22 @@ const i18n = {
     window.scrollTo({ top: stepper.getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' });
   }
   show(0);
+
+  // page d'origine : on pré-remplit le besoin et le message
+  (() => {
+    const from = new URLSearchParams(location.search).get('from') || '';
+    const label = t.sources[from];
+    if (!label) return;
+    ($('b-source') as HTMLInputElement).value = from;
+    const need = t.sourceNeed[from];
+    const sel = $('b-need') as HTMLSelectElement;
+    if (need && [...sel.options].some((o) => o.value === need)) sel.value = need;
+    const msg = $('b-message') as HTMLTextAreaElement;
+    if (!msg.value) msg.value = t.fromMessage.replace('{page}', label);
+    const note = $('from-note');
+    note.textContent = `${t.fromLabel} : ${label}`;
+    note.hidden = false;
+  })();
 
   const dayKey = (iso: string) =>
     new Intl.DateTimeFormat('en-CA', { timeZone: userTz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso));

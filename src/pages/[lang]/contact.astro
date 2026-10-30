@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { t, em, href, langs, type Lang } from '../../content';
+import { sourceLabels } from '../../lib/source';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -8,7 +9,7 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const c = t(lang);
 const k = c.contact;
-const i18n = { ok: k.okTitle, err: k.err, invalid: k.invalid, sending: k.sending, send: k.send };
+const i18n = { ok: k.okTitle, err: k.err, invalid: k.invalid, sending: k.sending, send: k.send, sources: sourceLabels(lang), fromLabel: c.book.fromLabel };
 ---
 
 <Base lang={lang} page="contact" title={c.cta.message} description={k.hero.sub}>
@@ -23,6 +24,8 @@ const i18n = { ok: k.okTitle, err: k.err, invalid: k.invalid, sending: k.sending
   <section style="padding-top:clamp(16px,3vw,32px)">
     <div class="wrap">
       <form class="form" id="contact-form" novalidate data-lang={lang}>
+        <p class="from-note" id="c-from" hidden></p>
+        <input type="hidden" name="source" id="c-source" value="" />
         <div class="two">
           <div class="field">
             <label for="c-first">{k.fields.firstName}</label>
@@ -78,6 +81,19 @@ const i18n = { ok: k.okTitle, err: k.err, invalid: k.invalid, sending: k.sending
   const success = document.getElementById('c-success')!;
   const btn = document.getElementById('c-submit') as HTMLButtonElement | null;
   const t = JSON.parse(document.getElementById('c-i18n')!.textContent || '{}');
+
+  // page d'origine : on pré-remplit le sujet
+  (() => {
+    const from = new URLSearchParams(location.search).get('from') || '';
+    const label = t.sources[from];
+    if (!label) return;
+    (document.getElementById('c-source') as HTMLInputElement).value = from;
+    const subject = document.getElementById('c-subject') as HTMLInputElement | null;
+    if (subject && !subject.value) subject.value = label;
+    const note = document.getElementById('c-from')!;
+    note.textContent = `${t.fromLabel} : ${label}`;
+    note.hidden = false;
+  })();
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();

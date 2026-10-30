@@ -1,5 +1,6 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import CtaMenu from '../../../components/CtaMenu.astro';
 import CtaBand from '../../../components/CtaBand.astro';
 import Crumb from '../../../components/Crumb.astro';
 import { t, em, href, langs, type Lang } from '../../../content';
@@ -15,20 +16,22 @@ const monthly = formatPrice('marketing', lang);
 ---
 
 <Base lang={lang} page="marketing/content" title={c.nav.sub.content} description={m.hero.sub}>
-  <section class="page-hero">
-    <div class="wrap">
+  <section class="page-hero has-photo">
+    <div class="wrap hero-split">
+      <div class="hero-text">
       <Crumb lang={lang} parent="marketing" label={c.nav.marketing} />
       <span class="kicker" style="display:flex">{c.nav.sub.content}</span>
       <h1 set:html={em(m.hero.title)} />
       <p class="lead">{m.hero.sub}</p>
       <div class="btn-row" style="margin-top:32px">
-        <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
-        <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+        <CtaMenu lang={lang} />
       </div>
+      </div>
+      <img class="hero-photo" src="/photos/binta-porte-detouree.webp" alt="Binta Kande en lunettes de soleil devant une porte en bois" width="918" height="1213" />
     </div>
   </section>
 
-  <section style="padding-top:clamp(32px,5vw,64px)">
+  <section class="band-marine">
     <div class="wrap">
       <div class="section-head reveal">
         <span class="kicker">{m.content.kicker}</span>
@@ -49,7 +52,7 @@ const monthly = formatPrice('marketing', lang);
     </div>
   </section>
 
-  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+  <section class="band-lilas">
     <div class="wrap monthly">
       <div class="reveal">
         <span class="kicker">{m.monthly.kicker}</span>

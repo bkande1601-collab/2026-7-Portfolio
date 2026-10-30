@@ -1,6 +1,7 @@
 ---
 import { t, href, type Lang } from '../content';
 import { site } from '../config/site';
+import CtaMenu from './CtaMenu.astro';
 
 interface Props {
   lang: Lang;
@@ -34,12 +35,14 @@ const links = [
     children: [
       { slug: 'products/diagnostic', label: c.nav.sub.diagnostic },
       { slug: 'products/prompt', label: c.nav.sub.prompt },
+      { slug: 'offers', label: c.nav.offers },
     ],
   },
-  { slug: 'offers', label: c.nav.offers, children: [] },
+  { slug: 'blog', label: c.nav.blog, children: [] },
   { slug: 'journey', label: c.nav.journey, children: [] },
 ];
-const isHere = (slug: string) => page === slug || page.startsWith(`${slug}/`);
+const isHere = (slug: string) =>
+  page === slug || page.startsWith(`${slug}/`) || (slug === 'products' && page === 'offers');
 ---
 
 <header class="site-header">
@@ -90,8 +93,7 @@ const isHere = (slug: string) => page === slug || page.startsWith(`${slug}/`);
         <a class="lang" href={otherHref} hreflang={lang === 'fr' ? 'en' : 'fr'} lang={lang === 'fr' ? 'en' : 'fr'} title={c.switchLang.title}>
           {c.switchLang.label}
         </a>
-        <a class="btn btn-ghost btn-sm" href={href(lang, 'contact')}>{c.cta.message}</a>
-        <a class="btn btn-primary btn-sm" href={href(lang, 'book')}>{c.cta.book}</a>
+        <CtaMenu lang={lang} size="sm" />
       </div>
     </nav>
   </div>

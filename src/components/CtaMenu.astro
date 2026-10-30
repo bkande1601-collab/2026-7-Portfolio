@@ -1,0 +1,36 @@
+---
+/**
+ * Un seul bouton d'action. Il ouvre un petit menu avec les deux choix :
+ * réserver un audit, ou envoyer un message. La page d'origine est ajoutée
+ * automatiquement aux liens (voir le script de Base.astro).
+ */
+import { t, href, type Lang } from '../content';
+
+interface Props {
+  lang: Lang;
+  size?: 'sm' | 'md';
+  up?: boolean;
+}
+const { lang, size = 'md', up = false } = Astro.props;
+const c = t(lang);
+---
+
+<div class={`cta-menu${up ? ' up' : ''}`}>
+  <button class={`btn btn-primary${size === 'sm' ? ' btn-sm' : ''} cta-main`} type="button" aria-expanded="false" aria-haspopup="true">
+    {c.cta.talk} <span aria-hidden="true">▾</span>
+  </button>
+  <ul class="cta-pop">
+    <li>
+      <a href={href(lang, 'book')}>
+        <b>{c.cta.book}</b>
+        <small>{c.cta.bookNote}</small>
+      </a>
+    </li>
+    <li>
+      <a href={href(lang, 'contact')}>
+        <b>{c.cta.message}</b>
+        <small>{c.cta.messageNote}</small>
+      </a>
+    </li>
+  </ul>
+</div>

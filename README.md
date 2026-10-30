@@ -138,3 +138,11 @@ src/
 - **Sous-pages :** le menu a des sous-menus. Les pages sont dans `src/pages/[lang]/marketing/`, `automations/` et `products/`. Les textes sont dans `src/content/fr.ts` et `en.ts`.
 - **Liens Stripe :** colle-les dans `stripeLinks`, fichier `src/config/site.ts`.
 - **Assistant du site :** il répond en mode aperçu sans clé. Pour de vraies réponses d'IA, ajoute `ANTHROPIC_API_KEY` dans Vercel (voir `.env.example`).
+
+## Blog, bouton « Parlons-en » et suivi
+
+- **Blog :** les articles sont dans `src/content/blog.ts`. Pour en ajouter un, copiez un bloc, changez le `slug` et les textes (français et anglais).
+- **Bouton unique « Parlons-en » :** il ouvre le choix entre « Réserver un audit » et « Envoyer un message ». Le composant est `src/components/CtaMenu.astro`.
+- **Suivi de la page d'origine :** les liens vers la réservation et le message gardent la page d'où vient le visiteur (`?from=marketing/content`). Le formulaire pré-remplit alors le besoin et le message, et tu vois la page d'origine dans l'e-mail et dans l'événement Google Agenda. La correspondance page vers besoin est dans `src/lib/source.ts`.
+- **Vidéo de la page Automatisations :** mets le chemin de ton .mp4 dans `automationsVideo`, fichier `src/config/site.ts`.
+- **Publication LinkedIn du hackathon :** `hackathonLink`, même fichier.

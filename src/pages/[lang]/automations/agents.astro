@@ -1,5 +1,6 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import CtaMenu from '../../../components/CtaMenu.astro';
 import Window from '../../../components/Window.astro';
 import CtaBand from '../../../components/CtaBand.astro';
 import Crumb from '../../../components/Crumb.astro';
@@ -14,16 +15,18 @@ const a = c.automations;
 ---
 
 <Base lang={lang} page="automations/agents" title={c.nav.sub.agents} description={a.agent.text}>
-  <section class="page-hero">
-    <div class="wrap">
+  <section class="page-hero has-photo">
+    <div class="wrap hero-split">
+      <div class="hero-text">
       <Crumb lang={lang} parent="automations" label={c.nav.automations} />
       <span class="kicker" style="display:flex">{a.agent.kicker}</span>
       <h1 set:html={em(a.agent.title)} />
       <p class="lead">{a.agent.text}</p>
       <div class="btn-row" style="margin-top:32px">
-        <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
-        <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+        <CtaMenu lang={lang} />
       </div>
+      </div>
+      <img class="hero-photo" src="/photos/binta-sourire-detouree.webp" alt="Binta Kande souriante" width="1168" height="1013" />
     </div>
   </section>
 
@@ -40,7 +43,7 @@ const a = c.automations;
     </div>
   </section>
 
-  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+  <section class="band-marine">
     <div class="wrap">
       <div class="pipeline reveal">
         {

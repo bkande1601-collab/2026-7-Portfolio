@@ -1,10 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
+import CtaMenu from '../../components/CtaMenu.astro';
 import BeforeAfter from '../../components/BeforeAfter.astro';
 import Marquee from '../../components/Marquee.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import SubCards from '../../components/SubCards.astro';
+import Window from '../../components/Window.astro';
 import { t, em, href, langs, type Lang } from '../../content';
+import { site } from '../../config/site';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -15,19 +18,52 @@ const a = c.automations;
 ---
 
 <Base lang={lang} page="automations" title={c.nav.automations} description={a.hero.sub}>
-  <section class="page-hero">
-    <div class="wrap">
+  <section class="page-hero has-photo">
+    <div class="wrap hero-split">
+      <div class="hero-text">
       <span class="kicker">{a.hero.kicker}</span>
       <h1 set:html={em(a.hero.title)} />
       <p class="lead">{a.hero.sub}</p>
       <div class="btn-row" style="margin-top:32px">
-        <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
-        <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+        <CtaMenu lang={lang} />
+      </div>
+      </div>
+      <img class="hero-photo" src="/photos/binta-sourire-detouree.webp" alt="Binta Kande souriante" width="1168" height="1013" />
+    </div>
+  </section>
+
+  <!-- Avant tout : ce que j'ai construit -->
+  <section class="band-lilas" style="padding-bottom:clamp(48px,7vw,96px)">
+    <div class="wrap split">
+      <div class="reveal">
+        <span class="kicker">{a.built.kicker}</span>
+        <h2 set:html={em(a.built.title)} />
+        <p class="lead">{a.built.text}</p>
+        <ul class="chips">
+          {a.built.modules.map((m) => <li>{m}</li>)}
+        </ul>
+      </div>
+      <div class="reveal">
+        {
+          site.automationsVideo ? (
+            <video class="built-video" src={site.automationsVideo} controls playsinline preload="metadata" aria-label={a.built.kicker} />
+          ) : (
+            <Window
+              title={c.home.platform.chat.title}
+              modules={c.home.platform.modules}
+              q={c.home.platform.chat.q}
+              a={c.home.platform.chat.a}
+              src={c.home.platform.chat.src}
+              lock={c.home.platform.chat.lock}
+            />
+          )
+        }
+        {!site.automationsVideo && <p class="video-soon">{a.built.videoSoon}</p>}
       </div>
     </div>
   </section>
 
-  <section style="padding-top:clamp(32px,5vw,64px)">
+  <section>
     <div class="wrap">
       <div class="section-head reveal">
         <span class="kicker">{a.overview.kicker}</span>

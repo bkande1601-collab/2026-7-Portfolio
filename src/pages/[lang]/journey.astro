@@ -41,6 +41,7 @@ const j = c.journey;
               <span class="when">{it.when}</span>
               <h3>
                 {it.title}
+                {it.org && <>, <span class="org">{it.org}</span></>}
                 {it.todo && <span class="todo-tag">{j.todo}</span>}
               </h3>
               <p>{it.text}</p>

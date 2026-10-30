@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import CtaMenu from '../../components/CtaMenu.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import SubCards from '../../components/SubCards.astro';
 import { t, em, href, langs, type Lang } from '../../content';
@@ -13,15 +14,17 @@ const m = c.marketing;
 ---
 
 <Base lang={lang} page="marketing" title={c.nav.marketing} description={m.intro.sub}>
-  <section class="page-hero">
-    <div class="wrap">
+  <section class="page-hero has-photo">
+    <div class="wrap hero-split">
+      <div class="hero-text">
       <span class="kicker">{m.hero.kicker}</span>
       <h1 set:html={em(m.intro.title)} />
       <p class="lead">{m.intro.sub}</p>
       <div class="btn-row" style="margin-top:32px">
-        <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
-        <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+        <CtaMenu lang={lang} />
       </div>
+      </div>
+      <img class="hero-photo" src="/photos/binta-porte-detouree.webp" alt="Binta Kande en lunettes de soleil devant une porte en bois" width="918" height="1213" />
     </div>
   </section>
 
@@ -52,6 +55,20 @@ const m = c.marketing;
           ))
         }
       </ul>
+    </div>
+  </section>
+
+  <!-- En construction -->
+  <section class="band-lilas" style="padding-bottom:clamp(48px,7vw,96px)">
+    <div class="wrap split">
+      <div class="reveal">
+        <span class="kicker">{m.building.kicker}</span>
+        <h2 set:html={em(m.building.title)} />
+        <p class="lead">{m.building.text}</p>
+        <p style="margin-top:26px">
+          <a class="textlink" href={`${href(lang)}#labo`}><span class="arrow">{m.building.link}&nbsp;</span></a>
+        </p>
+      </div>
     </div>
   </section>
 

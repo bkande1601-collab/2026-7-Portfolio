@@ -1,5 +1,6 @@
 ---
 import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/archivo/wdth-italic.css';
 import '../styles/global.css';
 import { t, href, type Lang } from '../content';
 import { site } from '../config/site';
@@ -70,6 +71,40 @@ const origin = Astro.site ? Astro.site.origin : '';
       } else {
         items.forEach((el) => el.classList.add('in'));
       }
+
+      // suivi : les liens vers « réserver » et « message » gardent la page d'origine
+      const here = location.pathname.replace(/^\/(fr|en)\/?/, '').replace(/\.html$/, '');
+      document.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((a) => {
+        const u = new URL(a.getAttribute('href') || '', location.origin);
+        if (u.origin === location.origin && /^\/(fr|en)\/(book|contact)$/.test(u.pathname) && here && !/^(book|contact)$/.test(here) && !u.searchParams.has('from')) {
+          u.searchParams.set('from', here);
+          a.setAttribute('href', u.pathname + u.search);
+        }
+      });
+
+      // bouton d'action unique : il ouvre le choix « audit » ou « message »
+      const ctas = document.querySelectorAll<HTMLElement>('.cta-menu');
+      const closeCtas = (except?: HTMLElement) =>
+        ctas.forEach((m) => {
+          if (m !== except) {
+            m.classList.remove('open');
+            m.querySelector('.cta-main')?.setAttribute('aria-expanded', 'false');
+          }
+        });
+      ctas.forEach((m) => {
+        const b = m.querySelector<HTMLButtonElement>('.cta-main');
+        b?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const open = !m.classList.contains('open');
+          closeCtas(m);
+          m.classList.toggle('open', open);
+          b.setAttribute('aria-expanded', String(open));
+        });
+      });
+      document.addEventListener('click', () => closeCtas());
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeCtas();
+      });
 
       // sous-menus : un bouton ▾ pour le clavier et le tactile
       const subItems = document.querySelectorAll<HTMLElement>('.nav-item.has-sub');

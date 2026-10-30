@@ -19,8 +19,9 @@ export const fr = {
     home: 'Accueil',
     marketing: 'Marketing & contenu',
     automations: 'Automatisations & IA',
-    products: 'Produits digitaux',
+    products: 'Services',
     offers: 'Tarifs',
+    blog: 'Blog',
     journey: 'Parcours',
     faq: 'FAQ',
     sub: {
@@ -39,6 +40,9 @@ export const fr = {
   },
 
   cta: {
+    talk: 'Parlons-en',
+    bookNote: 'Un échange de 30 minutes en visio',
+    messageNote: 'Votre demande, par e-mail',
     book: 'Réserver un audit',
     message: 'Envoyer un message',
   },
@@ -106,6 +110,30 @@ export const fr = {
       },
     },
 
+    proof: {
+      kicker: 'Ce que j’ai fait',
+      title: 'Des *preuves*, pas des promesses.',
+      hackathon: {
+        tag: 'Hackathon',
+        title: 'J’ai gagné le hackathon Mirakl x Eugenia School.',
+        text: 'Un concours d’IA et de data. Mon équipe a présenté son projet devant un jury, et on a gagné.',
+        link: 'Voir la publication LinkedIn',
+        alt: 'Photo de groupe après la restitution du jury du hackathon Mirakl x Eugenia School',
+        pitchAlt: 'Binta Kande présente un projet au micro',
+      },
+      cards: [
+        { t: 'Une plateforme interne complète', d: 'Onboarding automatisé, GraphRAG, chatbot, OKR et dashboard, construite pour WLFG.', slug: 'automations' },
+        { t: 'Social media manager', d: 'Stratégie et contenus sur Instagram, TikTok et LinkedIn.', slug: 'marketing' },
+        { t: 'WeTalk Podcast', d: 'Un podcast sur l’entrepreneuriat, de l’idée à la diffusion.', slug: 'journey' },
+      ],
+    },
+
+    tips: {
+      kicker: 'Conseils',
+      title: 'Ce que je répondrais à *un ami* entrepreneur.',
+      link: 'Voir tous les conseils',
+    },
+
     paths: {
       kicker: 'Que cherchez-vous ?',
       title: '3 façons de *travailler* ensemble.',
@@ -125,7 +153,7 @@ export const fr = {
         },
         {
           slug: 'products',
-          name: 'Produits digitaux',
+          name: 'Services',
           line: 'Un diagnostic IA de votre business et un prompt maître sur mesure, à acheter en ligne.',
           price: 'diagnostic',
         },
@@ -198,6 +226,13 @@ export const fr = {
         },
       ],
     },
+    built: {
+      kicker: 'Ce que j’ai construit',
+      title: 'Pour WLFG, une plateforme interne *complète*.',
+      text: 'Un onboarding automatisé, un GraphRAG, un chatbot, des OKR et tout un système d’automatisation, avec un dashboard pour tout suivre. Je l’ai conçue et développée moi-même, et elle sert au quotidien.',
+      modules: ['Onboarding automatisé', 'GraphRAG', 'Chatbot', 'OKR', 'Automatisations', 'Dashboard'],
+      videoSoon: 'Une vidéo de démonstration arrive bientôt.',
+    },
     flow: {
       kicker: 'Un exemple concret',
       title: 'Un lead arrive. Personne n’a rien touché.',
@@ -262,6 +297,12 @@ export const fr = {
           slug: 'marketing/webinars',
         },
       ],
+    },
+    building: {
+      kicker: 'En construction',
+      title: 'Une plateforme qui crée du contenu pour les *entrepreneurs*.',
+      text: 'Pour asseoir ce que je sais faire en marketing digital, je construis moi-même une plateforme de création de contenu pensée pour les entrepreneurs. Je vous en dis plus très bientôt.',
+      link: 'Me prévenir',
     },
     content: {
       kicker: 'Ce que je fais pour vos réseaux',
@@ -494,6 +535,8 @@ export const fr = {
       sub: 'Dites-moi qui vous êtes et ce que vous cherchez. Puis choisissez un créneau en visio, ou envoyez simplement votre demande par e-mail.',
     },
     steps: ['Votre demande', 'Jour et heure', 'Confirmation'],
+    fromLabel: 'Vous venez de la page',
+    fromMessage: 'Bonjour, je vous écris depuis la page « {page} ». ',
     mode: {
       label: 'Que souhaitez-vous ?',
       meet: 'Réserver un échange en visio',
@@ -597,43 +640,50 @@ export const fr = {
     items: [
       {
         when: 'Nov. 2025 à aujourd’hui',
-        title: 'Chief of Staff, Proplyd Productions et WLFG Consulting',
+        title: 'Chief of Staff',
+        org: 'Proplyd Productions et WLFG Consulting',
         text: 'Bras droit du CEO : priorités stratégiques et opérationnelles, OKR trimestriels, supports investisseurs, développement commercial. J’y ai conçu et déployé des automatisations et une plateforme interne.',
         todo: false,
       },
       {
         when: 'Juil. 2024 à aujourd’hui',
         title: 'Freelance',
+        org: '',
         text: 'Sites Shopify et Framer pensés pour convertir, stratégie digitale, automatisations et agents IA. J’ai aussi créé WeTalk Podcast, un podcast sur l’entrepreneuriat, et organisé des ateliers de networking.',
         todo: false,
       },
       {
         when: 'Juil. à déc. 2025',
-        title: 'Social media manager, MNGRS.AI',
+        title: 'Social media manager',
+        org: 'MNGRS.AI',
         text: 'Stratégie et contenus visuels et vidéo sur Instagram, TikTok et LinkedIn, avec un reporting chaque semaine : engagement, portée, conversions.',
         todo: false,
       },
       {
         when: '2025',
-        title: 'Chargée de marketing digital, La Squadra Paris',
+        title: 'Chargée de marketing digital',
+        org: 'La Squadra Paris',
         text: 'E-commerce, publicité, CRM, réseaux sociaux, analytics : 7 fonctions sur un poste. E-mailing et automatisations pour la fidélisation.',
         todo: false,
       },
       {
         when: '2025 à 2026',
-        title: 'MSc IA appliquée au business, Eugenia School',
+        title: 'MSc IA appliquée au business',
+        org: 'Eugenia School',
         text: 'Business analytics, data visualisation, Python, SQL, PowerBI, HubSpot, Dataiku, GA4.',
         todo: false,
       },
       {
         when: '2024 à 2025',
-        title: 'Bachelor Chef de projets digitaux, Digital School of Paris',
+        title: 'Bachelor Chef de projets digitaux',
+        org: 'Digital School of Paris',
         text: 'SEO, Suite Adobe, management d’équipe, Scrum.',
         todo: false,
       },
       {
         when: '2023 à 2024',
-        title: 'Licence Commerce international, CNAM',
+        title: 'Licence Commerce international',
+        org: 'CNAM',
         text: 'Marketing digital, management, macroéconomie, comptabilité.',
         todo: false,
       },
@@ -674,6 +724,19 @@ export const fr = {
       },
     ],
     finalTitle: 'Une autre question ? *Posez-la.*',
+  },
+
+  blog: {
+    hero: {
+      kicker: 'Blog',
+      title: 'Des conseils *concrets*, pour gagner du temps.',
+      sub: 'Automatisation, réseaux sociaux, webinaires : ce que j’applique et ce que je recommande.',
+    },
+    read: 'Lire l’article',
+    back: 'Tous les conseils',
+    minutes: 'min de lecture',
+    ctaTitle: 'Envie qu’on regarde *votre cas* ?',
+    ctaText: '30 minutes pour voir ce qui s’applique à vous.',
   },
 
   chat: {

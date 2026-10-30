@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { t, em, href, langs, type Lang } from '../../content';
+import { posts } from '../../content/blog';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const b = c.blog;
+---
+
+<Base lang={lang} page="blog" title={c.nav.blog} description={b.hero.sub}>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="kicker">{b.hero.kicker}</span>
+      <h1 set:html={em(b.hero.title)} />
+      <p class="lead">{b.hero.sub}</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <ul class="posts">
+        {
+          posts.map((p, i) => {
+            const x = p[lang];
+            return (
+              <li class="reveal">
+                <a class="post" href={href(lang, `blog/${p.slug}`)}>
+                  <span class="post-n">0{i + 1}</span>
+                  <span class="post-body">
+                    <span class="post-tag">{x.tag}</span>
+                    <span class="post-title">{x.title}</span>
+                    <span class="post-ex">{x.excerpt}</span>
+                  </span>
+                  <span class="post-go" aria-hidden="true">→</span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={b.ctaTitle} text={b.ctaText} />
+</Base>

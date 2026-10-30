@@ -28,6 +28,15 @@ export const site = {
    */
   photo: '/photos/binta-parcours.webp',
 
+  /**
+   * VIDÉO DE LA PAGE AUTOMATISATIONS (ce que j'ai construit pour WLFG).
+   * Mettez le chemin ou l'URL d'un .mp4 ; laissez '' pour afficher la maquette.
+   */
+  automationsVideo: '',
+
+  /** Publication LinkedIn du hackathon Mirakl x Eugenia School. */
+  hackathonLink: 'https://lnkd.in/p/eW7JqGUB',
+
   /** Liens du pied de page. Un lien vide ('') est masqué. */
   links: {
     github: 'https://github.com/bkande1601-collab',

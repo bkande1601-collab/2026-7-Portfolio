@@ -1,13 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
+import CtaMenu from '../../components/CtaMenu.astro';
 import HeroVisual from '../../components/HeroVisual.astro';
 import SkillsBar from '../../components/SkillsBar.astro';
 import Marquee from '../../components/Marquee.astro';
-import OfferRail from '../../components/OfferRail.astro';
 import LabSection from '../../components/LabSection.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { t, em, href, langs, type Lang } from '../../content';
-import { site, formatPrice, type PriceKey } from '../../config/site';
+import { site } from '../../config/site';
+import { posts } from '../../content/blog';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -26,8 +27,7 @@ const h = c.home;
         <h1 set:html={em(h.hero.title)} />
         <p class="lead">{h.hero.sub}</p>
         <div class="btn-row">
-          <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
-          <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+          <CtaMenu lang={lang} />
         </div>
         <p class="credential">{h.hero.credential}</p>
       </div>
@@ -48,7 +48,6 @@ const h = c.home;
       <ul class="paths">
         {
           h.paths.items.map((it, i) => {
-            const p = formatPrice(it.price as PriceKey, lang);
             return (
               <li class="reveal">
                 <a class="path" href={href(lang, it.slug)}>
@@ -56,10 +55,6 @@ const h = c.home;
                   <span class="path-body">
                     <span class="path-name">{it.name}</span>
                     <span class="path-line">{it.line}</span>
-                  </span>
-                  <span class="path-price">
-                    <small>{h.paths.from}</small>
-                    {p.n} €{p.per === 'month' && <small>{c.offers.perMonth}</small>}
                   </span>
                   <span class="path-go" aria-hidden="true">→</span>
                 </a>
@@ -101,22 +96,79 @@ const h = c.home;
     </div>
   </section>
 
-  <!-- 6. Offres sur une seule ligne -->
-  <section style="padding-top:0">
+  <!-- 6. Preuves -->
+  <section>
     <div class="wrap">
       <div class="section-head reveal">
-        <span class="kicker">{c.nav.offers}</span>
-        <h2>{h.offersTitle}</h2>
+        <span class="kicker">{h.proof.kicker}</span>
+        <h2 set:html={em(h.proof.title)} />
       </div>
-      <div class="reveal"><OfferRail lang={lang} /></div>
-      <p class="rail-foot reveal">
-        <a class="textlink" href={href(lang, 'offers')}><span class="arrow">{h.offersLink}&nbsp;</span></a>
-      </p>
+      <div class="proof-feature reveal">
+        <div class="proof-photos">
+          <img src="/photos/hackathon-mirakl-eugenia.webp" alt={h.proof.hackathon.alt} width="1179" height="628" loading="lazy" />
+          <img class="proof-pitch" src="/photos/pitch.webp" alt={h.proof.hackathon.pitchAlt} width="680" height="878" loading="lazy" />
+        </div>
+        <div>
+          <span class="formula-tag">{h.proof.hackathon.tag}</span>
+          <h3>{h.proof.hackathon.title}</h3>
+          <p class="lead">{h.proof.hackathon.text}</p>
+          {
+            site.hackathonLink && (
+              <p style="margin-top:22px">
+                <a class="textlink" href={site.hackathonLink} rel="noopener noreferrer" target="_blank">
+                  <span class="arrow">{h.proof.hackathon.link}&nbsp;</span>
+                </a>
+              </p>
+            )
+          }
+        </div>
+      </div>
+      <div class="also reveal" style="margin-top:clamp(32px,5vw,56px)">
+        {
+          h.proof.cards.map((x) => (
+            <div>
+              <b><a class="rung-link" href={href(lang, x.slug)}>{x.t}</a></b>
+              <span>{x.d}</span>
+            </div>
+          ))
+        }
+      </div>
     </div>
   </section>
 
   <!-- 7. Outils -->
+  <!-- 7. Outils -->
   <Marquee label={h.toolsTitle} />
+
+  <!-- 7b. Conseils -->
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{h.tips.kicker}</span>
+        <h2 set:html={em(h.tips.title)} />
+      </div>
+      <ul class="posts">
+        {
+          posts.map((p, i) => (
+            <li class="reveal">
+              <a class="post" href={href(lang, `blog/${p.slug}`)}>
+                <span class="post-n">0{i + 1}</span>
+                <span class="post-body">
+                  <span class="post-tag">{p[lang].tag}</span>
+                  <span class="post-title">{p[lang].title}</span>
+                  <span class="post-ex">{p[lang].excerpt}</span>
+                </span>
+                <span class="post-go" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="rail-foot reveal" style="margin-top:28px">
+        <a class="textlink" href={href(lang, 'blog')}><span class="arrow">{h.tips.link}&nbsp;</span></a>
+      </p>
+    </div>
+  </section>
 
   <!-- 8. Dans le labo -->
   <section style="background:var(--bg-2);border-block:1px solid var(--line)" id="labo">

@@ -20,8 +20,9 @@ const other = p.items.find((x) => x.key !== key)!;
 ---
 
 <Base lang={lang} page={`products/${key}`} title={it.name} description={it.line}>
-  <section class="page-hero">
-    <div class="wrap">
+  <section class="page-hero has-photo">
+    <div class="wrap hero-split">
+      <div class="hero-text">
       <Crumb lang={lang} parent="products" label={c.nav.products} />
       <span class="kicker" style="display:flex">{p.hero.kicker}</span>
       <h1>{it.name}</h1>
@@ -34,6 +35,8 @@ const other = p.items.find((x) => x.key !== key)!;
           <span class="btn btn-primary" aria-disabled="true" style="opacity:.6;cursor:default">{p.soon}</span>
         )}
       </div>
+      </div>
+      <img class="hero-photo" src="/photos/binta-accueil-violet.webp" alt="Binta Kande en haut violet, les bras croisés" width="1108" height="1313" />
     </div>
   </section>
 
