@@ -51,7 +51,7 @@ export const en: Content = {
       'Digital marketing',
       'Social media management',
       'Meta ads',
-      'Turnkey webinars',
+      'End-to-end webinars',
       'WhatsApp automations',
       'Landing pages',
       'AI assistants on your documents',
@@ -69,7 +69,7 @@ export const en: Content = {
       },
       marketing: {
         name: 'Digital marketing',
-        text: 'Meta ads, turnkey webinars, WhatsApp and email automations, social media. You can come just for the marketing.',
+        text: 'Meta ads, end-to-end webinars, WhatsApp and email automations, social media. You can come just for the marketing.',
         link: 'See marketing',
       },
     },
@@ -192,7 +192,7 @@ export const en: Content = {
     hero: {
       kicker: 'Digital marketing',
       title: 'A *structured* webinar, from the ad to the follow-up.',
-      sub: 'I set up everything your webinar needs to fill up and run well: Meta ads, WhatsApp automations, emails, landing page and slides. Turnkey.',
+      sub: 'I set up everything your webinar needs to fill up and run well: Meta ads, WhatsApp automations, emails, landing page and slides. End to end.',
     },
     flow: {
       kicker: 'An attendee’s journey',

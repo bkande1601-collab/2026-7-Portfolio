@@ -49,7 +49,7 @@ export const fr = {
       'Marketing digital',
       'Social media management',
       'Publicités Meta',
-      'Webinaires clé en main',
+      'Webinaires de A à Z',
       'Automatisations WhatsApp',
       'Landing pages',
       'Assistants IA sur vos documents',
@@ -67,7 +67,7 @@ export const fr = {
       },
       marketing: {
         name: 'Marketing digital',
-        text: 'Publicités Meta, webinaires clé en main, automatisations WhatsApp et e-mails, réseaux sociaux. Vous pouvez venir uniquement pour le marketing.',
+        text: 'Publicités Meta, webinaires de A à Z, automatisations WhatsApp et e-mails, réseaux sociaux. Vous pouvez venir uniquement pour le marketing.',
         link: 'Voir le marketing',
       },
     },
@@ -190,7 +190,7 @@ export const fr = {
     hero: {
       kicker: 'Marketing digital',
       title: 'Un webinaire *cadré*, de la publicité à la relance.',
-      sub: "Je mets en place tout ce qu'il faut pour que votre webinaire se remplisse et se déroule bien : publicités Meta, automatisations WhatsApp, e-mails, landing page et slides. Clé en main.",
+      sub: "Je mets en place tout ce qu'il faut pour que votre webinaire se remplisse et se déroule bien : publicités Meta, automatisations WhatsApp, e-mails, landing page et slides. De A à Z.",
     },
     flow: {
       kicker: 'Le parcours d’un participant',
