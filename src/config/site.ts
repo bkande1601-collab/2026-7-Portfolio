@@ -1,5 +1,5 @@
 /**
- * RÉGLAGES DU SITE — tout ce qui se règle sans toucher au design.
+ * RÉGLAGES DU SITE, tout ce qui se règle sans toucher au design.
  * Les textes (FR/EN) sont dans src/content/fr.ts et src/content/en.ts.
  */
 
@@ -40,18 +40,39 @@ export const site = {
 
 /**
  * PRIX (en euros). Modifiez ici : ils se mettent à jour partout.
- * `from: true` affiche « à partir de ».  `per: 'month'` = par mois.
+ * `from: true` affiche « dès ». `to` ajoute une fourchette (« de 200 à 800 € »).
+ * `plus: true` ajoute un « + » après le montant haut. `per: 'month'` = par mois.
  */
 export const prices = {
-  audit: { amount: 490, from: false, per: 'once' },
-  sprint: { amount: 1500, from: true, per: 'once' },
-  agent: { amount: 4500, from: true, per: 'once' },
-  tool: { amount: 9000, from: true, per: 'once' },
+  diagnostic: { amount: 19, from: false, per: 'once' },
+  prompt: { amount: 39, from: false, per: 'once' },
+  clarity: { amount: 99, from: false, per: 'once' },
+  agent: { amount: 200, to: 800, from: false, per: 'once' },
+  system: { amount: 2000, to: 5000, plus: true, from: false, per: 'once' },
   run: { amount: 690, from: false, per: 'month' },
   runPlus: { amount: 1490, from: false, per: 'month' },
   marketing: { amount: 900, from: true, per: 'month' },
   cos: { amount: 2400, from: true, per: 'month' },
-} as const;
+} as const satisfies Record<string, Price>;
+
+type Price = {
+  amount: number;
+  to?: number;
+  plus?: boolean;
+  from: boolean;
+  per: 'once' | 'month';
+};
+
+/**
+ * LIENS DE PAIEMENT STRIPE. Créez un « Payment Link » par produit dans Stripe,
+ * puis collez l'adresse ici (https://buy.stripe.com/...). Laissé vide, le bouton
+ * affiche « Bientôt disponible ». Dans Stripe, réglez la page de confirmation
+ * pour qu'elle renvoie vers votre formulaire de questions.
+ */
+export const stripeLinks: Record<'diagnostic' | 'prompt', string> = {
+  diagnostic: '',
+  prompt: '',
+};
 
 /**
  * WEBINAIRES (page Marketing). Mettez un montant en euros pour l'afficher
@@ -65,7 +86,7 @@ export const webinarPrices: { setup: number | null; plus: number | null } = {
 export type PriceKey = keyof typeof prices;
 
 /**
- * RÉSERVATION — horaires, durée, marges, délai : un seul endroit.
+ * RÉSERVATION, horaires, durée, marges, délai : un seul endroit.
  * Les jours/heures sont en heure locale du fuseau `timezone`.
  */
 export const booking = {
@@ -97,10 +118,16 @@ export const booking = {
 
 /** Formate un prix selon la langue. */
 export function formatPrice(key: PriceKey, lang: 'fr' | 'en') {
-  const p = prices[key];
-  const n = new Intl.NumberFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', {
+  const p: Price = prices[key];
+  const nf = new Intl.NumberFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', {
     maximumFractionDigits: 0,
     useGrouping: 'always',
-  }).format(p.amount);
-  return { amount: `${n} €`, n, from: p.from, per: p.per };
+  });
+  const low = nf.format(p.amount);
+  const hasRange = typeof p.to === 'number';
+  const sep = lang === 'fr' ? ' à ' : ' to ';
+  const amount = hasRange
+    ? `${low}${sep}${nf.format(p.to!)} €${p.plus ? '+' : ''}`
+    : `${low} €`;
+  return { amount, n: low, from: p.from, range: hasRange, per: p.per };
 }

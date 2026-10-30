@@ -79,10 +79,15 @@ const prep: Record<Lang, Record<string, string[]>> = {
       'Listez les outils qu’il devrait connecter (Notion, Google, HubSpot…).',
       'Ce que vous utilisez aujourd’hui (tableur, outil existant) et ce qui vous gêne.',
     ],
-    marketing: [
-      'Notez vos objectifs des 3 prochains mois (leads, notoriété, ventes).',
-      'Gardez à portée vos chiffres actuels : trafic, taux de conversion, budgets.',
-      'Dites-moi ce qui a déjà été essayé, et ce qui a marché ou non.',
+    content: [
+      'Notez les plateformes qui comptent pour vous (Instagram, TikTok, LinkedIn).',
+      'Gardez à portée vos chiffres actuels : abonnés, engagement, ce qui marche déjà.',
+      'Envoyez-moi 2 ou 3 comptes que vous aimez : ils m’aident à cerner votre style.',
+    ],
+    webinar: [
+      'Notez le sujet de votre webinaire et à qui il s’adresse.',
+      'Dites-moi si vous avez déjà une audience (liste e-mail, réseaux).',
+      'Pensez à la date visée et à l’objectif : inscriptions, ventes, notoriété.',
     ],
     cos: [
       'Listez vos 3 priorités du trimestre et ce qui les freine.',
@@ -111,10 +116,15 @@ const prep: Record<Lang, Record<string, string[]>> = {
       'List the tools it should connect to (Notion, Google, HubSpot…).',
       'What you use today (spreadsheet, existing tool) and what bothers you.',
     ],
-    marketing: [
-      'Write down your goals for the next 3 months (leads, awareness, sales).',
-      'Keep your current numbers at hand: traffic, conversion rate, budgets.',
-      'Tell me what has been tried already, and what worked or not.',
+    content: [
+      'Note the platforms that matter to you (Instagram, TikTok, LinkedIn).',
+      'Keep your current numbers at hand: followers, engagement, what already works.',
+      'Send me 2 or 3 accounts you like: they help me understand your style.',
+    ],
+    webinar: [
+      'Note the topic of your webinar and who it is for.',
+      'Tell me whether you already have an audience (email list, social media).',
+      'Think of the target date and the goal: sign-ups, sales, awareness.',
     ],
     cos: [
       'List your 3 priorities for the quarter and what is slowing them down.',
@@ -221,7 +231,7 @@ function gcalLink(d: BookingData) {
   const end = d.startMs + booking.durationMin * 60_000;
   const p = new URLSearchParams({
     action: 'TEMPLATE',
-    text: `${site.brand} — ${t(d.lang).cta.book}`,
+    text: `${site.brand} | ${t(d.lang).cta.book}`,
     dates: `${fmt(d.startMs)}/${fmt(end)}`,
     details: d.meetLink,
     location: d.meetLink,
@@ -279,23 +289,23 @@ export function ownerBookingMail(d: BookingData, eventLink: string): Mail {
   const when = longDate(d.startMs, d.lang, booking.timezone);
   const c = t(d.lang);
   const needLabel = c.book.needs.find((n) => n.v === d.need)?.t ?? d.need;
-  const budgetLabel = c.book.budgets.find((n) => n.v === d.budget)?.t ?? '—';
+  const budgetLabel = c.book.budgets.find((n) => n.v === d.budget)?.t ?? 'Non renseigné';
   const f = L.fr.fields;
   const body =
     para(`<strong>${esc(when)}</strong> (${esc(booking.timezone)}) · ${booking.durationMin} min · ${d.lang.toUpperCase()}`) +
     table(
       row(f.name, esc(d.name)) +
         row(f.email, `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) +
-        row(f.company, esc(d.company || '—')) +
+        row(f.company, esc(d.company || 'Non renseigné')) +
         row(f.need, esc(needLabel)) +
         row(f.budget, esc(budgetLabel)) +
-        row(f.message, esc(d.message || '—').replace(/\n/g, '<br>')),
+        row(f.message, esc(d.message || 'Non renseigné').replace(/\n/g, '<br>')),
     ) +
     (d.meetLink ? button(d.meetLink, 'Google Meet') : '') +
     (eventLink ? `<p style="margin:0;font-size:14px;"><a href="${esc(eventLink)}" style="color:${C.muted};">Voir dans Google Agenda</a></p>` : '');
   return {
     to: ownerEmail(),
-    subject: `Nouveau rendez-vous : ${d.name} — ${when}`,
+    subject: `Nouveau rendez-vous : ${d.name}, ${when}`,
     html: shell({ preheader: `${d.name} a réservé un audit.`, title: 'Nouveau rendez-vous', body, footer: 'Récapitulatif automatique.' }),
     replyTo: d.email,
   };
@@ -327,12 +337,12 @@ export function contactMails(d: { name: string; email: string; subject: string; 
 
   const toOwner: Mail = {
     to: ownerEmail(),
-    subject: `Message de ${d.name}${d.subject ? ` — ${d.subject}` : ''}`,
+    subject: `Message de ${d.name}${d.subject ? ` : ${d.subject}` : ''}`,
     html: shell({
       preheader: `${d.name} vous a écrit.`,
       title: 'Nouveau message',
       body:
-        table(row('Nom', esc(d.name)) + row('E-mail', `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) + row('Sujet', esc(d.subject || '—')) + row('Langue', d.lang.toUpperCase())) +
+        table(row('Nom', esc(d.name)) + row('E-mail', `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) + row('Sujet', esc(d.subject || 'Non renseigné')) + row('Langue', d.lang.toUpperCase())) +
         `<blockquote style="margin:0;padding:12px 18px;border-left:3px solid ${C.apricot};background:#fbf3ea;">${msgHtml}</blockquote>`,
       footer: 'Répondez directement à cet e-mail pour écrire à la personne.',
     }),

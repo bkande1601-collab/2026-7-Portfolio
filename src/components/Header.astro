@@ -11,17 +11,17 @@ const { lang, page, otherHref } = Astro.props;
 const c = t(lang);
 
 const links = [
-  { slug: 'automations', label: c.nav.automations },
   { slug: 'marketing', label: c.nav.marketing },
+  { slug: 'automations', label: c.nav.automations },
+  { slug: 'products', label: c.nav.products },
   { slug: 'offers', label: c.nav.offers },
   { slug: 'journey', label: c.nav.journey },
-  { slug: 'faq', label: c.nav.faq },
 ];
 ---
 
 <header class="site-header">
   <div class="wrap bar">
-    <a class="logo" href={href(lang)} aria-label={`${site.brand} — ${c.nav.home}`}>
+    <a class="logo" href={href(lang)} aria-label={`${site.brand} : ${c.nav.home}`}>
       <i aria-hidden="true"></i>{site.brand}
     </a>
 

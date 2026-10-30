@@ -1,0 +1,110 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { t, em, href, langs, type Lang } from '../../content';
+import { formatPrice, stripeLinks, type PriceKey } from '../../config/site';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const p = c.products;
+---
+
+<Base lang={lang} page="products" title={c.nav.products} description={p.hero.sub}>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="kicker">{p.hero.kicker}</span>
+      <h1 set:html={em(p.hero.title)} />
+      <p class="lead">{p.hero.sub}</p>
+    </div>
+  </section>
+
+  <!-- Les produits -->
+  <section style="padding-top:clamp(24px,4vw,48px)">
+    <div class="wrap">
+      <ul class="products">
+        {
+          p.items.map((it) => {
+            const price = formatPrice(it.key as PriceKey, lang);
+            const link = stripeLinks[it.key as 'diagnostic' | 'prompt'];
+            return (
+              <li class="product reveal">
+                <div class="product-main">
+                  <h2>{it.name}</h2>
+                  <p class="lead">{it.line}</p>
+                  <div class="product-buy">
+                    <span class="product-price">{price.amount}</span>
+                    {link ? (
+                      <a class="btn btn-primary" href={link} rel="noopener noreferrer">{it.cta}</a>
+                    ) : (
+                      <span class="btn btn-primary" aria-disabled="true" style="opacity:.55;cursor:default">{p.soon}</span>
+                    )}
+                  </div>
+                </div>
+                <ol class="gets">
+                  {it.gets.map((g, i) => (
+                    <li>
+                      <span class="gets-n">0{i + 1}</span>
+                      <span class="gets-t">{g.t}</span>
+                      <span class="gets-d">{g.d}</span>
+                    </li>
+                  ))}
+                </ol>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Comment ça marche -->
+  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{p.how.kicker}</span>
+        <h2>{p.how.title}</h2>
+      </div>
+      <div class="steps-line three reveal">
+        {p.how.steps.map((s) => <div><b>{s.t}</b><span>{s.d}</span></div>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Ce que vous pouvez attendre -->
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{p.trustKicker}</span>
+      </div>
+      <div class="also reveal">
+        {p.trust.map((it) => <div><b>{it.t}</b><span>{it.d}</span></div>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Et après ? -->
+  <section style="padding-top:0">
+    <div class="wrap split">
+      <div class="reveal">
+        <span class="kicker">{p.next.kicker}</span>
+        <h2 set:html={em(p.next.title)} />
+        <p class="lead">{p.next.text}</p>
+        <div class="btn-row" style="margin-top:28px">
+          <a class="btn btn-primary" href={href(lang, 'book')}>{p.next.linkCall}</a>
+          <a class="btn btn-ghost" href={href(lang, 'offers')}>{p.next.linkOffers}</a>
+        </div>
+      </div>
+      <div class="reveal soon-box">
+        <span class="kicker">{p.formations.kicker}</span>
+        <h3>{p.formations.title}</h3>
+        <p>{p.formations.text}</p>
+        <a class="textlink" href={`${href(lang)}#labo`}><span class="arrow">{p.formations.link}&nbsp;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={p.finalTitle} text={p.finalText} />
+</Base>

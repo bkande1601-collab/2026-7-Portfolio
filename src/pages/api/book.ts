@@ -9,8 +9,8 @@ import { t } from '../../content';
 
 export const prerender = false;
 
-const NEEDS = ['automation', 'agent', 'tool', 'marketing', 'cos', 'other'];
-const BUDGETS = ['lt1500', '1500-4500', '4500-9000', 'gt9000', 'unknown', ''];
+const NEEDS = ['automation', 'agent', 'tool', 'content', 'webinar', 'cos', 'other'];
+const BUDGETS = ['lt200', '200-800', '800-2000', 'gt2000', 'unknown', ''];
 
 export const POST: APIRoute = async ({ request }) => {
   const body = await readJson(request);
@@ -63,7 +63,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const c = t(lang);
   const needLabel = c.book.needs.find((n) => n.v === need)?.t ?? need;
-  const budgetLabel = c.book.budgets.find((n) => n.v === budget)?.t ?? '—';
+  const budgetLabel = c.book.budgets.find((n) => n.v === budget)?.t ?? 'Non renseigné';
   const description = [
     `${name} <${email}>`,
     data.company && `Entreprise : ${data.company}`,
@@ -79,7 +79,7 @@ export const POST: APIRoute = async ({ request }) => {
   let eventLink = '';
   try {
     const ev = await createEvent({
-      summary: `Audit — ${name}${data.company ? ` (${data.company})` : ''}`,
+      summary: `Échange : ${name}${data.company ? ` (${data.company})` : ''}`,
       description,
       startMs,
       endMs: startMs + booking.durationMin * 60_000,

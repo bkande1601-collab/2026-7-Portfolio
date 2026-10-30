@@ -1,5 +1,5 @@
 /**
- * TEXTS — ENGLISH.
+ * TEXTS, ENGLISH.
  * Tip: a word between *asterisks* is shown in violet (accent).
  * Prices and hours are NOT here: see src/config/site.ts.
  * Same keys as fr.ts.
@@ -19,9 +19,10 @@ export const en: Content = {
 
   nav: {
     home: 'Home',
+    marketing: 'Marketing & content',
     automations: 'Automation & AI',
-    marketing: 'Marketing',
-    offers: 'Services & pricing',
+    products: 'Digital products',
+    offers: 'Pricing',
     journey: 'Journey',
     faq: 'FAQ',
     menu: 'Menu',
@@ -51,7 +52,7 @@ export const en: Content = {
       'Digital marketing',
       'Social media management',
       'Meta ads',
-      'End-to-end webinars',
+      'Webinars',
       'WhatsApp automations',
       'Landing pages',
       'AI assistants on your documents',
@@ -59,20 +60,6 @@ export const en: Content = {
       'Data reporting',
       'Chief of Staff',
     ],
-    services: {
-      kicker: 'Two ways to work together',
-      title: 'Systems that *run*, and marketing that fills them.',
-      auto: {
-        name: 'Automation & AI',
-        text: 'I take repetitive work off your team with automations, AI agents connected to your tools and documents, and custom internal tools.',
-        link: 'See automation',
-      },
-      marketing: {
-        name: 'Digital marketing',
-        text: 'Meta ads, end-to-end webinars, WhatsApp and email automations, social media. You can come just for the marketing.',
-        link: 'See marketing',
-      },
-    },
     toolsTitle: 'What I use every day',
 
     beforeAfter: {
@@ -90,7 +77,7 @@ export const en: Content = {
         'A request lands',
         'Automation routes and classifies it',
         'The AI agent reads, drafts, decides',
-        'Notion, HubSpot, Calendar updated — report is automatic',
+        'Notion, HubSpot and Calendar updated, report is automatic',
       ],
       caption: 'Less copy-paste, more time for what actually needs a person.',
     },
@@ -99,7 +86,6 @@ export const en: Content = {
       kicker: 'Proof, in production',
       title: 'I built *my own* platform. It runs every day.',
       text: "Projects, messaging, a to-do synced with Notion, OKRs, onboarding and offboarding, Google Calendar, and an AI assistant that knows the company's documents. Designed and built solo, encrypted, bilingual.",
-      stack: 'Gemini · Hetzner via Coolify',
       modules: ['Projects', 'Messaging', 'To-do · Notion', 'OKR', 'Onboarding & exits', 'Calendar', 'AI assistant'],
       chat: {
         title: 'AI assistant',
@@ -110,11 +96,48 @@ export const en: Content = {
       },
     },
 
-    role: {
-      kicker: 'Who is speaking',
-      title: 'Chief of Staff by day, *builder* the rest of the time.',
-      text: "I run operations for the WLFG group (WLFG Consulting and Proplyd Productions): priorities, OKRs, reporting, coordination. My MSc in AI & Data and years of building tools mean I don't just specify them — I ship them. As a freelancer, I bring the same rigour to companies that want to automate seriously.",
+    paths: {
+      kicker: 'What are you looking for?',
+      title: 'Three ways to *work* together.',
+      from: 'from',
+      items: [
+        {
+          slug: 'marketing',
+          name: 'Marketing & content',
+          line: 'Content for your social media, created and published for you. Webinars too.',
+          price: 'marketing',
+        },
+        {
+          slug: 'automations',
+          name: 'Automation & AI',
+          line: 'Fewer repetitive tasks, AI agents that know your business.',
+          price: 'agent',
+        },
+        {
+          slug: 'products',
+          name: 'Digital products',
+          line: 'An AI diagnosis of your business and a tailored master prompt, to buy online.',
+          price: 'diagnostic',
+        },
+      ],
+    },
+
+    how: {
+      kicker: 'How it works',
+      title: 'Simple, from the first click to delivery.',
+      steps: [
+        { t: 'You choose', d: 'A product to buy, or a 30-minute conversation.' },
+        { t: 'I frame it with you', d: 'A form or a call, to really understand your need.' },
+        { t: 'I deliver', d: 'You get the result, and we decide what comes next if you want to.' },
+      ],
+    },
+
+    who: {
+      kicker: 'Who I am',
+      title: 'Binta Kande, *Chief of Staff* and freelancer.',
+      text: 'I run operations at Proplyd Productions and WLFG Consulting. Before that, I was a social media manager and a digital marketing manager. My MSc in AI did the rest: I build the tools I sell myself.',
       link: 'Read my journey',
+      photoAlt: 'Smiling portrait of Binta Kande',
     },
 
     offersTitle: 'A simple ladder, from first step to full system',
@@ -139,8 +162,8 @@ export const en: Content = {
       sending: 'Sending…',
     },
 
-    finalTitle: 'A process that costs you *too much* time?',
-    finalText: "Thirty minutes to map it out. You leave with a first lead, even if we don't end up working together.",
+    finalTitle: 'Tell me what you are *looking for*.',
+    finalText: 'Thirty minutes to map out your need: content, an automation or an AI agent.',
   },
 
   automations: {
@@ -171,7 +194,7 @@ export const en: Content = {
     tool: {
       kicker: 'Internal tool',
       title: 'When a spreadsheet is no longer enough, we build *yours*.',
-      text: 'A platform in your colours, encrypted, talking to your tools (Notion, Google, HubSpot). It is what I did for WLFG — and it is used daily.',
+      text: 'A platform in your colours, encrypted, talking to your tools (Notion, Google, HubSpot). It is what I built for WLFG, and it is used every day.',
     },
     process: {
       kicker: 'How it works',
@@ -190,24 +213,55 @@ export const en: Content = {
 
   marketing: {
     hero: {
-      kicker: 'Digital marketing',
-      title: 'A *structured* webinar, from the ad to the follow-up.',
-      sub: 'I set up everything your webinar needs to fill up and run well: Meta ads, WhatsApp automations, emails, landing page and slides. End to end.',
+      kicker: 'Marketing & content',
+      title: 'Content for your social media, *created and published* for you.',
+      sub: 'Instagram, TikTok, LinkedIn: I define your line, I produce the visuals, videos and copy, and I send you a report every week.',
     },
-    flow: {
-      kicker: 'An attendee’s journey',
-      title: 'From the ad to the replay, everything is *connected*.',
+    content: {
+      kicker: 'What I do for your social media',
+      title: 'From the editorial plan to the *weekly report*.',
+      steps: [
+        { t: 'Strategy', d: 'Your editorial line, after watching your competitors' },
+        { t: 'Creation', d: 'Visuals, videos and copy that look like you' },
+        { t: 'Publishing', d: 'On Instagram, TikTok and LinkedIn' },
+        { t: 'Report', d: 'Reach, engagement and conversions, every week' },
+      ],
+      note: 'You stay in control: you approve, I publish, and you see the numbers.',
+    },
+    monthly: {
+      kicker: 'The formula',
+      name: 'Monthly content',
+      text: 'A regular publishing rhythm, content produced for you and a report every week. Social media content is the heart of this offer.',
+      from: 'from',
+      perMonth: 'per month',
+    },
+    also: {
+      kicker: 'And also',
+      items: [
+        { t: 'Email and CRM', d: 'Campaigns and automations to retain and follow up (Brevo, Klaviyo, HubSpot).' },
+        { t: 'Websites that convert', d: 'Shopify or Framer sites designed to turn visits into inquiries.' },
+        { t: 'Meta ads', d: 'Campaigns created and tracked to reach the right people.' },
+      ],
+    },
+    proof: {
+      kicker: 'Where this experience comes from',
+      title: 'From social media to *full* marketing.',
+      items: [
+        { who: 'MNGRS.AI', role: 'Social media manager', text: 'Strategy across three platforms, visual and video content, a report every week.' },
+        { who: 'La Squadra Paris', role: 'Digital marketing manager', text: 'E-commerce, ads, CRM, social media and analytics: seven functions in a single role.' },
+        { who: 'Freelance', role: 'Since 2024', text: 'Websites, digital strategy, an entrepreneurship podcast and networking workshops.' },
+      ],
+    },
+    webinars: {
+      kicker: 'Also: webinars',
+      title: 'A *structured* webinar, from the ad to the follow-up.',
+      sub: 'I set up everything your webinar needs to run well: Meta ads, WhatsApp, emails, landing page and slides.',
       steps: [
         { t: 'Meta ad', d: 'It brings in the right people' },
         { t: 'Landing page', d: 'One page, one sign-up' },
         { t: 'Reminders', d: 'Automatic WhatsApp and emails' },
         { t: 'Webinar', d: 'Structured slides, a follow-up after' },
       ],
-      note: 'Everything is automated. Each person who signs up gets the right message at the right time, with nothing sent by hand.',
-    },
-    formulas: {
-      kicker: 'Two formulas',
-      title: 'You choose *how far* I go.',
       setup: {
         tag: 'Without ads',
         name: 'Foundation',
@@ -217,92 +271,169 @@ export const en: Content = {
       plus: {
         tag: 'With ads',
         name: 'Boost',
-        text: 'Everything above, plus the advertising: I create and run your Meta campaigns to fill your webinar.',
+        text: 'Everything above, plus the advertising: I create and run your Meta campaigns to get your webinar noticed.',
         who: 'To start from zero or move faster.',
       },
       quote: 'On quote',
-      quoteNote: 'The price depends on your webinar. I give it to you at the end of the audit.',
-      monthly: 'Monthly digital marketing: ads, content and follow-up, on an ongoing basis.',
-    },
-    promise: {
-      title: 'What I promise, and what I don’t.',
+      quoteNote: 'The price depends on your webinar. I give it to you after we talk.',
+      promiseTitle: 'What I promise, and what I do not.',
       yes: 'I set up everything so that your webinar works, with the utmost care.',
       no: 'I do not guarantee a number of attendees or a number of sales. No one can honestly do that.',
+      promiseYes: 'I promise',
+      promiseNo: 'I do not promise',
     },
-    background: {
-      kicker: 'Why me',
-      title: 'I was a social media manager before I built *systems*.',
-      text: 'I connect the two: the message that makes people want it, and the machinery that delivers it with no manual effort.',
+    finalTitle: 'Shall we talk about *your social media*?',
+    finalText: 'Half an hour to define your goal, your platforms and the right rhythm.',
+  },
+
+  products: {
+    hero: {
+      kicker: 'Digital products',
+      title: 'Your AI diagnosis, *ready to apply*.',
+      sub: 'You answer a few questions about you and your business. AI agents I designed analyse your answers, and you receive your result by email.',
     },
-    finalTitle: 'Shall we structure *your webinar* together?',
-    finalText: 'Half an hour to define the goal, the audience and the formula.',
+    how: {
+      kicker: 'How it works',
+      title: 'Three steps, no appointment.',
+      steps: [
+        { t: 'You pay', d: 'Secure payment on Stripe. I never see your card.' },
+        { t: 'You answer', d: 'A form: who you are, your site, your LinkedIn, your problem, your goals.' },
+        { t: 'You receive', d: 'Your personalised result, straight to your inbox.' },
+      ],
+    },
+    items: [
+      {
+        key: 'diagnostic',
+        name: 'Business diagnosis',
+        line: 'Where your business stands, what holds you back, and what AI and marketing can change for you.',
+        gets: [
+          { t: 'An analysis of your business', d: 'Your activity, your friction points.' },
+          { t: 'Three concrete leads', d: 'Where to save time or money.' },
+          { t: 'An action plan', d: 'Actions ready to apply as soon as you receive it.' },
+        ],
+        cta: 'Buy the diagnosis',
+      },
+      {
+        key: 'prompt',
+        name: 'Tailored master prompt',
+        line: 'A long, precise prompt written for you: your business, your customers, the way you speak.',
+        gets: [
+          { t: 'A master prompt', d: 'Fitted to your business, not a generic template.' },
+          { t: 'Ready to paste', d: 'Into the AI tool you already use.' },
+        ],
+        cta: 'Buy the master prompt',
+      },
+    ],
+    soon: 'Coming soon',
+    trust: [
+      { t: 'No generic template', d: 'Every result starts from your answers.' },
+      { t: 'Made by AI agents', d: 'That I designed, and I tell you so plainly.' },
+      { t: 'Secure payment', d: 'Stripe handles the payment, I do not see your card.' },
+    ],
+    trustKicker: 'What you can expect',
+    next: {
+      kicker: 'What next?',
+      title: 'Want to go further? *Let us talk.*',
+      text: 'If your result makes you want to act, we can discuss it in 30 minutes, or I build the agent or the system for you.',
+      linkCall: 'Book a call',
+      linkOffers: 'See pricing',
+    },
+    formations: {
+      kicker: 'Courses',
+      title: 'Courses are coming.',
+      text: 'I am preparing courses. Leave your email in the "In the lab" section on the home page and I will let you know when they launch.',
+      link: 'Notify me',
+    },
+    finalTitle: 'Not sure which product? *Write to me.*',
+    finalText: 'Tell me your situation and I will tell you what fits.',
   },
 
   offers: {
     hero: {
-      kicker: 'Services & pricing',
-      title: 'A clear ladder. *You* pick the rung.',
-      sub: 'From diagnosis to a full system. Each rung is useful on its own, and sets up the next.',
+      kicker: 'Pricing',
+      title: 'A clear ladder. *You* choose the rung.',
+      sub: 'From a 19 € product to a complete system. Each rung is useful on its own, and prepares the next.',
     },
     ladderLabel: 'Ladder',
     ladder: [
       {
-        key: 'audit',
-        name: 'Audit',
-        line: 'I find where your time goes and what can be automated.',
-        out: 'Process map and 3 leads ranked by gain.',
+        key: 'diagnostic',
+        name: 'AI diagnosis',
+        line: 'Your business analysed by AI agents, by filling in a form.',
+        out: 'An analysis, three leads and an action plan, by email.',
+        href: 'products',
       },
       {
-        key: 'sprint',
-        name: 'Automation sprint',
-        line: 'The first automations run in production.',
-        out: 'One to three automations delivered, tested, documented.',
+        key: 'prompt',
+        name: 'Master prompt',
+        line: 'A long, precise prompt written for you and your business.',
+        out: 'Ready to paste into your AI tool.',
+        href: 'products',
+      },
+      {
+        key: 'clarity',
+        name: 'Clarity Session',
+        line: 'A 30-minute call to decide: diagnosis, leads, roadmap.',
+        out: 'What you do yourself, what we automate, what I do for you.',
+        href: 'book',
       },
       {
         key: 'agent',
-        name: 'AI agent on your data',
-        line: 'An assistant that knows your documents and cites its sources.',
-        out: 'Agent deployed, plugged into your tools, with scope and guardrails.',
+        name: 'AI agent',
+        line: 'One precise need, one agent delivered. A building block, not a full system.',
+        out: 'Content, customer replies, internal organisation or an assistant on your data.',
+        href: 'automations',
       },
       {
-        key: 'tool',
-        name: 'Internal tool or platform',
-        line: 'Your own encrypted platform, like the one at WLFG.',
-        out: 'Custom platform, hosted and maintainable.',
+        key: 'system',
+        name: 'Complete system',
+        line: 'We audit, connect and automate. The business goes from manual to semi-automatic.',
+        out: 'Global analysis, a stack of connected agents, optimised workflows.',
+        href: 'automations',
       },
     ],
     from: 'from',
-    flat: 'flat fee',
+    range: 'from',
+    rangeTo: 'to',
+    flat: 'fixed price',
     perMonth: '/ month',
-    quote: 'Starting prices: an exact quote follows the audit.',
+    quote: 'Prices for custom offers are ranges. The exact quote follows our conversation.',
     runKicker: 'Then, to make it last',
     runTitle: 'A monthly subscription, *Run*.',
-    runText: 'An unmonitored automation eventually breaks. I take care of it.',
+    runText: 'An automation nobody watches ends up breaking. I take care of it.',
     runPlans: [
       { key: 'run', name: 'Run', line: 'Monitoring, fixes and small adjustments.' },
       { key: 'runPlus', name: 'Run+', line: 'Everything in Run, plus monthly improvements and data reporting.' },
     ],
-    otherKicker: 'Also available',
+    otherKicker: 'And also',
     other: [
       {
         key: 'marketing',
-        name: 'Digital marketing',
-        line: 'Strategy, content and acquisition, with the same reflex: automate what repeats.',
+        name: 'Marketing & content',
+        line: 'Content for your social media, created, published and tracked every week.',
+        href: 'marketing',
+      },
+      {
+        key: null,
+        name: 'Webinars',
+        line: 'Complete setup, with or without ads (Foundation and Boost formulas).',
+        custom: 'On quote',
+        href: 'marketing',
       },
       {
         key: 'cos',
         name: 'Outsourced Chief of Staff',
-        line: 'Steering, OKRs, priorities and reporting for your leadership, part-time.',
+        line: 'Steering, OKRs, priorities and reporting for your leadership, on a part-time basis.',
       },
       {
         key: null,
         name: 'Data reporting',
-        line: 'Automated dashboards and reports, plugged into your sources.',
+        line: 'Dashboards and automated reports, connected to your sources.',
         custom: 'On quote',
       },
     ],
-    finalTitle: 'Not sure which rung? *Start* with the audit.',
-    finalText: 'It is the entry point, and it is credited against a sprint if we continue together.',
+    finalTitle: 'Not sure which rung? *Start* small.',
+    finalText: 'A 19 € diagnosis, or 30 minutes of conversation. You choose.',
   },
 
   book: {
@@ -325,17 +456,18 @@ export const en: Content = {
     needs: [
       { v: 'automation', t: 'Automate a process' },
       { v: 'agent', t: 'An AI agent on my data' },
-      { v: 'tool', t: 'An internal tool / platform' },
-      { v: 'marketing', t: 'Digital marketing' },
+      { v: 'tool', t: 'An internal tool or platform' },
+      { v: 'content', t: 'Content for my social media' },
+      { v: 'webinar', t: 'A webinar' },
       { v: 'cos', t: 'Outsourced Chief of Staff' },
       { v: 'other', t: "I don't know yet" },
     ],
     budgets: [
-      { v: 'lt1500', t: 'Under €1,500' },
-      { v: '1500-4500', t: '€1,500 – 4,500' },
-      { v: '4500-9000', t: '€4,500 – 9,000' },
-      { v: 'gt9000', t: 'Over €9,000' },
-      { v: 'unknown', t: 'To define together' },
+      { v: 'lt200', t: 'Under €200' },
+      { v: '200-800', t: '€200 to €800' },
+      { v: '800-2000', t: '€800 to €2,000' },
+      { v: 'gt2000', t: 'Over €2,000' },
+      { v: 'unknown', t: 'To be defined together' },
     ],
     next: 'Choose a slot',
     back: 'Back',
@@ -353,7 +485,7 @@ export const en: Content = {
     successTitle: "You're booked.",
     successText: 'A confirmation email with the Google Meet link is on its way.',
     successPreview: 'Preview mode: no real appointment was created.',
-    error: 'Booking failed. The slot may have just been taken — please pick another.',
+    error: 'Booking failed. The slot may have just been taken, please pick another.',
     errorFields: 'Please fill in name, email and need.',
     weekdays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     privacy: 'Your answers are only used to prepare our conversation.',
@@ -384,38 +516,57 @@ export const en: Content = {
   journey: {
     hero: {
       kicker: 'Journey',
-      title: 'Where I come from, and *what I built*.',
-      sub: 'Dates and schools are coming. The essentials are already here.',
+      title: 'Where I come from, and *what I have built*.',
+      sub: 'From social media to running a company, then AI: a path that connects the message and the machinery.',
     },
     photoAlt: 'Portrait of Binta Kande',
-    photoNote: 'Photo to add: drop public/binta.jpg',
+    photoNote: '',
     todo: 'To complete',
     items: [
       {
-        when: 'Today',
-        title: 'Freelance — automation & AI agents',
-        text: 'I support companies: audits, sprints, AI agents, internal tools, Run subscriptions.',
+        when: 'Nov. 2025 to today',
+        title: 'Chief of Staff, Proplyd Productions and WLFG Consulting',
+        text: 'Right hand to the CEO: strategic and operational priorities, quarterly OKRs, investor materials, business development. I designed and deployed automations and an internal platform there.',
         todo: false,
       },
       {
-        when: 'Ongoing',
-        title: 'Chief of Staff — WLFG group',
-        text: 'WLFG Consulting and Proplyd Productions. Steering, OKRs, reporting, and the internal platform I designed and built.',
+        when: 'Jul. 2024 to today',
+        title: 'Freelance',
+        text: 'Shopify and Framer sites built to convert, digital strategy, automations and AI agents. I also created an entrepreneurship podcast and organised networking workshops.',
         todo: false,
       },
       {
-        when: '[year]',
-        title: 'MSc in AI & Data',
-        text: 'Institution: [to complete].',
-        todo: true,
+        when: 'Jul. to Dec. 2025',
+        title: 'Social media manager, MNGRS.AI',
+        text: 'Strategy and visual and video content on Instagram, TikTok and LinkedIn, with a weekly report: engagement, reach, conversions.',
+        todo: false,
       },
       {
-        when: '[year]',
-        title: 'Education and first experiences',
-        text: '[School, degree, company — to complete].',
-        todo: true,
+        when: '2025',
+        title: 'Digital marketing manager, La Squadra Paris',
+        text: 'E-commerce, ads, CRM, social media, analytics: seven functions in one role. Email marketing and automations for retention.',
+        todo: false,
+      },
+      {
+        when: '2025 to 2026',
+        title: 'MSc in AI Applied to Business, Eugenia School',
+        text: 'Business analytics, data visualisation, Python, SQL, PowerBI, HubSpot, Dataiku, GA4.',
+        todo: false,
+      },
+      {
+        when: '2024 to 2025',
+        title: 'Bachelor in Digital Project Management, Digital School of Paris',
+        text: 'SEO, Adobe Suite, team management, Scrum.',
+        todo: false,
+      },
+      {
+        when: '2023 to 2024',
+        title: 'Bachelor in International Trade, CNAM',
+        text: 'Digital marketing, management, macroeconomics, accounting.',
+        todo: false,
       },
     ],
+    languages: 'French, native. English, bilingual.',
     stackTitle: 'The toolbox',
   },
 
@@ -426,31 +577,35 @@ export const en: Content = {
     },
     items: [
       {
-        q: 'What are the timelines?',
-        a: 'An audit can be scheduled within a few days. An automation sprint is measured in weeks; an AI agent or internal tool takes a few weeks to a few months depending on scope. The exact schedule is set in the quote.',
+        q: 'How do the 19 € and 39 € products work?',
+        a: 'You pay online, fill in a form about you and your business, and receive your result by email. The result is produced by AI agents I designed, from your answers.',
       },
       {
         q: 'Is my data safe?',
-        a: 'Security is part of the brief, not an option. I apply the same level as on my own platform: AES-256-GCM encryption, access limited to what is strictly needed, European hosting (Hetzner). I work under an NDA if you wish.',
+        a: 'Yes. Payment goes through Stripe, I never see your card. Your answers are only used to produce your result. For custom projects, security is part of the brief, and I work under a confidentiality agreement if you wish.',
       },
       {
-        q: 'How does billing work?',
-        a: 'Audit: flat fee. Sprint, agent and tool: a quote with a deposit at kick-off and the balance on delivery. Run and Run+: a monthly subscription with no long commitment. Listed prices are starting prices; the exact quote follows the audit.',
+        q: 'How does billing work for custom offers?',
+        a: 'AI agent and complete system: a quote with a deposit at the start and the balance on delivery. Run, Run+ and monthly content: a monthly subscription. Displayed prices are ranges or starting prices, the exact quote follows our conversation.',
+      },
+      {
+        q: 'What do you promise for webinars and marketing?',
+        a: 'I set up everything needed for it to work. I do not guarantee a number of attendees or a number of sales.',
       },
       {
         q: 'Do you work in English?',
-        a: 'Yes. The site, the conversations, the documentation and the tools I deliver exist in both French and English.',
+        a: 'Yes. The site, the exchanges and the documents I deliver exist in French and English.',
       },
       {
         q: 'What if an automation breaks?',
-        a: 'Every automation logs what it does and alerts you on failure. With Run, I monitor it and fix it before you notice.',
+        a: 'Each automation logs what it does and alerts you on failure. With Run, I monitor it and fix it before you notice.',
       },
     ],
     finalTitle: 'Another question? *Ask it.*',
   },
 
   footer: {
-    tagline: 'Automation & AI agents that run in production.',
+    tagline: 'Marketing, automation and AI agents.',
     rights: 'All rights reserved.',
     github: 'GitHub',
     linkedin: 'LinkedIn',

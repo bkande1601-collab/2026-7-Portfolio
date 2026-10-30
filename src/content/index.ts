@@ -24,7 +24,7 @@ export const tools = [
 ];
 
 /** Pages (slug identique en FR et EN). */
-export const pages = ['', 'automations', 'marketing', 'offers', 'book', 'contact', 'journey', 'faq'] as const;
+export const pages = ['', 'automations', 'marketing', 'products', 'offers', 'book', 'contact', 'journey', 'faq'] as const;
 
 export function href(lang: Lang, page: string = '') {
   return page ? `/${lang}/${page}` : `/${lang}`;

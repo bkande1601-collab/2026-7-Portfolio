@@ -3,12 +3,11 @@ import Base from '../../layouts/Base.astro';
 import HeroVisual from '../../components/HeroVisual.astro';
 import SkillsBar from '../../components/SkillsBar.astro';
 import Marquee from '../../components/Marquee.astro';
-import BeforeAfter from '../../components/BeforeAfter.astro';
-import Window from '../../components/Window.astro';
 import OfferRail from '../../components/OfferRail.astro';
 import LabSection from '../../components/LabSection.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { t, em, href, langs, type Lang } from '../../content';
+import { site, formatPrice, type PriceKey } from '../../config/site';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -19,7 +18,7 @@ const h = c.home;
 ---
 
 <Base lang={lang} page="">
-  <!-- 1. Accroche + emplacement vidéo -->
+  <!-- 1. Accroche + photo (ou vidéo) -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
@@ -39,75 +38,70 @@ const h = c.home;
   <!-- 2. Bande défilante des compétences -->
   <SkillsBar skills={h.skills} label={h.hero.eyebrow} />
 
-  <!-- 2b. Deux services : automatisations et marketing -->
+  <!-- 3. Que cherchez-vous ? Trois portes d'entrée -->
   <section>
     <div class="wrap">
       <div class="section-head reveal">
-        <span class="kicker">{h.services.kicker}</span>
-        <h2 set:html={em(h.services.title)} />
+        <span class="kicker">{h.paths.kicker}</span>
+        <h2 set:html={em(h.paths.title)} />
       </div>
-      <div class="formulas reveal">
-        <div class="formula">
-          <h3>{h.services.auto.name}</h3>
-          <p>{h.services.auto.text}</p>
-          <a class="textlink" style="margin-top:auto;align-self:flex-start" href={href(lang, 'automations')}><span class="arrow">{h.services.auto.link}&nbsp;</span></a>
-        </div>
-        <div class="formula plus">
-          <h3>{h.services.marketing.name}</h3>
-          <p>{h.services.marketing.text}</p>
-          <a class="textlink" style="margin-top:auto;align-self:flex-start" href={href(lang, 'marketing')}><span class="arrow">{h.services.marketing.link}&nbsp;</span></a>
-        </div>
-      </div>
+      <ul class="paths">
+        {
+          h.paths.items.map((it, i) => {
+            const p = formatPrice(it.price as PriceKey, lang);
+            return (
+              <li class="reveal">
+                <a class="path" href={href(lang, it.slug)}>
+                  <span class="path-n">0{i + 1}</span>
+                  <span class="path-body">
+                    <span class="path-name">{it.name}</span>
+                    <span class="path-line">{it.line}</span>
+                  </span>
+                  <span class="path-price">
+                    <small>{h.paths.from}</small>
+                    {p.n} €{p.per === 'month' && <small>{c.offers.perMonth}</small>}
+                  </span>
+                  <span class="path-go" aria-hidden="true">→</span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
     </div>
   </section>
 
-  <!-- 3. Bande d'outils -->
-  <Marquee label={h.toolsTitle} />
-
-  <!-- 4. Avant / après -->
-  <section>
-    <div class="wrap">
-      <BeforeAfter data={h.beforeAfter} />
-    </div>
-  </section>
-
-  <!-- 5. La plateforme interne chiffrée -->
+  <!-- 4. Comment ça se passe -->
   <section style="background:var(--bg-2);border-block:1px solid var(--line)">
-    <div class="wrap platform">
-      <div class="reveal">
-        <span class="kicker">{h.platform.kicker}</span>
-        <h2 set:html={em(h.platform.title)} />
-        <p class="lead">{h.platform.text}</p>
-        <p class="stack-line">{h.platform.stack}</p>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{h.how.kicker}</span>
+        <h2>{h.how.title}</h2>
       </div>
-      <div class="reveal">
-        <Window
-          title={h.platform.chat.title}
-          modules={h.platform.modules}
-          q={h.platform.chat.q}
-          a={h.platform.chat.a}
-          src={h.platform.chat.src}
-          lock={h.platform.chat.lock}
-        />
+      <div class="steps-line three reveal">
+        {h.how.steps.map((s) => <div><b>{s.t}</b><span>{s.d}</span></div>)}
       </div>
     </div>
   </section>
 
-  <!-- 6. Mon rôle -->
+  <!-- 5. Qui je suis -->
   <section>
-    <div class="wrap role">
-      <div class="reveal">
-        <span class="kicker">{h.role.kicker}</span>
-        <h2 set:html={em(h.role.title)} />
+    <div class="wrap who">
+      <div class="who-photo reveal">
+        <img src="/photos/binta-contact.webp" alt={h.who.photoAlt} width="640" height="800" loading="lazy" />
       </div>
       <div class="reveal">
-        <p>{h.role.text}</p>
-        <a class="textlink" href={href(lang, 'journey')}><span class="arrow">{h.role.link}&nbsp;</span></a>
+        <span class="kicker">{h.who.kicker}</span>
+        <h2 set:html={em(h.who.title)} />
+        <p class="lead">{h.who.text}</p>
+        <p style="margin-top:28px">
+          <a class="textlink" href={href(lang, 'journey')}><span class="arrow">{h.who.link}&nbsp;</span></a>
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- 7. Offres sur une seule ligne -->
+  <!-- 6. Offres sur une seule ligne -->
   <section style="padding-top:0">
     <div class="wrap">
       <div class="section-head reveal">
@@ -120,6 +114,9 @@ const h = c.home;
       </p>
     </div>
   </section>
+
+  <!-- 7. Outils -->
+  <Marquee label={h.toolsTitle} />
 
   <!-- 8. Dans le labo -->
   <section style="background:var(--bg-2);border-block:1px solid var(--line)" id="labo">

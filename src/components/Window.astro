@@ -13,7 +13,7 @@ const showSide = Array.isArray(modules) && modules.length > 0;
 const active = showSide ? modules!.length - 1 : -1;
 ---
 
-<div class="win" role="img" aria-label={`${title}: ${q} — ${a}`}>
+<div class="win" role="img" aria-label={`${title}: ${q} ${a}`}>
   <div class="win-bar" aria-hidden="true">
     <i></i><i></i><i></i>
     <span class="lock">

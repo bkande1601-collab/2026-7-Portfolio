@@ -16,7 +16,7 @@ interface Props {
 const { lang, page = '', title, description } = Astro.props;
 const c = t(lang);
 const other: Lang = lang === 'fr' ? 'en' : 'fr';
-const pageTitle = title ? `${title} — ${site.name}` : c.meta.title;
+const pageTitle = title ? `${title} | ${site.name}` : c.meta.title;
 const pageDesc = description ?? c.meta.description;
 const origin = Astro.site ? Astro.site.origin : '';
 ---

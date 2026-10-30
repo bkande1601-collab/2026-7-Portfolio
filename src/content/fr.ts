@@ -1,5 +1,5 @@
 /**
- * TEXTES — FRANÇAIS.
+ * TEXTES, FRANÇAIS.
  * Astuce : un mot entre *astérisques* s'affiche en violet (accent).
  * Les prix et horaires ne sont PAS ici : voir src/config/site.ts.
  * La version anglaise est dans en.ts (mêmes clés).
@@ -17,9 +17,10 @@ export const fr = {
 
   nav: {
     home: 'Accueil',
+    marketing: 'Marketing & contenu',
     automations: 'Automatisations & IA',
-    marketing: 'Marketing',
-    offers: 'Offres & tarifs',
+    products: 'Produits digitaux',
+    offers: 'Tarifs',
     journey: 'Parcours',
     faq: 'FAQ',
     menu: 'Menu',
@@ -49,7 +50,7 @@ export const fr = {
       'Marketing digital',
       'Social media management',
       'Publicités Meta',
-      'Webinaires de A à Z',
+      'Webinaires',
       'Automatisations WhatsApp',
       'Landing pages',
       'Assistants IA sur vos documents',
@@ -57,20 +58,6 @@ export const fr = {
       'Reporting data',
       'Chief of Staff',
     ],
-    services: {
-      kicker: 'Deux façons de travailler ensemble',
-      title: 'Des systèmes qui *tournent*, et un marketing qui les remplit.',
-      auto: {
-        name: 'Automatisations & IA',
-        text: 'Je retire le travail répétitif de votre équipe avec des automatisations, des agents IA branchés sur vos outils et vos documents, et des outils internes sur mesure.',
-        link: 'Voir les automatisations',
-      },
-      marketing: {
-        name: 'Marketing digital',
-        text: 'Publicités Meta, webinaires de A à Z, automatisations WhatsApp et e-mails, réseaux sociaux. Vous pouvez venir uniquement pour le marketing.',
-        link: 'Voir le marketing',
-      },
-    },
     toolsTitle: 'Ce que j’utilise tous les jours',
 
     beforeAfter: {
@@ -88,7 +75,7 @@ export const fr = {
         'Une demande arrive',
         'L’automatisation la route et la classe',
         "L'agent IA lit, rédige, décide",
-        'Notion, HubSpot, Agenda à jour — rapport automatique',
+        'Notion, HubSpot et Agenda à jour, rapport automatique',
       ],
       caption: 'Moins de copier-coller, plus de temps pour ce qui demande vraiment quelqu’un.',
     },
@@ -97,7 +84,6 @@ export const fr = {
       kicker: 'La preuve, en production',
       title: "J'ai construit *ma propre* plateforme. Elle tourne tous les jours.",
       text: "Projets, messagerie, to-do synchronisée avec Notion, OKR, arrivées et départs, Google Agenda, et un assistant IA qui connaît les documents de l'entreprise. Conçue et développée seule, chiffrée, bilingue.",
-      stack: 'Gemini · Hetzner via Coolify',
       modules: ['Projets', 'Messagerie', 'To-do · Notion', 'OKR', 'Onboarding & départs', 'Agenda', 'Assistant IA'],
       chat: {
         title: 'Assistant IA',
@@ -108,11 +94,48 @@ export const fr = {
       },
     },
 
-    role: {
-      kicker: 'Qui parle',
-      title: 'Chief of Staff le jour, *builder* le reste du temps.',
-      text: "Je pilote les opérations du groupe WLFG (WLFG Consulting et Proplyd Productions) : priorités, OKR, reporting, coordination. Mon MSc en IA & Data et mes années à construire des outils font que je ne me contente pas de les spécifier : je les livre. En freelance, j'apporte la même rigueur aux entreprises qui veulent automatiser sérieusement.",
+    paths: {
+      kicker: 'Que cherchez-vous ?',
+      title: 'Trois façons de *travailler* ensemble.',
+      from: 'dès',
+      items: [
+        {
+          slug: 'marketing',
+          name: 'Marketing & contenu',
+          line: 'Du contenu pour vos réseaux sociaux, créé et publié pour vous. Les webinaires aussi.',
+          price: 'marketing',
+        },
+        {
+          slug: 'automations',
+          name: 'Automatisations & IA',
+          line: 'Moins de tâches répétitives, des agents IA qui connaissent votre business.',
+          price: 'agent',
+        },
+        {
+          slug: 'products',
+          name: 'Produits digitaux',
+          line: 'Un diagnostic IA de votre business et un prompt maître sur mesure, à acheter en ligne.',
+          price: 'diagnostic',
+        },
+      ],
+    },
+
+    how: {
+      kicker: 'Comment ça se passe',
+      title: 'Simple, du premier clic à la livraison.',
+      steps: [
+        { t: 'Vous choisissez', d: 'Un produit à acheter, ou un échange de 30 minutes.' },
+        { t: 'Je cadre avec vous', d: 'Un formulaire ou un call, pour bien comprendre votre besoin.' },
+        { t: 'Je livre', d: 'Vous recevez le résultat, et on décide de la suite si vous le voulez.' },
+      ],
+    },
+
+    who: {
+      kicker: 'Qui je suis',
+      title: 'Binta Kande, *Chief of Staff* et freelance.',
+      text: 'Je pilote les opérations de Proplyd Productions et WLFG Consulting. Avant, j’ai été social media manager et chargée de marketing digital. Mon MSc en IA a fait le reste : je construis moi-même les outils que je vends.',
       link: 'Lire mon parcours',
+      photoAlt: 'Portrait souriant de Binta Kande',
     },
 
     offersTitle: 'Une échelle simple, du premier pas au système complet',
@@ -137,8 +160,8 @@ export const fr = {
       sending: 'Envoi…',
     },
 
-    finalTitle: 'Vous avez un process qui vous coûte *trop* de temps ?',
-    finalText: 'Trente minutes pour le mettre à plat. Vous repartez avec une première piste, même si on ne travaille pas ensemble.',
+    finalTitle: 'Dites-moi ce que vous *cherchez*.',
+    finalText: 'Trente minutes pour mettre à plat votre besoin : du contenu, une automatisation ou un agent IA.',
   },
 
   automations: {
@@ -188,24 +211,55 @@ export const fr = {
 
   marketing: {
     hero: {
-      kicker: 'Marketing digital',
-      title: 'Un webinaire *cadré*, de la publicité à la relance.',
-      sub: "Je mets en place tout ce qu'il faut pour que votre webinaire se remplisse et se déroule bien : publicités Meta, automatisations WhatsApp, e-mails, landing page et slides. De A à Z.",
+      kicker: 'Marketing & contenu',
+      title: 'Du contenu pour vos réseaux, *créé et publié* pour vous.',
+      sub: 'Instagram, TikTok, LinkedIn : je définis votre ligne, je produis les visuels, les vidéos et les textes, et je vous envoie un bilan chaque semaine.',
     },
-    flow: {
-      kicker: 'Le parcours d’un participant',
-      title: 'De la publicité au replay, tout est *relié*.',
+    content: {
+      kicker: 'Ce que je fais pour vos réseaux',
+      title: 'Du plan éditorial au *bilan* de la semaine.',
+      steps: [
+        { t: 'Stratégie', d: 'Votre ligne éditoriale, après une veille sur vos concurrents' },
+        { t: 'Création', d: 'Visuels, vidéos et textes qui vous ressemblent' },
+        { t: 'Publication', d: 'Sur Instagram, TikTok et LinkedIn' },
+        { t: 'Bilan', d: 'Portée, engagement et conversions, chaque semaine' },
+      ],
+      note: 'Vous gardez la main : vous validez, je publie, et vous voyez les chiffres.',
+    },
+    monthly: {
+      kicker: 'La formule',
+      name: 'Contenu au mois',
+      text: 'Un rythme de publication régulier, des contenus produits pour vous et un bilan chaque semaine. Le contenu des réseaux est le cœur de cette offre.',
+      from: 'dès',
+      perMonth: 'par mois',
+    },
+    also: {
+      kicker: 'Et aussi',
+      items: [
+        { t: 'E-mailing et CRM', d: 'Campagnes et automatisations pour fidéliser et relancer (Brevo, Klaviyo, HubSpot).' },
+        { t: 'Sites qui convertissent', d: 'Sites Shopify ou Framer pensés pour transformer les visites en demandes.' },
+        { t: 'Publicités Meta', d: 'Des campagnes créées et suivies pour toucher les bonnes personnes.' },
+      ],
+    },
+    proof: {
+      kicker: 'D’où vient cette expérience',
+      title: 'Des réseaux sociaux au *marketing* complet.',
+      items: [
+        { who: 'MNGRS.AI', role: 'Social media manager', text: 'Stratégie sur trois plateformes, production de contenus visuels et vidéo, reporting chaque semaine.' },
+        { who: 'La Squadra Paris', role: 'Chargée de marketing digital', text: 'E-commerce, publicité, CRM, réseaux sociaux et analytics : sept fonctions réunies sur un seul poste.' },
+        { who: 'Freelance', role: 'Depuis 2024', text: 'Sites, stratégie digitale, un podcast sur l’entrepreneuriat et des ateliers de networking.' },
+      ],
+    },
+    webinars: {
+      kicker: 'Aussi : les webinaires',
+      title: 'Un webinaire *cadré*, de la publicité à la relance.',
+      sub: 'Je mets en place tout ce qu’il faut pour que votre webinaire se déroule bien : publicités Meta, WhatsApp, e-mails, landing page et slides.',
       steps: [
         { t: 'Publicité Meta', d: 'Elle attire les bonnes personnes' },
         { t: 'Landing page', d: 'Une page, une inscription' },
         { t: 'Rappels', d: 'WhatsApp et e-mails automatiques' },
         { t: 'Webinaire', d: 'Des slides cadrées, une relance après' },
       ],
-      note: 'Tout est automatisé. Chaque inscrit reçoit le bon message au bon moment, sans envoi à la main.',
-    },
-    formulas: {
-      kicker: 'Deux formules',
-      title: 'Vous choisissez *jusqu’où* je vais.',
       setup: {
         tag: 'Sans publicité',
         name: 'Socle',
@@ -215,64 +269,133 @@ export const fr = {
       plus: {
         tag: 'Avec publicité',
         name: 'Boost',
-        text: 'Tout ce qui précède, plus la publicité : je crée et pilote vos campagnes Meta pour remplir votre webinaire.',
+        text: 'Tout ce qui précède, plus la publicité : je crée et pilote vos campagnes Meta pour faire connaître votre webinaire.',
         who: 'Pour partir de zéro ou aller plus vite.',
       },
       quote: 'Sur devis',
-      quoteNote: 'Le prix dépend de votre webinaire. Je vous le donne à la fin de l’audit.',
-      monthly: 'Marketing digital au mois : publicités, contenus et suivi, en continu.',
-    },
-    promise: {
-      title: 'Ce que je promets, et ce que je ne promets pas.',
+      quoteNote: 'Le prix dépend de votre webinaire. Je vous le donne après notre échange.',
+      promiseTitle: 'Ce que je promets, et ce que je ne promets pas.',
       yes: 'Je mets tout en place pour que votre webinaire fonctionne, avec le plus grand sérieux.',
       no: 'Je ne garantis pas un nombre de participants ni un nombre de ventes. Personne ne peut honnêtement le faire.',
+      promiseYes: 'Je promets',
+      promiseNo: 'Je ne promets pas',
     },
-    background: {
-      kicker: 'Pourquoi moi',
-      title: 'J’ai été social media manager avant de construire des *systèmes*.',
-      text: 'Je relie les deux : le message qui donne envie, et la mécanique qui le livre sans effort manuel.',
+    finalTitle: 'On parle de *vos réseaux* ?',
+    finalText: 'Une demi-heure pour définir votre objectif, vos plateformes et le bon rythme.',
+  },
+
+  products: {
+    hero: {
+      kicker: 'Produits digitaux',
+      title: 'Votre diagnostic IA, *prêt à appliquer*.',
+      sub: 'Vous répondez à quelques questions sur vous et votre business. Des agents IA que j’ai conçus analysent vos réponses, et vous recevez votre résultat par e-mail.',
     },
-    finalTitle: 'On cadre *votre webinaire* ensemble ?',
-    finalText: 'Une demi-heure pour définir l’objectif, l’audience et la formule.',
+    how: {
+      kicker: 'Comment ça marche',
+      title: 'Trois étapes, sans rendez-vous.',
+      steps: [
+        { t: 'Vous payez', d: 'Paiement sécurisé sur Stripe. Je ne vois jamais votre carte.' },
+        { t: 'Vous répondez', d: 'Un formulaire : qui vous êtes, votre site, votre LinkedIn, votre problème, vos objectifs.' },
+        { t: 'Vous recevez', d: 'Votre résultat personnalisé, directement par e-mail.' },
+      ],
+    },
+    items: [
+      {
+        key: 'diagnostic',
+        name: 'Diagnostic de votre business',
+        line: 'Où en est votre business, ce qui vous freine, et ce que l’IA et le marketing peuvent changer pour vous.',
+        gets: [
+          { t: 'Une analyse de votre business', d: 'Votre activité, vos points de friction.' },
+          { t: 'Trois pistes concrètes', d: 'Où gagner du temps ou de l’argent.' },
+          { t: 'Un plan d’action', d: 'Des actions prêtes à appliquer dès la réception.' },
+        ],
+        cta: 'Acheter le diagnostic',
+      },
+      {
+        key: 'prompt',
+        name: 'Prompt maître sur mesure',
+        line: 'Un prompt long et précis, écrit pour vous : votre activité, vos clients, votre manière de parler.',
+        gets: [
+          { t: 'Un prompt maître', d: 'Adapté à votre business, pas un modèle générique.' },
+          { t: 'Prêt à coller', d: 'Dans l’outil d’IA que vous utilisez déjà.' },
+        ],
+        cta: 'Acheter le prompt maître',
+      },
+    ],
+    soon: 'Bientôt disponible',
+    trust: [
+      { t: 'Zéro modèle générique', d: 'Chaque résultat part de vos réponses.' },
+      { t: 'Produit par des agents IA', d: 'Que j’ai conçus, et je vous le dis clairement.' },
+      { t: 'Paiement sécurisé', d: 'Stripe gère le paiement, je ne vois pas votre carte.' },
+    ],
+    trustKicker: 'Ce que vous pouvez attendre',
+    next: {
+      kicker: 'Et après ?',
+      title: 'Envie d’aller plus loin ? *Parlons-en.*',
+      text: 'Si votre résultat vous donne envie de passer à l’action, on peut en discuter en 30 minutes, ou je construis l’agent ou le système pour vous.',
+      linkCall: 'Réserver un échange',
+      linkOffers: 'Voir les tarifs',
+    },
+    formations: {
+      kicker: 'Formations',
+      title: 'Les formations arrivent.',
+      text: 'Je prépare des formations. Laissez votre e-mail dans la section « Dans le labo » de l’accueil, je vous préviens à la sortie.',
+      link: 'Me prévenir',
+    },
+    finalTitle: 'Un doute sur le bon produit ? *Écrivez-moi.*',
+    finalText: 'Dites-moi votre situation, je vous dis ce qui vous convient.',
   },
 
   offers: {
     hero: {
-      kicker: 'Offres & tarifs',
+      kicker: 'Tarifs',
       title: 'Une échelle claire. *Vous* choisissez la marche.',
-      sub: 'Du diagnostic au système complet. Chaque marche est utile seule, et prépare la suivante.',
+      sub: 'Du produit à 19 € au système complet. Chaque marche est utile seule, et prépare la suivante.',
     },
     ladderLabel: 'Échelle',
     ladder: [
       {
-        key: 'audit',
-        name: 'Audit',
-        line: 'Je trouve où part votre temps et ce qu’on peut automatiser.',
-        out: 'Cartographie des process et 3 pistes classées par gain.',
+        key: 'diagnostic',
+        name: 'Diagnostic IA',
+        line: 'Votre business analysé par des agents IA, en remplissant un formulaire.',
+        out: 'Une analyse, trois pistes et un plan d’action, par e-mail.',
+        href: 'products',
       },
       {
-        key: 'sprint',
-        name: 'Sprint automatisation',
-        line: 'Les premières automatisations tournent en production.',
-        out: 'Une à trois automatisations livrées, testées, documentées.',
+        key: 'prompt',
+        name: 'Prompt maître',
+        line: 'Un prompt long et précis, écrit pour vous et votre activité.',
+        out: 'Prêt à coller dans votre outil d’IA.',
+        href: 'products',
+      },
+      {
+        key: 'clarity',
+        name: 'Clarity Session',
+        line: 'Un call de 30 minutes pour décider : diagnostic, pistes, feuille de route.',
+        out: 'Ce que vous faites seul, ce qu’on automatise, ce que je fais pour vous.',
+        href: 'book',
       },
       {
         key: 'agent',
-        name: 'Agent IA sur vos données',
-        line: 'Un assistant qui connaît vos documents et cite ses sources.',
-        out: 'Agent déployé, branché à vos outils, avec périmètre et garde-fous.',
+        name: 'Agent IA',
+        line: 'Un besoin précis, un agent livré. Une brique, pas un système complet.',
+        out: 'Contenu, réponses clients, organisation interne ou assistant sur vos données.',
+        href: 'automations',
       },
       {
-        key: 'tool',
-        name: 'Outil interne ou plateforme',
-        line: 'Votre propre plateforme, chiffrée, comme celle de WLFG.',
-        out: 'Plateforme sur mesure, hébergée et maintenable.',
+        key: 'system',
+        name: 'Système complet',
+        line: 'On audite, on connecte, on automatise. Le business passe du manuel au semi-automatique.',
+        out: 'Analyse globale, stack d’agents connectés, workflows optimisés.',
+        href: 'automations',
       },
     ],
-    from: 'à partir de',
-    flat: 'forfait',
+    from: 'dès',
+    range: 'de',
+    rangeTo: 'à',
+    flat: 'prix fixe',
     perMonth: '/ mois',
-    quote: 'Prix de départ : le devis précis suit l’audit.',
+    quote: 'Les prix des offres sur mesure sont des fourchettes. Le devis précis suit notre échange.',
     runKicker: 'Puis, pour que ça dure',
     runTitle: 'Un abonnement mensuel, *Run*.',
     runText: 'Une automatisation non surveillée finit par casser. Je m’en occupe.',
@@ -284,8 +407,16 @@ export const fr = {
     other: [
       {
         key: 'marketing',
-        name: 'Marketing digital',
-        line: 'Stratégie, contenu et acquisition, avec le même réflexe : automatiser ce qui se répète.',
+        name: 'Marketing & contenu',
+        line: 'Contenu pour vos réseaux sociaux, créé, publié et suivi chaque semaine.',
+        href: 'marketing',
+      },
+      {
+        key: null,
+        name: 'Webinaires',
+        line: 'Mise en place complète, avec ou sans publicité (formules Socle et Boost).',
+        custom: 'Sur devis',
+        href: 'marketing',
       },
       {
         key: 'cos',
@@ -299,8 +430,8 @@ export const fr = {
         custom: 'Sur devis',
       },
     ],
-    finalTitle: 'Pas sûr de la marche ? *Commencez* par l’audit.',
-    finalText: 'C’est le point d’entrée, et il se déduit d’un sprint si on continue ensemble.',
+    finalTitle: 'Pas sûr de la marche ? *Commencez* petit.',
+    finalText: 'Un diagnostic à 19 €, ou 30 minutes d’échange. Vous choisissez.',
   },
 
   book: {
@@ -323,16 +454,17 @@ export const fr = {
     needs: [
       { v: 'automation', t: 'Automatiser un process' },
       { v: 'agent', t: 'Un agent IA sur mes données' },
-      { v: 'tool', t: 'Un outil interne / une plateforme' },
-      { v: 'marketing', t: 'Marketing digital' },
+      { v: 'tool', t: 'Un outil interne ou une plateforme' },
+      { v: 'content', t: 'Du contenu pour mes réseaux sociaux' },
+      { v: 'webinar', t: 'Un webinaire' },
       { v: 'cos', t: 'Chief of Staff externalisée' },
       { v: 'other', t: 'Je ne sais pas encore' },
     ],
     budgets: [
-      { v: 'lt1500', t: 'Moins de 1 500 €' },
-      { v: '1500-4500', t: '1 500 – 4 500 €' },
-      { v: '4500-9000', t: '4 500 – 9 000 €' },
-      { v: 'gt9000', t: 'Plus de 9 000 €' },
+      { v: 'lt200', t: 'Moins de 200 €' },
+      { v: '200-800', t: 'De 200 à 800 €' },
+      { v: '800-2000', t: 'De 800 à 2 000 €' },
+      { v: 'gt2000', t: 'Plus de 2 000 €' },
       { v: 'unknown', t: 'À définir ensemble' },
     ],
     next: 'Choisir un créneau',
@@ -383,37 +515,56 @@ export const fr = {
     hero: {
       kicker: 'Parcours',
       title: 'D’où je viens, et *ce que j’ai bâti*.',
-      sub: 'Le détail des dates et des écoles arrive. L’essentiel, lui, est déjà là.',
+      sub: 'Du social media au pilotage d’entreprise, puis à l’IA : un parcours qui relie le message et la mécanique.',
     },
     photoAlt: 'Portrait de Binta Kande',
-    photoNote: 'Photo à ajouter : déposez public/binta.jpg',
+    photoNote: '',
     todo: 'À compléter',
     items: [
       {
-        when: "Aujourd'hui",
-        title: 'Freelance — automatisations & agents IA',
-        text: 'J’accompagne des entreprises : audit, sprints, agents IA, outils internes, abonnements Run.',
+        when: 'Nov. 2025 à aujourd’hui',
+        title: 'Chief of Staff, Proplyd Productions et WLFG Consulting',
+        text: 'Bras droit du CEO : priorités stratégiques et opérationnelles, OKR trimestriels, supports investisseurs, développement commercial. J’y ai conçu et déployé des automatisations et une plateforme interne.',
         todo: false,
       },
       {
-        when: 'En cours',
-        title: 'Chief of Staff — groupe WLFG',
-        text: 'WLFG Consulting et Proplyd Productions. Pilotage, OKR, reporting, et la plateforme interne que j’ai conçue et développée.',
+        when: 'Juil. 2024 à aujourd’hui',
+        title: 'Freelance',
+        text: 'Sites Shopify et Framer pensés pour convertir, stratégie digitale, automatisations et agents IA. J’ai aussi créé un podcast sur l’entrepreneuriat et organisé des ateliers de networking.',
         todo: false,
       },
       {
-        when: '[année]',
-        title: 'MSc en IA & Data',
-        text: 'Établissement : [à compléter].',
-        todo: true,
+        when: 'Juil. à déc. 2025',
+        title: 'Social media manager, MNGRS.AI',
+        text: 'Stratégie et contenus visuels et vidéo sur Instagram, TikTok et LinkedIn, avec un reporting chaque semaine : engagement, portée, conversions.',
+        todo: false,
       },
       {
-        when: '[année]',
-        title: 'Formation et premières expériences',
-        text: '[École, diplôme, entreprise — à compléter].',
-        todo: true,
+        when: '2025',
+        title: 'Chargée de marketing digital, La Squadra Paris',
+        text: 'E-commerce, publicité, CRM, réseaux sociaux, analytics : sept fonctions sur un poste. E-mailing et automatisations pour la fidélisation.',
+        todo: false,
+      },
+      {
+        when: '2025 à 2026',
+        title: 'MSc IA appliquée au business, Eugenia School',
+        text: 'Business analytics, data visualisation, Python, SQL, PowerBI, HubSpot, Dataiku, GA4.',
+        todo: false,
+      },
+      {
+        when: '2024 à 2025',
+        title: 'Bachelor Chef de projets digitaux, Digital School of Paris',
+        text: 'SEO, Suite Adobe, management d’équipe, Scrum.',
+        todo: false,
+      },
+      {
+        when: '2023 à 2024',
+        title: 'Licence Commerce international, CNAM',
+        text: 'Marketing digital, management, macroéconomie, comptabilité.',
+        todo: false,
       },
     ],
+    languages: 'Français, langue maternelle. Anglais, bilingue.',
     stackTitle: 'La boîte à outils',
   },
 
@@ -424,20 +575,24 @@ export const fr = {
     },
     items: [
       {
-        q: 'Quels sont les délais ?',
-        a: 'Un audit se planifie sous quelques jours. Un sprint d’automatisation se compte en semaines, un agent IA ou un outil interne en quelques semaines à quelques mois selon le périmètre. Le calendrier précis est fixé dans le devis.',
+        q: 'Comment fonctionnent les produits à 19 € et 39 € ?',
+        a: 'Vous payez en ligne, vous remplissez un formulaire sur vous et votre business, et vous recevez votre résultat par e-mail. Le résultat est produit par des agents IA que j’ai conçus, à partir de vos réponses.',
       },
       {
         q: 'Mes données sont-elles en sécurité ?',
-        a: 'La sécurité fait partie du cahier des charges, pas d’une option. J’applique le même niveau que sur ma propre plateforme : chiffrement AES-256-GCM, accès limités au strict nécessaire, hébergement en Europe (Hetzner). Je travaille sous accord de confidentialité si vous le souhaitez.',
+        a: 'Oui. Le paiement passe par Stripe, je ne vois jamais votre carte. Vos réponses ne servent qu’à produire votre résultat. Pour les projets sur mesure, la sécurité fait partie du cahier des charges, et je travaille sous accord de confidentialité si vous le souhaitez.',
       },
       {
-        q: 'Comment se passe la facturation ?',
-        a: 'Audit : forfait. Sprint, agent et outil : devis avec acompte au démarrage, solde à la livraison. Run et Run+ : abonnement mensuel, sans engagement long. Les prix affichés sont des prix de départ ; le devis exact suit l’audit.',
+        q: 'Comment se passe la facturation des offres sur mesure ?',
+        a: 'Agent IA et système complet : devis avec acompte au démarrage, solde à la livraison. Run, Run+ et le contenu au mois : abonnement mensuel. Les prix affichés sont des fourchettes ou des prix de départ, le devis exact suit notre échange.',
+      },
+      {
+        q: 'Que promettez-vous pour les webinaires et le marketing ?',
+        a: 'Je mets en place tout ce qu’il faut pour que ça fonctionne. Je ne garantis ni un nombre de participants, ni un nombre de ventes.',
       },
       {
         q: 'Travaillez-vous en anglais ?',
-        a: 'Oui. Le site, les échanges, la documentation et les outils que je livre existent en français et en anglais.',
+        a: 'Oui. Le site, les échanges et les documents que je livre existent en français et en anglais.',
       },
       {
         q: 'Et si une automatisation casse ?',
@@ -448,7 +603,7 @@ export const fr = {
   },
 
   footer: {
-    tagline: 'Automatisations & agents IA qui tournent en production.',
+    tagline: 'Marketing, automatisations et agents IA.',
     rights: 'Tous droits réservés.',
     github: 'GitHub',
     linkedin: 'LinkedIn',

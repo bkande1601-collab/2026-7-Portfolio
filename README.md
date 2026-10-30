@@ -1,4 +1,4 @@
-# Portfolio — Binta Kande
+# Portfolio de Binta Kande
 
 Site bilingue (FR/EN), rapide et statique, avec de petites fonctions serveur pour la prise de rendez-vous (Google Agenda), les e-mails (Resend) et les formulaires.
 

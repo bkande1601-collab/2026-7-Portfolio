@@ -10,10 +10,11 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const c = t(lang);
 const m = c.marketing;
+const w = m.webinars;
 
 const money = (n: number | null) =>
   n === null
-    ? m.formulas.quote
+    ? w.quote
     : new Intl.NumberFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { maximumFractionDigits: 0, useGrouping: 'always' }).format(n) + ' €';
 const monthly = formatPrice('marketing', lang);
 ---
@@ -31,16 +32,16 @@ const monthly = formatPrice('marketing', lang);
     </div>
   </section>
 
-  <!-- Le parcours d'un participant -->
+  <!-- 1. Contenu réseaux : le parcours -->
   <section style="padding-top:clamp(32px,5vw,64px)">
     <div class="wrap">
       <div class="section-head reveal">
-        <span class="kicker">{m.flow.kicker}</span>
-        <h2 set:html={em(m.flow.title)} />
+        <span class="kicker">{m.content.kicker}</span>
+        <h2 set:html={em(m.content.title)} />
       </div>
       <div class="pipeline reveal">
         {
-          m.flow.steps.map((s, i) => (
+          m.content.steps.map((s, i) => (
             <div class="pipe-step">
               <div class="dot">{i + 1}</div>
               <b>{s.t}</b>
@@ -49,62 +50,105 @@ const monthly = formatPrice('marketing', lang);
           ))
         }
       </div>
-      <p class="note reveal">{m.flow.note}</p>
+      <p class="note reveal">{m.content.note}</p>
     </div>
   </section>
 
-  <!-- Formules 1a et 1b -->
+  <!-- 2. La formule mensuelle -->
   <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+    <div class="wrap monthly">
+      <div class="reveal">
+        <span class="kicker">{m.monthly.kicker}</span>
+        <h2>{m.monthly.name}</h2>
+        <p class="lead">{m.monthly.text}</p>
+        <div class="btn-row" style="margin-top:28px">
+          <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
+        </div>
+      </div>
+      <div class="monthly-price reveal">
+        <small>{m.monthly.from}</small>
+        <b>{monthly.n} €</b>
+        <span>{m.monthly.perMonth}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Et aussi -->
+  <section>
     <div class="wrap">
       <div class="section-head reveal">
-        <span class="kicker">{m.formulas.kicker}</span>
-        <h2 set:html={em(m.formulas.title)} />
+        <span class="kicker">{m.also.kicker}</span>
       </div>
-      <div class="formulas reveal">
+      <div class="also reveal">
+        {m.also.items.map((it) => <div><b>{it.t}</b><span>{it.d}</span></div>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. D'où vient l'expérience -->
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{m.proof.kicker}</span>
+        <h2 set:html={em(m.proof.title)} />
+      </div>
+      <ul class="proof">
+        {
+          m.proof.items.map((it) => (
+            <li class="reveal">
+              <div class="proof-who"><b>{it.who}</b><span>{it.role}</span></div>
+              <p>{it.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. Webinaires, après le contenu -->
+  <section style="background:var(--bg-2);border-block:1px solid var(--line)" id="webinaires">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{w.kicker}</span>
+        <h2 set:html={em(w.title)} />
+        <p class="lead">{w.sub}</p>
+      </div>
+      <div class="pipeline reveal">
+        {
+          w.steps.map((s, i) => (
+            <div class="pipe-step">
+              <div class="dot">{i + 1}</div>
+              <b>{s.t}</b>
+              <span>{s.d}</span>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="formulas reveal" style="margin-top:clamp(32px,5vw,56px)">
         <div class="formula">
-          <span class="formula-tag">{m.formulas.setup.tag}</span>
-          <h3>{m.formulas.setup.name}</h3>
-          <p>{m.formulas.setup.text}</p>
-          <p class="who">{m.formulas.setup.who}</p>
+          <span class="formula-tag">{w.setup.tag}</span>
+          <h3>{w.setup.name}</h3>
+          <p>{w.setup.text}</p>
+          <p class="who">{w.setup.who}</p>
           <p class="formula-price">{money(webinarPrices.setup)}</p>
         </div>
         <div class="formula plus">
-          <span class="formula-tag">{m.formulas.plus.tag}</span>
-          <h3>{m.formulas.plus.name}</h3>
-          <p>{m.formulas.plus.text}</p>
-          <p class="who">{m.formulas.plus.who}</p>
+          <span class="formula-tag">{w.plus.tag}</span>
+          <h3>{w.plus.name}</h3>
+          <p>{w.plus.text}</p>
+          <p class="who">{w.plus.who}</p>
           <p class="formula-price">{money(webinarPrices.plus)}</p>
         </div>
       </div>
-      <p class="note reveal">{m.formulas.quoteNote}</p>
-      <p class="rail-foot reveal" style="margin-top:28px">
-        {m.formulas.monthly}
-        <strong>{lang === 'fr' ? 'Dès' : 'From'} {monthly.amount} / {lang === 'fr' ? 'mois' : 'month'}.</strong>
-        <a class="textlink" href={href(lang, 'offers')}>{c.nav.offers}</a>
-      </p>
-    </div>
-  </section>
+      <p class="note reveal">{w.quoteNote}</p>
 
-  <!-- Promesse honnête -->
-  <section>
-    <div class="wrap">
-      <div class="promise reveal">
-        <h2>{m.promise.title}</h2>
+      <div class="promise reveal" style="margin-top:clamp(40px,6vw,72px)">
+        <h3 class="promise-title">{w.promiseTitle}</h3>
         <div class="promise-cols">
-          <p><b>{lang === 'fr' ? 'Je promets' : 'I promise'}</b>{m.promise.yes}</p>
-          <p><b>{lang === 'fr' ? 'Je ne promets pas' : 'I do not promise'}</b>{m.promise.no}</p>
+          <p><b>{w.promiseYes}</b>{w.yes}</p>
+          <p><b>{w.promiseNo}</b>{w.no}</p>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Parcours -->
-  <section style="padding-top:0">
-    <div class="wrap">
-      <div class="section-head reveal" style="margin-bottom:0">
-        <span class="kicker">{m.background.kicker}</span>
-        <h2 set:html={em(m.background.title)} />
-        <p class="lead">{m.background.text}</p>
       </div>
     </div>
   </section>

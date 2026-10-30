@@ -32,11 +32,11 @@ const price = (k: PriceKey) => formatPrice(k, lang);
             const p = price(r.key as PriceKey);
             return (
               <li class="rung reveal" style={`--i:${i}`}>
-                <div class="name"><h3>{r.name}</h3></div>
+                <div class="name"><h3><a class="rung-link" href={href(lang, r.href)}>{r.name}</a></h3></div>
                 <p class="line">{r.line}</p>
                 <p class="out">{r.out}</p>
                 <div class="price">
-                  <span class="price-f">{p.from ? o.from : o.flat}</span>
+                  <span class="price-f">{p.from ? o.from : p.range ? '\u00a0' : o.flat}</span>
                   <span class="price-n">{p.amount}</span>
                 </div>
               </li>
@@ -86,7 +86,7 @@ const price = (k: PriceKey) => formatPrice(k, lang);
             return (
               <li class="reveal">
                 <div>
-                  <h3>{s.name}</h3>
+                  <h3>{(s as { href?: string }).href ? <a class="rung-link" href={href(lang, (s as { href?: string }).href as string)}>{s.name}</a> : s.name}</h3>
                   <p>{s.line}</p>
                 </div>
                 <div class="price-n">

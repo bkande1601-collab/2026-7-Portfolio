@@ -55,14 +55,14 @@ const i18n = {
           <div class="field">
             <label for="b-need">{b.fields.need}</label>
             <select id="b-need" name="need" required>
-              <option value="" disabled selected>—</option>
+              <option value="" disabled selected>{lang === 'fr' ? 'Choisir' : 'Choose'}</option>
               {b.needs.map((n) => <option value={n.v}>{n.t}</option>)}
             </select>
           </div>
           <div class="field">
             <label for="b-budget">{b.fields.budget} <span>({b.fields.optional})</span></label>
             <select id="b-budget" name="budget">
-              <option value="" selected>—</option>
+              <option value="" selected>{lang === 'fr' ? 'Choisir' : 'Choose'}</option>
               {b.budgets.map((n) => <option value={n.v}>{n.t}</option>)}
             </select>
           </div>

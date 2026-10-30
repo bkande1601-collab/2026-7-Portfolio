@@ -1,6 +1,6 @@
 ---
 /** Les offres sur une seule ligne (accueil). */
-import { t, type Lang } from '../content';
+import { t, href, type Lang } from '../content';
 import { formatPrice as fmt, type PriceKey } from '../config/site';
 
 interface Props {
@@ -9,12 +9,13 @@ interface Props {
 const { lang } = Astro.props;
 const c = t(lang);
 
-const stops: { key: PriceKey; name: string }[] = [
-  { key: 'audit', name: c.offers.ladder[0].name },
-  { key: 'sprint', name: c.offers.ladder[1].name },
-  { key: 'agent', name: c.offers.ladder[2].name },
-  { key: 'tool', name: c.offers.ladder[3].name },
-  { key: 'run', name: 'Run' },
+const stops: { key: PriceKey; name: string; page: string }[] = [
+  { key: 'diagnostic', name: c.offers.ladder[0].name, page: 'products' },
+  { key: 'prompt', name: c.offers.ladder[1].name, page: 'products' },
+  { key: 'clarity', name: c.offers.ladder[2].name, page: 'book' },
+  { key: 'agent', name: c.offers.ladder[3].name, page: 'automations' },
+  { key: 'system', name: c.offers.ladder[4].name, page: 'automations' },
+  { key: 'run', name: 'Run', page: 'offers' },
 ];
 ---
 
@@ -24,14 +25,14 @@ const stops: { key: PriceKey; name: string }[] = [
       stops.map((s) => {
         const p = fmt(s.key, lang);
         return (
-          <div class="stop">
-            <span class="f">{p.from ? c.offers.from : s.key === 'audit' ? c.offers.flat : ' '}</span>
+          <a class="stop" href={href(lang, s.page)}>
+            <span class="f">{p.from ? c.offers.from : p.range ? ' ' : s.key === 'run' ? ' ' : c.offers.flat}</span>
             <span class="p">
               {p.amount}
               {p.per === 'month' && <small>{c.offers.perMonth}</small>}
             </span>
             <span class="n">{s.name}</span>
-          </div>
+          </a>
         );
       })
     }
