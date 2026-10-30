@@ -1,0 +1,24 @@
+---
+import { href, type Lang } from '../content';
+import type { Post } from '../content/blog';
+
+interface Props {
+  lang: Lang;
+  post: Post;
+  big?: boolean;
+}
+const { lang, post, big = false } = Astro.props;
+const x = post[lang];
+---
+
+<a class={`pcard${big ? ' big' : ''}`} href={href(lang, `blog/${post.slug}`)}>
+  <span class={`pcard-cover tone-${post.cover.tone}${post.cover.cutout ? ' cut' : ''}`}>
+    <img src={post.cover.src} alt="" width="800" height="600" loading="lazy" />
+  </span>
+  <span class="pcard-body">
+    <span class="post-tag">{x.tag}</span>
+    <span class="post-title">{x.title}</span>
+    <span class="post-ex">{x.excerpt}</span>
+    <span class="pcard-go" aria-hidden="true">→</span>
+  </span>
+</a>

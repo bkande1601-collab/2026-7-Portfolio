@@ -2,10 +2,12 @@
 import Base from '../../../layouts/Base.astro';
 import CtaMenu from '../../../components/CtaMenu.astro';
 import Window from '../../../components/Window.astro';
+import MotionVideo from '../../../components/MotionVideo.astro';
 import Marquee from '../../../components/Marquee.astro';
 import CtaBand from '../../../components/CtaBand.astro';
 import Crumb from '../../../components/Crumb.astro';
 import { t, em, href, langs, type Lang } from '../../../content';
+import { site } from '../../../config/site';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -17,7 +19,7 @@ const a = c.automations;
 
 <Base lang={lang} page="automations/systems" title={c.nav.sub.systems} description={a.tool.text}>
   <section class="page-hero has-photo">
-    <div class="wrap hero-split">
+    <div class="wrap hero-split wide">
       <div class="hero-text">
       <Crumb lang={lang} parent="automations" label={c.nav.automations} />
       <span class="kicker" style="display:flex">{a.tool.kicker}</span>
@@ -34,14 +36,20 @@ const a = c.automations;
   <section style="padding-top:clamp(32px,5vw,64px)">
     <div class="wrap">
       <div class="reveal">
-        <Window
-          title={c.home.platform.chat.title}
-          modules={c.home.platform.modules}
-          q={c.home.platform.chat.q}
-          a={c.home.platform.chat.a}
-          src={c.home.platform.chat.src}
-          lock={c.home.platform.chat.lock}
-        />
+        {
+          site.automationsVideo ? (
+            <MotionVideo src={site.automationsVideo} poster={site.automationsVideoPoster} label={a.tool.kicker} soundOn={c.home.hero.soundOn} soundOff={c.home.hero.soundOff} />
+          ) : (
+            <Window
+              title={c.home.platform.chat.title}
+              modules={c.home.platform.modules}
+              q={c.home.platform.chat.q}
+              a={c.home.platform.chat.a}
+              src={c.home.platform.chat.src}
+              lock={c.home.platform.chat.lock}
+            />
+          )
+        }
       </div>
     </div>
   </section>

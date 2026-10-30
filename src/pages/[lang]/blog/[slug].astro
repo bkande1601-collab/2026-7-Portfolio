@@ -1,7 +1,10 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import CtaBand from '../../../components/CtaBand.astro';
+import CtaMenu from '../../../components/CtaMenu.astro';
 import Crumb from '../../../components/Crumb.astro';
+import PostCard from '../../../components/PostCard.astro';
+import ResourceBox from '../../../components/ResourceBox.astro';
 import { t, em, href, langs, type Lang } from '../../../content';
 import { posts } from '../../../content/blog';
 
@@ -15,31 +18,87 @@ const b = c.blog;
 const post = posts.find((p) => p.slug === slug)!;
 const x = post[lang];
 const date = new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(post.date));
+const others = posts.filter((p) => p.slug !== slug).slice(0, 3);
+const services = b.services as Record<string, { name: string; line: string }>;
 ---
 
 <Base lang={lang} page={`blog/${slug}`} title={x.title} description={x.excerpt}>
-  <section class="page-hero">
-    <div class="wrap">
-      <Crumb lang={lang} parent="blog" label={b.back} />
-      <span class="kicker" style="display:flex">{x.tag}</span>
-      <h1>{x.title}</h1>
-      <p class="lead">{x.excerpt}</p>
-      <p class="post-meta">{date} · {post.minutes} {b.minutes}</p>
+  <section class={`page-hero${post.cover.cutout ? ' has-photo' : ''}`}>
+    <div class={`wrap${post.cover.cutout ? ' hero-split' : ''}`}>
+      <div class={post.cover.cutout ? 'hero-text' : ''}>
+        <Crumb lang={lang} parent="blog" label={b.back} />
+        <span class="kicker" style="display:flex">{x.tag}</span>
+        <h1>{x.title}</h1>
+        <p class="lead">{x.excerpt}</p>
+        <p class="post-meta">{date} · {post.minutes} {b.minutes}</p>
+      </div>
+      {post.cover.cutout && <img class="hero-photo" src={post.cover.src} alt="" width="900" height="1100" />}
     </div>
   </section>
 
   <section>
     <div class="wrap">
+      {
+        !post.cover.cutout && (
+          <img class="article-photo" src={post.cover.src} alt="" width="1179" height="628" />
+        )
+      }
       <article class="article">
         {
-          x.sections.map((s) => (
-            <>
-              {s.h && <h2>{s.h}</h2>}
-              {s.p.map((para) => <p>{para}</p>)}
-            </>
-          ))
+          x.sections.map((s) =>
+            s.service ? (
+              <a class="svc" href={href(lang, s.service)}>
+                <span class="svc-k">{b.serviceLabel}</span>
+                <b>{services[s.service]?.name}</b>
+                <span>{services[s.service]?.line}</span>
+                <span class="svc-go" aria-hidden="true">→</span>
+              </a>
+            ) : (
+              <>
+                {s.h && <h2>{s.h}</h2>}
+                {s.p?.map((para) => <p>{para}</p>)}
+                {s.list && <ul class="bullets">{s.list.map((li) => <li>{li}</li>)}</ul>}
+              </>
+            ),
+          )
         }
       </article>
+
+      <!-- Gros encadré : réserver un call -->
+      <aside class="callbox reveal">
+        <div>
+          <h2>{x.callTitle}</h2>
+          <p>{x.callText}</p>
+        </div>
+        <CtaMenu lang={lang} up />
+      </aside>
+
+      <!-- Gros encadré : la ressource offerte -->
+      <ResourceBox lang={lang} slug={post.resource} />
+
+      {
+        x.sources && (
+          <div class="sources">
+            <b>{b.sourcesLabel}</b>
+            <ul>
+              {x.sources.map((s) => (
+                <li><a href={s.url} rel="noopener noreferrer" target="_blank">{s.label}</a></li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="band-lilas" style="padding-bottom:clamp(48px,7vw,96px)">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{b.allPosts}</span>
+      </div>
+      <div class="pgrid">
+        {others.map((p) => <div class="reveal"><PostCard lang={lang} post={p} /></div>)}
+      </div>
     </div>
   </section>
 

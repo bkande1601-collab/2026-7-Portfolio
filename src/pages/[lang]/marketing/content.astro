@@ -52,6 +52,19 @@ const monthly = formatPrice('marketing', lang);
     </div>
   </section>
 
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{m.week.kicker}</span>
+        <h2 set:html={em(m.week.title)} />
+      </div>
+      <div class="week reveal">
+        {m.week.days.map((x) => <div><b>{x.d}</b><span>{x.t}</span></div>)}
+      </div>
+      <p class="note reveal">{m.week.note}</p>
+    </div>
+  </section>
+
   <section class="band-lilas">
     <div class="wrap monthly">
       <div class="reveal">

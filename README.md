@@ -146,3 +146,9 @@ src/
 - **Suivi de la page d'origine :** les liens vers la réservation et le message gardent la page d'où vient le visiteur (`?from=marketing/content`). Le formulaire pré-remplit alors le besoin et le message, et tu vois la page d'origine dans l'e-mail et dans l'événement Google Agenda. La correspondance page vers besoin est dans `src/lib/source.ts`.
 - **Vidéo de la page Automatisations :** mets le chemin de ton .mp4 dans `automationsVideo`, fichier `src/config/site.ts`.
 - **Publication LinkedIn du hackathon :** `hackathonLink`, même fichier.
+
+## Ressources gratuites, vidéo de la plateforme
+
+- **Ressources (livres blancs) :** chaque article du blog propose une ressource en PDF. La personne laisse son e-mail et reçoit le PDF automatiquement (il faut Resend configuré ; sans lui, le site affiche le lien direct en mode aperçu). Les textes sont dans `src/content/resources.json`. Après toute modification, relancez `python3 scripts/build-resources.py` (il faut Google Chrome) pour régénérer les PDF dans `public/ressources/`. Le nom de domaine affiché dans les PDF est `bintakande.com` : changez-le en haut du script si besoin.
+- **Vidéo motion design de la plateforme :** `public/video/plateforme.mp4` (24 secondes, sans voix, avec une petite musique que le visiteur peut activer). Elle est utilisée sur les pages Automatisations et Systèmes. Pour mettre votre propre vidéo, déposez-la au même endroit ou changez `automationsVideo` dans `src/config/site.ts`.
+- **Blog :** 5 articles dans `src/content/blog.ts`, avec des encadrés vers les services, un encadré pour réserver un échange, et la ressource à télécharger.

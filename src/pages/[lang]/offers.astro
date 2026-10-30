@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import CtaBand from '../../components/CtaBand.astro';
+import CtaMenu from '../../components/CtaMenu.astro';
 import { t, em, href, langs, type Lang } from '../../content';
 import { formatPrice, type PriceKey } from '../../config/site';
 
@@ -23,8 +24,19 @@ const price = (k: PriceKey) => formatPrice(k, lang);
     </div>
   </section>
 
-  <!-- L'échelle : Audit → Sprint → Agent IA → Outil interne -->
-  <section style="padding-top:clamp(24px,4vw,48px)">
+  <!-- Le premier échange est gratuit -->
+  <section class="band-lilas" style="padding-block:clamp(36px,5vw,56px)">
+    <div class="wrap free-call reveal">
+      <div>
+        <h2 set:html={em(o.free.title)} />
+        <p class="lead">{o.free.text}</p>
+      </div>
+      <CtaMenu lang={lang} />
+    </div>
+  </section>
+
+  <!-- L'échelle -->
+  <section>
     <div class="wrap">
       <ol class="ladder">
         {
@@ -36,7 +48,7 @@ const price = (k: PriceKey) => formatPrice(k, lang);
                 <p class="line">{r.line}</p>
                 <p class="out">{r.out}</p>
                 <div class="price">
-                  <span class="price-f">{p.from ? o.from : p.range ? '\u00a0' : o.flat}</span>
+                  <span class="price-f">{p.from ? o.from : p.range ? ' ' : o.flat}</span>
                   <span class="price-n">{p.amount}</span>
                 </div>
               </li>
@@ -48,33 +60,8 @@ const price = (k: PriceKey) => formatPrice(k, lang);
     </div>
   </section>
 
-  <!-- Abonnement mensuel -->
-  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
-    <div class="wrap run">
-      <div class="reveal">
-        <span class="kicker">{o.runKicker}</span>
-        <h2 set:html={em(o.runTitle)} />
-        <p class="lead">{o.runText}</p>
-      </div>
-      <div class="run-plans reveal">
-        {
-          o.runPlans.map((r) => {
-            const p = price(r.key as PriceKey);
-            return (
-              <div class="run-plan">
-                <h3>{r.name}</h3>
-                <div class="price-n">{p.amount}<small> {o.perMonth}</small></div>
-                <p>{r.line}</p>
-              </div>
-            );
-          })
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- Services secondaires -->
-  <section>
+  <!-- Et aussi -->
+  <section class="band-marine">
     <div class="wrap">
       <div class="section-head reveal">
         <span class="kicker">{o.otherKicker}</span>
@@ -92,7 +79,7 @@ const price = (k: PriceKey) => formatPrice(k, lang);
                 <div class="price-n">
                   {p ? (
                     <>
-                      <small style="display:block;font-size:.5em;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:400">{o.from}</small>
+                      <small style="display:block;font-size:.5em;letter-spacing:.1em;text-transform:uppercase;font-weight:400">{o.from}</small>
                       {p.amount}<small> {o.perMonth}</small>
                     </>
                   ) : (

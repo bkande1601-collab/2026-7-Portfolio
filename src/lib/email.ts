@@ -385,3 +385,42 @@ export function labMails(d: { email: string; lang: Lang }) {
   };
   return { toVisitor, toOwner };
 }
+
+/* ---------- RESSOURCE GRATUITE (PDF envoyé par e-mail) ---------- */
+export function resourceMails(d: { email: string; lang: Lang; title: string; url: string; slug: string; source?: string }) {
+  const fr = d.lang === 'fr';
+  const origin = env('SITE_URL').replace(/\/$/, '');
+  const bookUrl = origin ? `${origin}/${d.lang}/book` : '';
+  const toVisitor: Mail = {
+    to: d.email,
+    subject: fr ? `Votre ressource : ${d.title}` : `Your resource: ${d.title}`,
+    html: shell({
+      preheader: fr ? 'Voici votre ressource, comme promis.' : 'Here is your resource, as promised.',
+      title: fr ? 'Voici votre ressource.' : 'Here is your resource.',
+      body:
+        para(esc(d.title)) +
+        button(d.url, fr ? 'Télécharger le PDF' : 'Download the PDF') +
+        para(
+          fr
+            ? 'Si vous voulez aller plus loin ou que je regarde votre cas, vous pouvez réserver un échange gratuit de 30 minutes :'
+            : 'If you want to go further or have me look at your case, you can book a free 30-minute call:',
+        ) +
+        (bookUrl ? button(bookUrl, t(d.lang).cta.book) : '') +
+        `<p style="margin:24px 0 0;">${fr ? 'À très vite,' : 'Talk soon,'}<br><strong>${esc(site.name)}</strong></p>`,
+      footer: fr ? 'Vous recevez cet e-mail car vous avez demandé cette ressource sur mon site.' : 'You are receiving this email because you requested this resource on my website.',
+    }),
+    replyTo: ownerEmail() || undefined,
+  };
+  const toOwner: Mail = {
+    to: ownerEmail(),
+    subject: `Ressource téléchargée : ${d.title}`,
+    html: shell({
+      preheader: `${d.email} a demandé une ressource.`,
+      title: 'Nouvelle demande de ressource',
+      body: table(row('E-mail', `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) + row('Ressource', esc(d.title)) + row('Langue', d.lang.toUpperCase()) + (d.source ? row('Page d’origine', esc(d.source)) : '')),
+      footer: 'Une personne intéressée par vos conseils : pensez à la recontacter.',
+    }),
+    replyTo: d.email,
+  };
+  return { toVisitor, toOwner };
+}

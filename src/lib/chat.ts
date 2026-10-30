@@ -13,14 +13,14 @@ export function facts(lang: Lang): string {
       ? `Diagnostic IA du business : ${p.diagnostic.amount} €. Prompt maître sur mesure : ${p.prompt.amount} €. Le client paie sur Stripe, remplit un formulaire, puis reçoit son résultat par e-mail.`
       : `AI business diagnosis: €${p.diagnostic.amount}. Tailored master prompt: €${p.prompt.amount}. The client pays on Stripe, fills in a form, then receives the result by email.`,
     fr
-      ? `Clarity Session : ${p.clarity.amount} €, un call de ${booking.durationMin} minutes pour décider.`
-      : `Clarity Session: €${p.clarity.amount}, a ${booking.durationMin}-minute call to decide.`,
+      ? `Le premier échange de ${booking.durationMin} minutes est gratuit (bouton « Réserver un audit »).`
+      : `The first ${booking.durationMin}-minute call is free (“Book an audit” button).`,
     fr
-      ? `Agent IA : de ${p.agent.amount} à ${p.agent.to} €. Système complet : de ${eur(p.system.amount)} à ${eur(p.system.to)} €+. Abonnements Run ${p.run.amount} € par mois, Run+ ${eur(p.runPlus.amount)} € par mois.`
-      : `AI agent: €${p.agent.amount} to €${p.agent.to}. Complete system: €${p.system.amount} to €${p.system.to}+. Run subscription €${p.run.amount} per month, Run+ €${eur(p.runPlus.amount)} per month.`,
+      ? `Agent IA : de ${p.agent.amount} à ${p.agent.to} €. Système complet : de ${eur(p.system.amount)} à ${eur(p.system.to)} €+.`
+      : `AI agent: €${p.agent.amount} to €${p.agent.to}. Complete system: €${eur(p.system.amount)} to €${eur(p.system.to)}+.`,
     fr
-      ? `Contenu pour les réseaux sociaux (Instagram, TikTok, LinkedIn) : dès ${p.marketing.amount} € par mois, avec un bilan chaque semaine. Webinaires : formules Socle (sans publicité) et Boost (avec publicité), sur devis.`
-      : `Social media content (Instagram, TikTok, LinkedIn): from €${p.marketing.amount} per month, with a weekly report. Webinars: Foundation (without ads) and Boost (with ads) formulas, on quote.`,
+      ? `Contenu pour les réseaux sociaux (Instagram, TikTok, LinkedIn) : dès ${p.marketing.amount} € par mois, avec un bilan chaque semaine. Webinaires : une formule de base avec tout inclus, et du sur mesure sur devis.`
+      : `Social media content (Instagram, TikTok, LinkedIn): from €${p.marketing.amount} per month, with a weekly report. Webinars: a base formula with everything included, and custom work on quote.`,
     fr ? 'Chief of Staff externalisée : dès 2 400 € par mois.' : 'Outsourced Chief of Staff: from €2,400 per month.',
     fr
       ? 'Promesse : tout est mis en place pour que ça fonctionne, mais aucun nombre de participants ni de ventes n’est garanti.'
@@ -63,16 +63,16 @@ export function previewAnswer(message: string, lang: Lang): string {
       : `I create and publish content for Instagram, TikTok and LinkedIn, with a weekly report, from €${p.marketing.amount} per month.`;
   if (has('webinaire', 'webinar'))
     return fr
-      ? 'Pour les webinaires, il y a 2 formules : Socle (sans publicité) et Boost (avec publicité Meta). Le prix est sur devis, et je ne garantis pas un nombre de participants.'
-      : 'For webinars there are 2 formulas: Foundation (without ads) and Boost (with Meta ads). Pricing is on quote, and I do not guarantee a number of attendees.';
+      ? 'Pour les webinaires, il y a une formule de base avec tout inclus, et du sur mesure (par exemple les publicités Meta). Le prix est sur devis, et je ne garantis pas un nombre de participants.'
+      : 'For webinars there is a base formula with everything included, and custom work (for example Meta ads). Pricing is on quote, and I do not guarantee a number of attendees.';
   if (has('agent', 'automat', 'système', 'systeme', 'system'))
     return fr
       ? `Un agent IA coûte de ${p.agent.amount} à ${p.agent.to} €, un système complet de ${eur(p.system.amount)} à ${eur(p.system.to)} €+. Le devis précis suit un échange.`
       : `An AI agent costs €${p.agent.amount} to €${p.agent.to}, a complete system €${p.system.amount} to €${p.system.to}+. The exact quote follows a conversation.`;
   if (has('prix', 'tarif', 'combien', 'price', 'cost', 'how much'))
     return fr
-      ? `Mes tarifs : diagnostic ${p.diagnostic.amount} €, prompt maître ${p.prompt.amount} €, Clarity Session ${p.clarity.amount} €, agent IA de ${p.agent.amount} à ${p.agent.to} €, contenu dès ${p.marketing.amount} € par mois. Tout est détaillé sur la page Tarifs.`
-      : `My pricing: diagnosis €${p.diagnostic.amount}, master prompt €${p.prompt.amount}, Clarity Session €${p.clarity.amount}, AI agent €${p.agent.amount} to €${p.agent.to}, content from €${p.marketing.amount} per month. Everything is on the Pricing page.`;
+      ? `Mes tarifs : diagnostic ${p.diagnostic.amount} €, prompt maître ${p.prompt.amount} €, agent IA de ${p.agent.amount} à ${p.agent.to} €, contenu dès ${p.marketing.amount} € par mois. Le premier échange est gratuit. Tout est détaillé sur la page Tarifs.`
+      : `My pricing: diagnosis €${p.diagnostic.amount}, master prompt €${p.prompt.amount}, AI agent €${p.agent.amount} to €${p.agent.to}, content from €${p.marketing.amount} per month. The first call is free. Everything is on the Pricing page.`;
   if (has('rendez', 'réserv', 'reserv', 'call', 'book', 'audit', 'échange', 'echange'))
     return fr
       ? `Vous pouvez réserver un échange de ${booking.durationMin} minutes avec le bouton « Réserver un audit », en haut de la page.`

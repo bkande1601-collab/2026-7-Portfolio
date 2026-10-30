@@ -55,17 +55,21 @@ const money = (n: number | null) =>
     <div class="wrap">
       <div class="formulas reveal">
         <div class="formula">
-          <span class="formula-tag">{w.setup.tag}</span>
-          <h3>{w.setup.name}</h3>
-          <p>{w.setup.text}</p>
-          <p class="who">{w.setup.who}</p>
+          <span class="formula-tag">{w.base.tag}</span>
+          <h3>{w.base.name}</h3>
+          <p>{w.base.text}</p>
+          <ul class="checks">
+            {w.base.items.map((x) => <li>{x}</li>)}
+          </ul>
           <p class="formula-price">{money(webinarPrices.setup)}</p>
         </div>
         <div class="formula plus">
-          <span class="formula-tag">{w.plus.tag}</span>
-          <h3>{w.plus.name}</h3>
-          <p>{w.plus.text}</p>
-          <p class="who">{w.plus.who}</p>
+          <span class="formula-tag">{w.custom.tag}</span>
+          <h3>{w.custom.name}</h3>
+          <p>{w.custom.text}</p>
+          <ul class="checks">
+            {w.custom.items.map((x) => <li>{x}</li>)}
+          </ul>
           <p class="formula-price">{money(webinarPrices.plus)}</p>
         </div>
       </div>

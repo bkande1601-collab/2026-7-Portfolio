@@ -8,6 +8,7 @@ import LabSection from '../../components/LabSection.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { t, em, href, langs, type Lang } from '../../content';
 import { site } from '../../config/site';
+import PostCard from '../../components/PostCard.astro';
 import { posts } from '../../content/blog';
 
 export function getStaticPaths() {
@@ -147,23 +148,9 @@ const h = c.home;
         <span class="kicker">{h.tips.kicker}</span>
         <h2 set:html={em(h.tips.title)} />
       </div>
-      <ul class="posts">
-        {
-          posts.map((p, i) => (
-            <li class="reveal">
-              <a class="post" href={href(lang, `blog/${p.slug}`)}>
-                <span class="post-n">0{i + 1}</span>
-                <span class="post-body">
-                  <span class="post-tag">{p[lang].tag}</span>
-                  <span class="post-title">{p[lang].title}</span>
-                  <span class="post-ex">{p[lang].excerpt}</span>
-                </span>
-                <span class="post-go" aria-hidden="true">→</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      <div class="pgrid">
+        {posts.slice(0, 3).map((p) => <div class="reveal"><PostCard lang={lang} post={p} /></div>)}
+      </div>
       <p class="rail-foot reveal" style="margin-top:28px">
         <a class="textlink" href={href(lang, 'blog')}><span class="arrow">{h.tips.link}&nbsp;</span></a>
       </p>

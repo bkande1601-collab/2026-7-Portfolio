@@ -29,10 +29,12 @@ export const site = {
   photo: '/photos/binta-parcours.webp',
 
   /**
-   * VIDÉO DE LA PAGE AUTOMATISATIONS (ce que j'ai construit pour WLFG).
-   * Mettez le chemin ou l'URL d'un .mp4 ; laissez '' pour afficher la maquette.
+   * VIDÉO MOTION DESIGN DE LA PLATEFORME INTERNE (pages Automatisations et Systèmes).
+   * Elle est dans public/video/plateforme.mp4. Pour la remplacer, déposez votre
+   * propre .mp4 au même endroit, ou changez le chemin ici. Laissez '' pour la retirer.
    */
-  automationsVideo: '',
+  automationsVideo: '/video/plateforme.mp4',
+  automationsVideoPoster: '/video/plateforme-poster.webp',
 
   /** Publication LinkedIn du hackathon Mirakl x Eugenia School. */
   hackathonLink: 'https://lnkd.in/p/eW7JqGUB',
@@ -55,11 +57,8 @@ export const site = {
 export const prices = {
   diagnostic: { amount: 19, from: false, per: 'once' },
   prompt: { amount: 39, from: false, per: 'once' },
-  clarity: { amount: 99, from: false, per: 'once' },
   agent: { amount: 200, to: 800, from: false, per: 'once' },
   system: { amount: 2000, to: 5000, plus: true, from: false, per: 'once' },
-  run: { amount: 690, from: false, per: 'month' },
-  runPlus: { amount: 1490, from: false, per: 'month' },
   marketing: { amount: 900, from: true, per: 'month' },
   cos: { amount: 2400, from: true, per: 'month' },
 } as const satisfies Record<string, Price>;

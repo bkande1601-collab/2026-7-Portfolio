@@ -1,0 +1,83 @@
+---
+/** Gros encadré « ressource offerte » : la personne laisse son e-mail et reçoit le PDF. */
+import { t, type Lang } from '../content';
+
+interface Props {
+  lang: Lang;
+  slug: string;
+}
+const { lang, slug } = Astro.props;
+const k = t(lang).blog.resource;
+const title = (k.titles as Record<string, string>)[slug] ?? slug;
+const id = `res-${slug}`;
+---
+
+<aside class="resbox reveal" id={id} data-slug={slug} data-lang={lang}>
+  <div class="resbox-text">
+    <span class="kicker">{k.kicker}</span>
+    <h2>{title}</h2>
+    <p class="resbox-note">{k.consent}</p>
+  </div>
+  <form class="resbox-form" novalidate>
+    <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <label class="sr-only" for={`${id}-mail`}>{k.label}</label>
+    <input id={`${id}-mail`} name="email" type="email" inputmode="email" autocomplete="email" placeholder={k.placeholder} required />
+    <button class="btn btn-primary" type="submit">{k.button}</button>
+    <p class="form-msg" role="status" aria-live="polite"></p>
+  </form>
+</aside>
+
+<script type="application/json" id="res-i18n" set:html={JSON.stringify({ sending: k.sending, ok: k.ok, preview: k.preview, open: k.open, invalid: k.invalid, err: k.err, button: k.button })} />
+
+<script>
+  const box = document.querySelector<HTMLElement>('.resbox');
+  if (box) {
+    const t = JSON.parse(document.getElementById('res-i18n')!.textContent || '{}');
+    const form = box.querySelector('form')!;
+    const msg = box.querySelector<HTMLElement>('.form-msg')!;
+    const btn = box.querySelector<HTMLButtonElement>('button')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = new FormData(form);
+      const email = String(f.get('email') || '').trim();
+      msg.className = 'form-msg';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        msg.textContent = t.invalid;
+        msg.classList.add('err');
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = t.sending;
+      const here = location.pathname.replace(/^\/(fr|en)\/?/, '').replace(/\.html$/, '');
+      try {
+        const res = await fetch('/api/resource', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, resource: box.dataset.slug, lang: box.dataset.lang, website: f.get('website'), source: here }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error('x');
+        msg.className = 'form-msg ok';
+        if (data.preview && data.url) {
+          msg.textContent = t.preview + ' ';
+          const a = document.createElement('a');
+          a.href = data.url;
+          a.textContent = t.open;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          msg.appendChild(a);
+        } else {
+          msg.textContent = t.ok;
+        }
+        form.querySelector<HTMLInputElement>('input[type=email]')!.value = '';
+        btn.textContent = t.button;
+        btn.disabled = false;
+      } catch {
+        msg.textContent = t.err;
+        msg.classList.add('err');
+        btn.textContent = t.button;
+        btn.disabled = false;
+      }
+    });
+  }
+</script>

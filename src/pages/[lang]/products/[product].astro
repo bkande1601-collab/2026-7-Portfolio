@@ -41,16 +41,48 @@ const other = p.items.find((x) => x.key !== key)!;
   </section>
 
   <section style="padding-top:clamp(32px,5vw,64px)">
+    <div class="wrap split" style="align-items:start">
+      <div class="reveal">
+        <span class="kicker">{p.forWhoLabel}</span>
+        <p class="lead" style="margin-top:0">{it.forWho}</p>
+        <span class="kicker" style="margin-top:36px;display:flex">{p.asksLabel}</span>
+        <ul class="checks">
+          {it.asks.map((x) => <li>{x}</li>)}
+        </ul>
+      </div>
+      <div class="reveal">
+        <span class="kicker">{p.getsLabel}</span>
+        <ol class="gets">
+          {it.gets.map((g, i) => (
+            <li>
+              <span class="gets-n">0{i + 1}</span>
+              <span class="gets-t">{g.t}</span>
+              <span class="gets-d">{g.d}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Un exemple -->
+  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
     <div class="wrap">
-      <ol class="gets reveal" style="max-width:720px">
-        {it.gets.map((g, i) => (
-          <li>
-            <span class="gets-n">0{i + 1}</span>
-            <span class="gets-t">{g.t}</span>
-            <span class="gets-d">{g.d}</span>
-          </li>
+      <div class="section-head reveal">
+        <span class="kicker">{it.example.title}</span>
+        <h2>{it.example.who}</h2>
+        <p class="lead">{it.example.problem}</p>
+      </div>
+      <div class="example reveal">
+        {it.example.result.map((r, i) => (
+          <div class="example-card">
+            <span class="example-n">0{i + 1}</span>
+            <b>{r.t}</b>
+            <p>{r.d}</p>
+          </div>
         ))}
-      </ol>
+      </div>
+      <p class="note reveal">{it.example.note}</p>
     </div>
   </section>
 

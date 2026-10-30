@@ -6,6 +6,7 @@ import Marquee from '../../components/Marquee.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import SubCards from '../../components/SubCards.astro';
 import Window from '../../components/Window.astro';
+import MotionVideo from '../../components/MotionVideo.astro';
 import { t, em, href, langs, type Lang } from '../../content';
 import { site } from '../../config/site';
 
@@ -19,7 +20,7 @@ const a = c.automations;
 
 <Base lang={lang} page="automations" title={c.nav.automations} description={a.hero.sub}>
   <section class="page-hero has-photo">
-    <div class="wrap hero-split">
+    <div class="wrap hero-split wide">
       <div class="hero-text">
       <span class="kicker">{a.hero.kicker}</span>
       <h1 set:html={em(a.hero.title)} />
@@ -46,7 +47,7 @@ const a = c.automations;
       <div class="reveal">
         {
           site.automationsVideo ? (
-            <video class="built-video" src={site.automationsVideo} controls playsinline preload="metadata" aria-label={a.built.kicker} />
+            <MotionVideo src={site.automationsVideo} poster={site.automationsVideoPoster} label={a.built.kicker} soundOn={c.home.hero.soundOn} soundOff={c.home.hero.soundOff} />
           ) : (
             <Window
               title={c.home.platform.chat.title}
@@ -73,7 +74,7 @@ const a = c.automations;
     </div>
   </section>
 
-  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+  <section class="band-marine">
     <div class="wrap">
       <BeforeAfter data={c.home.beforeAfter} />
     </div>

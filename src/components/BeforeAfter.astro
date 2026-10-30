@@ -1,4 +1,9 @@
 ---
+/**
+ * Avant / après, sous forme de cerveau : à gauche des neurones en désordre,
+ * à droite des neurones organisés qui se connectent, avec des signaux qui circulent.
+ * Les textes viennent de home.beforeAfter (fr.ts et en.ts).
+ */
 import { em } from '../content';
 
 interface Props {
@@ -13,20 +18,105 @@ interface Props {
   };
 }
 const { data } = Astro.props;
+
+// petit générateur pseudo-aléatoire : le dessin est toujours le même
+let seed = 11;
+const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const f = (n: number) => Number(n.toFixed(1));
+
+// ---- hémisphère gauche : neurones dispersés, liens qui s'emmêlent
+const left: { x: number; y: number; r: number; d: number }[] = [];
+let guard = 0;
+while (left.length < 19 && guard++ < 4000) {
+  const a = rnd() * Math.PI * 2;
+  const r = Math.sqrt(rnd());
+  const x = 290 + Math.cos(a) * r * 175;
+  const y = 215 + Math.sin(a) * r * 135;
+  if (left.every((p) => Math.hypot(p.x - x, p.y - y) > 40)) left.push({ x: f(x), y: f(y), r: f(4 + rnd() * 4), d: f(rnd() * 3) });
+}
+const tangle = Array.from({ length: 34 }, () => {
+  const i = Math.floor(rnd() * left.length);
+  let j = Math.floor(rnd() * left.length);
+  if (j === i) j = (j + 1) % left.length;
+  const a = left[i];
+  const b = left[j];
+  const cx = (a.x + b.x) / 2 + (rnd() - 0.5) * 170;
+  const cy = (a.y + b.y) / 2 + (rnd() - 0.5) * 170;
+  return { d: `M${a.x} ${a.y} Q${f(cx)} ${f(cy)} ${b.x} ${b.y}`, dur: f(1.4 + rnd() * 2.6), delay: f(rnd() * 2.5) };
+});
+
+// ---- hémisphère droit : couches de neurones reliées
+const cols = [
+  { x: 560, n: 3 },
+  { x: 650, n: 5 },
+  { x: 740, n: 5 },
+  { x: 830, n: 3 },
+];
+const layers = cols.map((c) =>
+  Array.from({ length: c.n }, (_, k) => ({ x: c.x, y: f(215 + (k - (c.n - 1) / 2) * 52) })),
+);
+const links: { id: string; d: string }[] = [];
+for (let l = 0; l < layers.length - 1; l++) {
+  layers[l].forEach((a, i) =>
+    layers[l + 1].forEach((b, j) => links.push({ id: `l${l}-${i}-${j}`, d: `M${a.x} ${a.y} L${b.x} ${b.y}` })),
+  );
+}
+// quelques liens portent un signal lumineux
+const pulses = links.filter((_, i) => i % 4 === 0).map((l, i) => ({ ...l, begin: f((i * 0.37) % 2.4), dur: f(1.6 + ((i * 7) % 5) * 0.2) }));
+
+const label = `${data.beforeLabel} : ${data.before.join(', ')}. ${data.afterLabel} : ${data.after.join(', ')}.`;
 ---
 
 <div class="section-head reveal">
   <span class="kicker">{data.kicker}</span>
   <h2 set:html={em(data.title)} />
 </div>
-<div class="ba reveal">
-  <div class="ba-col before">
-    <div class="ba-label">{data.beforeLabel}</div>
-    <ol>{data.before.map((s) => <li>{s}</li>)}</ol>
-  </div>
-  <div class="ba-col after">
-    <div class="ba-label">{data.afterLabel}</div>
-    <ol>{data.after.map((s) => <li>{s}</li>)}</ol>
-  </div>
-</div>
-<p class="ba-caption reveal">{data.caption}</p>
+
+<figure class="brain reveal">
+  <svg viewBox="0 0 1000 440" role="img" aria-label={label} focusable="false">
+    <defs>
+      <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#c6b8e4" stop-opacity="0.9" />
+        <stop offset="100%" stop-color="#c6b8e4" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+
+    <!-- le cerveau : deux hémisphères -->
+    <path class="lobe lobe-l" d="M488 70 C400 20 250 28 165 105 C85 178 88 300 168 352 C245 402 380 392 488 360 C470 300 480 210 470 150 C466 118 476 96 488 70Z" />
+    <path class="lobe lobe-r" d="M512 70 C600 20 750 28 835 105 C915 178 912 300 832 352 C755 402 620 392 512 360 C530 300 520 210 530 150 C534 118 524 96 512 70Z" />
+    <path class="fold" d="M190 150 C230 120 270 140 300 118 M170 230 C215 205 250 235 290 212 M200 305 C240 285 280 312 330 296" />
+    <path class="fold" d="M810 150 C770 120 730 140 700 118 M830 230 C785 205 750 235 710 212 M800 305 C760 285 720 312 670 296" />
+
+    <!-- avant : des neurones en désordre -->
+    <g class="chaos">
+      {tangle.map((t) => <path class="tangle" d={t.d} style={`animation-duration:${t.dur}s;animation-delay:${t.delay}s`} />)}
+      {left.map((n) => <circle class="nb" cx={n.x} cy={n.y} r={n.r} style={`animation-delay:${n.d}s`} />)}
+    </g>
+
+    <!-- après : des neurones organisés, des signaux qui circulent -->
+    <g class="order">
+      {links.map((l) => <path id={l.id} class="link" d={l.d} />)}
+      {
+        pulses.map((p) => (
+          <circle r="4.5" class="pulse-dot">
+            <animateMotion dur={`${p.dur}s`} begin={`${p.begin}s`} repeatCount="indefinite">
+              <mpath href={`#${p.id}`} />
+            </animateMotion>
+          </circle>
+        ))
+      }
+      {layers.flat().map((n, i) => <circle class="na" cx={n.x} cy={n.y} r="7" style={`animation-delay:${(i % 6) * 0.3}s`} />)}
+      {layers[layers.length - 1].map((n) => <circle class="out-ring" cx={n.x} cy={n.y} r="14" />)}
+    </g>
+
+    <text class="lab" x="290" y="425" text-anchor="middle">{data.beforeLabel}</text>
+    <text class="lab lab-after" x="710" y="425" text-anchor="middle">{data.afterLabel}</text>
+  </svg>
+  <figcaption class="ba-caption">{data.caption}</figcaption>
+</figure>
+
+<script>
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll<SVGSVGElement>('.brain svg').forEach((s) => s.pauseAnimations());
+  }
+</script>

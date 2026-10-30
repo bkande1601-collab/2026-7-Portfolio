@@ -1,0 +1,389 @@
+[
+  {
+    "slug": "taches-a-automatiser",
+    "fr": {
+      "title": "Checklist : les 10 tâches à automatiser en priorité",
+      "subtitle": "Repérez en 15 minutes ce qui vous fait perdre le plus de temps.",
+      "intro": "Cette checklist vous aide à choisir par quoi commencer. Pour chaque tâche, notez de 1 à 5 : la fréquence, le temps passé et le risque d’oubli. Additionnez : les totaux les plus hauts passent en premier.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Les 10 candidates",
+          "headers": ["Tâche", "Fréquence (1 à 5)", "Temps passé (1 à 5)", "Risque d’oubli (1 à 5)", "Total"],
+          "rows": [
+            ["Accueillir un nouveau client ou collaborateur (documents, accès, message)", "", "", "", ""],
+            ["Relancer un devis resté sans réponse", "", "", "", ""],
+            ["Relancer une facture en retard", "", "", "", ""],
+            ["Trier les e-mails et demandes entrantes", "", "", "", ""],
+            ["Qualifier les demandes reçues par formulaire", "", "", "", ""],
+            ["Compiler un reporting chaque semaine", "", "", "", ""],
+            ["Rédiger le compte rendu d’une réunion", "", "", "", ""],
+            ["Planifier les rendez-vous", "", "", "", ""],
+            ["Publier et programmer les contenus", "", "", "", ""],
+            ["Mettre à jour le CRM ou la base de données", "", "", "", ""]
+          ]
+        },
+        {
+          "type": "steps",
+          "title": "Comment utiliser votre score",
+          "items": [
+            { "label": "1", "text": "Choisissez la tâche avec le total le plus haut. C’est votre première automatisation." },
+            { "label": "2", "text": "Décrivez-la étape par étape, comme si vous l’expliquiez à quelqu’un. Chaque étape sera une action de l’automatisation." },
+            { "label": "3", "text": "Mettez-la en place, puis mesurez le temps gagné pendant 2 semaines avant de passer à la suivante." }
+          ]
+        },
+        {
+          "type": "text",
+          "title": "Une règle simple",
+          "text": "Une automatisation qui marche vaut mieux que cinq à moitié finies. Commencez petit, et gardez un humain là où il faut du jugement."
+        }
+      ],
+      "cta": "Envie d’aller plus vite ? Je peux regarder votre cas avec vous."
+    },
+    "en": {
+      "title": "Checklist: the 10 tasks to automate first",
+      "subtitle": "Spot in 15 minutes what costs you the most time.",
+      "intro": "This checklist helps you choose where to start. For each task, score from 1 to 5: how often it happens, the time it takes and the risk of forgetting it. Add them up: the highest totals come first.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "The 10 candidates",
+          "headers": ["Task", "Frequency (1 to 5)", "Time spent (1 to 5)", "Risk of forgetting (1 to 5)", "Total"],
+          "rows": [
+            ["Welcoming a new client or team member (documents, access, message)", "", "", "", ""],
+            ["Following up a quote with no answer", "", "", "", ""],
+            ["Following up a late invoice", "", "", "", ""],
+            ["Sorting incoming emails and requests", "", "", "", ""],
+            ["Qualifying requests received by form", "", "", "", ""],
+            ["Compiling a report every week", "", "", "", ""],
+            ["Writing meeting notes", "", "", "", ""],
+            ["Scheduling appointments", "", "", "", ""],
+            ["Publishing and scheduling content", "", "", "", ""],
+            ["Updating the CRM or the database", "", "", "", ""]
+          ]
+        },
+        {
+          "type": "steps",
+          "title": "How to use your score",
+          "items": [
+            { "label": "1", "text": "Pick the task with the highest total. It is your first automation." },
+            { "label": "2", "text": "Describe it step by step, as if you were explaining it to someone. Each step becomes an action in the automation." },
+            { "label": "3", "text": "Set it up, then measure the time saved for 2 weeks before moving on to the next one." }
+          ]
+        },
+        {
+          "type": "text",
+          "title": "A simple rule",
+          "text": "One automation that works beats five half-finished ones. Start small, and keep a human wherever judgement is needed."
+        }
+      ],
+      "cta": "Want to go faster? I can look at your case with you."
+    }
+  },
+  {
+    "slug": "calendrier-contenu",
+    "fr": {
+      "title": "Modèle : votre calendrier de contenu sur 4 semaines",
+      "subtitle": "Une ligne claire, un rythme tenable, un bilan chaque semaine.",
+      "intro": "Remplissez ce modèle une fois, et vous savez quoi publier pendant un mois. Commencez par choisir 3 thèmes au maximum : tout ce que vous publiez doit se rattacher à l’un d’eux.",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "Mes 3 thèmes",
+          "text": "1. ____________________    2. ____________________    3. ____________________"
+        },
+        {
+          "type": "table",
+          "title": "Les 4 semaines",
+          "headers": ["Semaine", "Thème", "Format (vidéo, carrousel, texte)", "Plateforme", "Appel à l’action"],
+          "rows": [
+            ["Semaine 1", "", "", "", ""],
+            ["Semaine 2", "", "", "", ""],
+            ["Semaine 3", "", "", "", ""],
+            ["Semaine 4", "", "", "", ""]
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Le bilan de chaque semaine",
+          "items": [
+            "Quelle portée a eu chaque contenu ?",
+            "Lequel a provoqué le plus d’échanges ?",
+            "Qu’est-ce qui a fait venir des messages ou des inscriptions ?",
+            "Qu’est-ce que je refais sous un autre angle ? Qu’est-ce que j’arrête ?"
+          ]
+        },
+        {
+          "type": "text",
+          "title": "Un rythme que vous pouvez tenir",
+          "text": "Mieux vaut 3 bons contenus par semaine, tenus pendant des mois, que 7 contenus par semaine abandonnés au bout d’un mois."
+        }
+      ],
+      "cta": "Envie que je produise et publie vos contenus ? Parlons-en."
+    },
+    "en": {
+      "title": "Template: your 4-week content calendar",
+      "subtitle": "A clear line, a rhythm you can keep, a review every week.",
+      "intro": "Fill in this template once, and you know what to publish for a month. Start by choosing 3 topics at most: everything you publish should connect to one of them.",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "My 3 topics",
+          "text": "1. ____________________    2. ____________________    3. ____________________"
+        },
+        {
+          "type": "table",
+          "title": "The 4 weeks",
+          "headers": ["Week", "Topic", "Format (video, carousel, text)", "Platform", "Call to action"],
+          "rows": [
+            ["Week 1", "", "", "", ""],
+            ["Week 2", "", "", "", ""],
+            ["Week 3", "", "", "", ""],
+            ["Week 4", "", "", "", ""]
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Each week’s review",
+          "items": [
+            "What reach did each piece of content get?",
+            "Which one started the most conversations?",
+            "What brought messages or sign-ups?",
+            "What do I redo from another angle? What do I stop?"
+          ]
+        },
+        {
+          "type": "text",
+          "title": "A rhythm you can keep",
+          "text": "It is better to have 3 good pieces of content a week, kept up for months, than 7 a week given up after a month."
+        }
+      ],
+      "cta": "Want me to produce and publish your content? Let’s talk."
+    }
+  },
+  {
+    "slug": "retroplanning-webinaire",
+    "fr": {
+      "title": "Rétroplanning d’un webinaire : de J-14 à J+7",
+      "subtitle": "Tout ce qu’il faut avoir en place, au bon moment.",
+      "intro": "Un webinaire ne se joue pas le jour J. Voici le calendrier que je suis à chaque fois. Cochez au fur et à mesure.",
+      "blocks": [
+        {
+          "type": "checklist",
+          "title": "J-14 : poser les bases",
+          "items": ["Définir l’objectif (inscriptions, rendez-vous, ventes)", "Choisir le sujet et la promesse, sans exagérer", "Fixer la date et l’heure", "Créer la page d’inscription : un message, un bouton"]
+        },
+        {
+          "type": "checklist",
+          "title": "J-10 à J-7 : faire connaître",
+          "items": ["Annoncer sur vos réseaux et par e-mail", "Activer la confirmation automatique d’inscription", "Préparer le plan des slides : une idée par slide"]
+        },
+        {
+          "type": "checklist",
+          "title": "J-3 et J-1 : rappeler",
+          "items": ["Rappel par e-mail", "Rappel par WhatsApp", "Tester le son, l’image et le partage d’écran"]
+        },
+        {
+          "type": "checklist",
+          "title": "Jour J",
+          "items": ["Annoncer le plan au début", "Tenir l’horaire", "Garder un temps pour les questions", "Terminer par une seule action claire"]
+        },
+        {
+          "type": "checklist",
+          "title": "J+1 à J+7 : relancer",
+          "items": ["Envoyer le replay et un message de remerciement", "Proposer l’action : un rendez-vous, un document, une offre", "Relancer les inscrits absents", "Faire le bilan : inscrits, présents, actions"]
+        },
+        {
+          "type": "text",
+          "title": "Une précision honnête",
+          "text": "Personne ne peut garantir un nombre de participants. Le but est de réunir tout ce qui augmente vos chances."
+        }
+      ],
+      "cta": "Envie que je mette tout cela en place pour vous ? Réservez un échange gratuit."
+    },
+    "en": {
+      "title": "Webinar countdown plan: from D-14 to D+7",
+      "subtitle": "Everything that needs to be in place, at the right time.",
+      "intro": "A webinar is not decided on the day. Here is the schedule I follow every time. Tick as you go.",
+      "blocks": [
+        {
+          "type": "checklist",
+          "title": "D-14: lay the groundwork",
+          "items": ["Define the goal (sign-ups, calls, sales)", "Choose the topic and the promise, without exaggerating", "Set the date and time", "Create the sign-up page: one message, one button"]
+        },
+        {
+          "type": "checklist",
+          "title": "D-10 to D-7: spread the word",
+          "items": ["Announce on your social media and by email", "Turn on the automatic sign-up confirmation", "Prepare the slide outline: one idea per slide"]
+        },
+        {
+          "type": "checklist",
+          "title": "D-3 and D-1: remind",
+          "items": ["Email reminder", "WhatsApp reminder", "Test sound, image and screen sharing"]
+        },
+        {
+          "type": "checklist",
+          "title": "Day D",
+          "items": ["Announce the plan at the start", "Keep to the schedule", "Keep time for questions", "End with a single clear action"]
+        },
+        {
+          "type": "checklist",
+          "title": "D+1 to D+7: follow up",
+          "items": ["Send the replay and a thank-you message", "Offer the action: a call, a document, an offer", "Follow up people who signed up but did not attend", "Review: sign-ups, attendees, actions"]
+        },
+        {
+          "type": "text",
+          "title": "An honest note",
+          "text": "No one can guarantee a number of attendees. The goal is to bring together everything that improves your chances."
+        }
+      ],
+      "cta": "Want me to set all this up for you? Book a free call."
+    }
+  },
+  {
+    "slug": "choisir-un-llm",
+    "fr": {
+      "title": "Grille : choisir le bon LLM pour votre cas",
+      "subtitle": "Comparez avec vos tâches réelles, pas avec un classement.",
+      "intro": "Les classements changent souvent et ne disent pas lequel convient à votre métier. Cette grille vous aide à tester 2 ou 3 modèles sur vos vraies tâches, puis à décider calmement.",
+      "blocks": [
+        {
+          "type": "steps",
+          "title": "Le test en 4 étapes",
+          "items": [
+            { "label": "1", "text": "Choisissez 5 tâches réelles : un e-mail à rédiger, un document à résumer, une question de votre métier, une idée de contenu, un tableau à analyser." },
+            { "label": "2", "text": "Donnez exactement le même texte à 2 ou 3 modèles." },
+            { "label": "3", "text": "Notez chaque réponse de 1 à 5 dans la grille ci-dessous." },
+            { "label": "4", "text": "Ajoutez les critères pratiques : prix, confidentialité, outils connectés." }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "La grille (à remplir)",
+          "headers": ["Critère", "Modèle A", "Modèle B", "Modèle C"],
+          "rows": [
+            ["Qualité en français (1 à 5)", "", "", ""],
+            ["Justesse sur mes 5 tâches (1 à 5)", "", "", ""],
+            ["Respect de mes consignes (1 à 5)", "", "", ""],
+            ["Prix pour mon usage", "", "", ""],
+            ["Protection de mes données", "", "", ""],
+            ["Taille des documents acceptés", "", "", ""],
+            ["Connexion à mes outils", "", "", ""],
+            ["Total", "", "", ""]
+          ]
+        },
+        {
+          "type": "text",
+          "title": "Où regarder les classements",
+          "text": "LMArena (lmarena.ai) : un classement ouvert fondé sur les votes d’utilisateurs. Artificial Analysis (artificialanalysis.ai) : des comparaisons de qualité, de vitesse et de prix. Les classements ne s’accordent pas toujours : utilisez-les pour présélectionner, puis testez."
+        }
+      ],
+      "cta": "Envie qu’on teste ensemble sur votre cas et vos données ? Réservez un échange gratuit."
+    },
+    "en": {
+      "title": "Grid: choosing the right LLM for your case",
+      "subtitle": "Compare with your real tasks, not with a ranking.",
+      "intro": "Rankings change often and do not tell you which model suits your business. This grid helps you test 2 or 3 models on your real tasks, then decide calmly.",
+      "blocks": [
+        {
+          "type": "steps",
+          "title": "The 4-step test",
+          "items": [
+            { "label": "1", "text": "Pick 5 real tasks: an email to write, a document to summarise, a question from your field, a content idea, a table to analyse." },
+            { "label": "2", "text": "Give exactly the same text to 2 or 3 models." },
+            { "label": "3", "text": "Score each answer from 1 to 5 in the grid below." },
+            { "label": "4", "text": "Add the practical criteria: price, privacy, connected tools." }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "The grid (to fill in)",
+          "headers": ["Criterion", "Model A", "Model B", "Model C"],
+          "rows": [
+            ["Quality in my language (1 to 5)", "", "", ""],
+            ["Accuracy on my 5 tasks (1 to 5)", "", "", ""],
+            ["Following my instructions (1 to 5)", "", "", ""],
+            ["Price for my usage", "", "", ""],
+            ["Protection of my data", "", "", ""],
+            ["Size of documents accepted", "", "", ""],
+            ["Connection to my tools", "", "", ""],
+            ["Total", "", "", ""]
+          ]
+        },
+        {
+          "type": "text",
+          "title": "Where to look at rankings",
+          "text": "LMArena (lmarena.ai): an open ranking based on user votes. Artificial Analysis (artificialanalysis.ai): comparisons of quality, speed and price. Rankings do not always agree: use them to shortlist, then test."
+        }
+      ],
+      "cta": "Want us to test together on your case and your data? Book a free call."
+    }
+  },
+  {
+    "slug": "modele-prompt-maitre",
+    "fr": {
+      "title": "Modèle : écrire votre prompt maître",
+      "subtitle": "Un prompt long et précis donne des réponses utilisables du premier coup.",
+      "intro": "Un prompt maître, c’est la fiche de poste de votre assistant IA. Remplissez chaque ligne avec vos mots, puis collez le tout au début de la conversation.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Les 7 lignes à remplir",
+          "headers": ["Ligne", "À écrire", "Exemple"],
+          "rows": [
+            ["Rôle", "Qui est l’assistant ?", "Tu es l’assistante de Camille, coach sportive."],
+            ["Public", "À qui parle-t-il ?", "Des femmes qui reprennent le sport."],
+            ["Ton", "Comment parle-t-il ?", "Chaleureux, direct, jamais culpabilisant."],
+            ["Mission", "Que doit-il faire ?", "Écrire des posts Instagram, répondre aux messages."],
+            ["Règles", "Ce qu’il ne doit jamais faire", "Aucun conseil médical."],
+            ["Format", "Comment répondre ?", "Phrases courtes, une idée par message."],
+            ["Exemples", "1 ou 2 réponses que vous aimez", "Collez-les ici."]
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Avant de coller",
+          "items": ["J’ai écrit avec mes mots, pas avec ceux d’un modèle", "J’ai donné au moins un exemple de bonne réponse", "J’ai dit ce que l’assistant ne doit pas faire", "J’ai testé avec 3 demandes réelles"]
+        },
+        {
+          "type": "text",
+          "title": "Pourquoi ça marche",
+          "text": "Sans contexte, un assistant IA répond de façon générale. Avec un rôle, un public, un ton et des règles, il répond comme quelqu’un qui connaît votre métier."
+        }
+      ],
+      "cta": "Envie d’un prompt maître écrit pour vous ? Découvrez le produit à 39 €."
+    },
+    "en": {
+      "title": "Template: writing your master prompt",
+      "subtitle": "A long, precise prompt gives usable answers on the first try.",
+      "intro": "A master prompt is the job description of your AI assistant. Fill in each line with your own words, then paste everything at the start of the conversation.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "The 7 lines to fill in",
+          "headers": ["Line", "What to write", "Example"],
+          "rows": [
+            ["Role", "Who is the assistant?", "You are Camille’s assistant, a sports coach."],
+            ["Audience", "Who does it talk to?", "Women getting back into sport."],
+            ["Tone", "How does it speak?", "Warm, direct, never guilt-tripping."],
+            ["Mission", "What must it do?", "Write Instagram posts, reply to messages."],
+            ["Rules", "What it must never do", "No medical advice."],
+            ["Format", "How to answer?", "Short sentences, one idea per message."],
+            ["Examples", "1 or 2 answers you like", "Paste them here."]
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Before pasting",
+          "items": ["I wrote in my own words, not those of a template", "I gave at least one example of a good answer", "I said what the assistant must not do", "I tested with 3 real requests"]
+        },
+        {
+          "type": "text",
+          "title": "Why it works",
+          "text": "Without context, an AI assistant answers in general terms. With a role, an audience, a tone and rules, it answers like someone who knows your business."
+        }
+      ],
+      "cta": "Want a master prompt written for you? Discover the 39 € product."
+    }
+  }
+]
