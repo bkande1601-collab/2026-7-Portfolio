@@ -19,7 +19,7 @@ export function em(s: string): string {
 
 /** Outils affichés dans la bande défilante. */
 export const tools = [
-  'n8n', 'Claude', 'Claude Code', 'Gemini', 'Notion', 'HubSpot', 'Node.js', 'React',
+  'Claude', 'Claude Code', 'Gemini', 'Notion', 'HubSpot', 'Node.js', 'React',
   'Docker', 'Coolify', 'Hetzner', 'Google Calendar', 'Google Workspace', 'GitHub',
 ];
 

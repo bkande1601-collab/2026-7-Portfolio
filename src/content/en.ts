@@ -1,6 +1,6 @@
 /**
  * TEXTS — ENGLISH.
- * Tip: a word between *asterisks* is shown in italic serif (accent).
+ * Tip: a word between *asterisks* is shown in violet (accent).
  * Prices and hours are NOT here: see src/config/site.ts.
  * Same keys as fr.ts.
  */
@@ -12,9 +12,9 @@ export const en: Content = {
   locale: 'en_GB',
 
   meta: {
-    title: 'Binta Kande — Automation & AI agents that actually run in production',
+    title: 'Binta Kande, automation, AI agents and digital marketing',
     description:
-      'Chief of Staff, MSc in AI & Data. I design automations and AI agents for businesses — encrypted, in production. Audit, sprint, AI agent, internal tool.',
+      'I design automations and AI agents for businesses, and set up their digital marketing: ads, webinars, social media.',
   },
 
   nav: {
@@ -38,18 +38,40 @@ export const en: Content = {
 
   home: {
     hero: {
-      eyebrow: 'Chief of Staff · Automation & AI agents',
-      title: 'Systems that *actually* run, not demos.',
-      sub: 'I automate the repetitive work of businesses and build AI agents that know their data. Encrypted, in production, in French and English.',
+      eyebrow: 'Automation, AI agents and digital marketing',
+      title: 'Automation and marketing that *actually* run.',
+      sub: 'I build AI agents and automations for businesses, and set up their digital marketing: ads, webinars, social media. Systems in production, not demos.',
       videoLabel: 'Motion design video',
       videoPending: 'My video goes here',
     },
-    facts: [
-      { k: 'AES-256-GCM', v: 'Encrypted platform, built solo' },
-      { k: 'MSc AI & Data', v: 'The technical foundation' },
-      { k: 'WLFG', v: 'Chief of Staff of the group' },
-      { k: 'FR · EN', v: 'Delivered in both languages' },
+    skills: [
+      'AI agents',
+      'Process automation',
+      'Digital marketing',
+      'Social media management',
+      'Meta ads',
+      'Turnkey webinars',
+      'WhatsApp automations',
+      'Landing pages',
+      'AI assistants on your documents',
+      'Internal platforms',
+      'Data reporting',
+      'Chief of Staff',
     ],
+    services: {
+      kicker: 'Two ways to work together',
+      title: 'Systems that *run*, and marketing that fills them.',
+      auto: {
+        name: 'Automation & AI',
+        text: 'I take repetitive work off your team with automations, AI agents connected to your tools and documents, and custom internal tools.',
+        link: 'See automation',
+      },
+      marketing: {
+        name: 'Digital marketing',
+        text: 'Meta ads, turnkey webinars, WhatsApp and email automations, social media. You can come just for the marketing.',
+        link: 'See marketing',
+      },
+    },
     toolsTitle: 'What I use every day',
 
     beforeAfter: {
@@ -65,7 +87,7 @@ export const en: Content = {
       ],
       after: [
         'A request lands',
-        'n8n routes and classifies it',
+        'Automation routes and classifies it',
         'The AI agent reads, drafts, decides',
         'Notion, HubSpot, Calendar updated — report is automatic',
       ],
@@ -76,7 +98,7 @@ export const en: Content = {
       kicker: 'Proof, in production',
       title: 'I built *my own* platform. It runs every day.',
       text: "Projects, messaging, a to-do synced with Notion, OKRs, onboarding and offboarding, Google Calendar, and an AI assistant that knows the company's documents. Designed and built solo, encrypted, bilingual.",
-      stack: 'n8n · Gemini · Hetzner via Coolify',
+      stack: 'Gemini · Hetzner via Coolify',
       modules: ['Projects', 'Messaging', 'To-do · Notion', 'OKR', 'Onboarding & exits', 'Calendar', 'AI assistant'],
       chat: {
         title: 'AI assistant',
@@ -124,7 +146,7 @@ export const en: Content = {
     hero: {
       kicker: 'Automation & AI',
       title: 'I take the *repetitive* work off your team.',
-      sub: 'n8n automations, AI agents plugged into your tools and documents, custom internal tools. This is my core craft.',
+      sub: 'Custom automations, AI agents plugged into your tools and documents, custom internal tools. This is my core craft.',
     },
     flow: {
       kicker: 'A concrete example',
@@ -180,7 +202,7 @@ export const en: Content = {
         { t: 'Reminders', d: 'Automatic WhatsApp and emails' },
         { t: 'Webinar', d: 'Structured slides, a follow-up after' },
       ],
-      note: 'Everything runs on n8n. Each person who signs up gets the right message at the right time, with nothing sent by hand.',
+      note: 'Everything is automated. Each person who signs up gets the right message at the right time, with nothing sent by hand.',
     },
     formulas: {
       kicker: 'Two formulas',

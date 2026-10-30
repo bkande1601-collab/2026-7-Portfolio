@@ -1,6 +1,6 @@
 /**
  * TEXTES — FRANÇAIS.
- * Astuce : un mot entre *astérisques* s'affiche en italique serif (accent).
+ * Astuce : un mot entre *astérisques* s'affiche en violet (accent).
  * Les prix et horaires ne sont PAS ici : voir src/config/site.ts.
  * La version anglaise est dans en.ts (mêmes clés).
  */
@@ -10,9 +10,9 @@ export const fr = {
   locale: 'fr_FR',
 
   meta: {
-    title: 'Binta Kande — Automatisations & agents IA qui tournent en production',
+    title: 'Binta Kande, automatisations, agents IA et marketing digital',
     description:
-      'Chief of Staff, MSc IA & Data. Je conçois des automatisations et des agents IA pour les entreprises, chiffrés et en production. Audit, sprint, agent IA, outil interne.',
+      'Je conçois des automatisations et des agents IA pour les entreprises, et je mets en place leur marketing digital : publicités, webinaires, réseaux sociaux.',
   },
 
   nav: {
@@ -36,18 +36,40 @@ export const fr = {
 
   home: {
     hero: {
-      eyebrow: 'Chief of Staff · Automatisations & agents IA',
-      title: 'Des systèmes qui *tournent* vraiment, pas des démos.',
-      sub: "J'automatise le travail répétitif des entreprises et je construis les agents IA qui connaissent leurs données. Chiffré, en production, en français et en anglais.",
+      eyebrow: 'Automatisations, agents IA et marketing digital',
+      title: 'Des automatisations et du marketing qui *tournent* vraiment.',
+      sub: "Je construis des agents IA et des automatisations pour les entreprises, et je mets en place leur marketing digital : publicités, webinaires, réseaux sociaux. Des systèmes en production, pas des démos.",
       videoLabel: 'Vidéo motion design',
       videoPending: 'Ma vidéo arrive ici',
     },
-    facts: [
-      { k: 'AES-256-GCM', v: 'Plateforme chiffrée, construite seule' },
-      { k: 'MSc IA & Data', v: 'Le socle technique' },
-      { k: 'WLFG', v: 'Chief of Staff du groupe' },
-      { k: 'FR · EN', v: 'Livré dans les deux langues' },
+    skills: [
+      'Agents IA',
+      'Automatisation de process',
+      'Marketing digital',
+      'Social media management',
+      'Publicités Meta',
+      'Webinaires clé en main',
+      'Automatisations WhatsApp',
+      'Landing pages',
+      'Assistants IA sur vos documents',
+      'Plateformes internes',
+      'Reporting data',
+      'Chief of Staff',
     ],
+    services: {
+      kicker: 'Deux façons de travailler ensemble',
+      title: 'Des systèmes qui *tournent*, et un marketing qui les remplit.',
+      auto: {
+        name: 'Automatisations & IA',
+        text: 'Je retire le travail répétitif de votre équipe avec des automatisations, des agents IA branchés sur vos outils et vos documents, et des outils internes sur mesure.',
+        link: 'Voir les automatisations',
+      },
+      marketing: {
+        name: 'Marketing digital',
+        text: 'Publicités Meta, webinaires clé en main, automatisations WhatsApp et e-mails, réseaux sociaux. Vous pouvez venir uniquement pour le marketing.',
+        link: 'Voir le marketing',
+      },
+    },
     toolsTitle: 'Ce que j’utilise tous les jours',
 
     beforeAfter: {
@@ -63,7 +85,7 @@ export const fr = {
       ],
       after: [
         'Une demande arrive',
-        'n8n la route et la classe',
+        'L’automatisation la route et la classe',
         "L'agent IA lit, rédige, décide",
         'Notion, HubSpot, Agenda à jour — rapport automatique',
       ],
@@ -74,7 +96,7 @@ export const fr = {
       kicker: 'La preuve, en production',
       title: "J'ai construit *ma propre* plateforme. Elle tourne tous les jours.",
       text: "Projets, messagerie, to-do synchronisée avec Notion, OKR, arrivées et départs, Google Agenda, et un assistant IA qui connaît les documents de l'entreprise. Conçue et développée seule, chiffrée, bilingue.",
-      stack: 'n8n · Gemini · Hetzner via Coolify',
+      stack: 'Gemini · Hetzner via Coolify',
       modules: ['Projets', 'Messagerie', 'To-do · Notion', 'OKR', 'Onboarding & départs', 'Agenda', 'Assistant IA'],
       chat: {
         title: 'Assistant IA',
@@ -122,7 +144,7 @@ export const fr = {
     hero: {
       kicker: 'Automatisations & IA',
       title: 'Je retire le travail *répétitif* de votre équipe.',
-      sub: "Des automatisations n8n, des agents IA branchés sur vos outils et vos documents, des outils internes sur mesure. C'est mon cœur de métier.",
+      sub: "Des automatisations sur mesure, des agents IA branchés sur vos outils et vos documents, des outils internes sur mesure. C'est mon cœur de métier.",
     },
     flow: {
       kicker: 'Un exemple concret',
@@ -178,7 +200,7 @@ export const fr = {
         { t: 'Rappels', d: 'WhatsApp et e-mails automatiques' },
         { t: 'Webinaire', d: 'Des slides cadrées, une relance après' },
       ],
-      note: 'Tout est automatisé avec n8n. Chaque inscrit reçoit le bon message au bon moment, sans envoi à la main.',
+      note: 'Tout est automatisé. Chaque inscrit reçoit le bon message au bon moment, sans envoi à la main.',
     },
     formulas: {
       kicker: 'Deux formules',

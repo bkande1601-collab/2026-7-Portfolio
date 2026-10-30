@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import HeroVisual from '../../components/HeroVisual.astro';
+import SkillsBar from '../../components/SkillsBar.astro';
 import Marquee from '../../components/Marquee.astro';
 import BeforeAfter from '../../components/BeforeAfter.astro';
 import Window from '../../components/Window.astro';
@@ -34,12 +35,30 @@ const h = c.home;
     </div>
   </section>
 
-  <!-- 2. Les infos clés d'un coup d'œil -->
-  <div class="wrap" style="padding-block:0">
-    <div class="facts">
-      {h.facts.map((f) => <div><b>{f.k}</b><span>{f.v}</span></div>)}
+  <!-- 2. Bande défilante des compétences -->
+  <SkillsBar skills={h.skills} label={h.hero.eyebrow} />
+
+  <!-- 2b. Deux services : automatisations et marketing -->
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{h.services.kicker}</span>
+        <h2 set:html={em(h.services.title)} />
+      </div>
+      <div class="formulas reveal">
+        <div class="formula">
+          <h3>{h.services.auto.name}</h3>
+          <p>{h.services.auto.text}</p>
+          <a class="textlink" style="margin-top:auto;align-self:flex-start" href={href(lang, 'automations')}><span class="arrow">{h.services.auto.link}&nbsp;</span></a>
+        </div>
+        <div class="formula plus">
+          <h3>{h.services.marketing.name}</h3>
+          <p>{h.services.marketing.text}</p>
+          <a class="textlink" style="margin-top:auto;align-self:flex-start" href={href(lang, 'marketing')}><span class="arrow">{h.services.marketing.link}&nbsp;</span></a>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
   <!-- 3. Bande d'outils -->
   <Marquee label={h.toolsTitle} />

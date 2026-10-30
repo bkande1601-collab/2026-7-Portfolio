@@ -1,0 +1,19 @@
+---
+interface Props {
+  skills: string[];
+  label: string;
+}
+const { skills, label } = Astro.props;
+---
+
+<!-- Bande défilante des compétences. Les textes sont dans content/fr.ts et en.ts (home.skills). -->
+<div class="skills" role="region" aria-label={label}>
+  <div class="marquee-track skills-track">
+    <ul class="marquee-group">
+      {skills.map((x) => <li>{x}</li>)}
+    </ul>
+    <ul class="marquee-group" aria-hidden="true">
+      {skills.map((x) => <li>{x}</li>)}
+    </ul>
+  </div>
+</div>

@@ -392,6 +392,7 @@ a:hover > .arrow::after {
 }
 .hero h1 {
   margin-bottom: 24px;
+  font-size: clamp(2rem, 4.1vw, 3.5rem);
 }
 .hero .lead {
   margin-bottom: 32px;
@@ -485,46 +486,43 @@ a:hover > .arrow::after {
   }
 }
 
-/* ---------- ligne de preuves ---------- */
-.facts {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+/* ---------- bande des compétences (café profond, défile) ---------- */
+.skills {
+  background: var(--marron);
+  color: var(--beige);
+  overflow: hidden;
+  padding-block: 18px;
 }
-.facts > div {
-  padding: 26px 24px;
-  border-left: 1px solid var(--line);
+.skills-track {
+  mask-image: none;
+  animation-duration: 46s;
 }
-.facts > div:first-child {
-  border-left: 0;
-  padding-left: 0;
+.skills .marquee-group {
+  list-style: none;
+  margin: 0;
+  gap: 0;
+  padding: 0;
 }
-.facts b {
-  display: block;
+.skills li {
   font-family: var(--font-head);
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
-  letter-spacing: -0.02em;
-  font-weight: 600;
+  font-weight: 800;
+  font-stretch: 120%;
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  white-space: nowrap;
+  padding-inline: clamp(18px, 2.6vw, 34px);
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(18px, 2.6vw, 34px);
 }
-.facts span {
-  font-size: 0.9rem;
-  color: var(--muted);
+.skills li::after {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--lilas);
 }
-@media (max-width: 760px) {
-  .facts {
-    grid-template-columns: 1fr 1fr;
-  }
-  .facts > div:nth-child(3) {
-    border-left: 0;
-    padding-left: 0;
-  }
-  .facts > div:nth-child(n + 3) {
-    border-top: 1px solid var(--line);
-  }
-  .facts > div {
-    padding: 18px 14px;
-  }
+.skills li:nth-child(3n + 2) {
+  color: var(--lilas);
 }
 
 /* ---------- bande défilante ---------- */
