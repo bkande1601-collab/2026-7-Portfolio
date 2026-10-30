@@ -53,6 +53,15 @@ export const prices = {
   cos: { amount: 2400, from: true, per: 'month' },
 } as const;
 
+/**
+ * WEBINAIRES (page Marketing). Mettez un montant en euros pour l'afficher
+ * (ex. 1900). Laissez null pour afficher « Sur devis ».
+ */
+export const webinarPrices: { setup: number | null; plus: number | null } = {
+  setup: null,
+  plus: null,
+};
+
 export type PriceKey = keyof typeof prices;
 
 /**

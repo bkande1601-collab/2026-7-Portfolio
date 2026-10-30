@@ -18,6 +18,7 @@ export const fr = {
   nav: {
     home: 'Accueil',
     automations: 'Automatisations & IA',
+    marketing: 'Marketing',
     offers: 'Offres & tarifs',
     journey: 'Parcours',
     faq: 'FAQ',
@@ -160,6 +161,56 @@ export const fr = {
     stackTitle: 'Les outils derrière',
     finalTitle: 'Commençons par *l’audit*.',
     finalText: 'Une demi-heure, un process, une première piste chiffrée.',
+  },
+
+  marketing: {
+    hero: {
+      kicker: 'Marketing digital',
+      title: 'Un webinaire *cadré*, de la publicité à la relance.',
+      sub: "Je mets en place tout ce qu'il faut pour que votre webinaire se remplisse et se déroule bien : publicités Meta, automatisations WhatsApp, e-mails, landing page et slides. Clé en main.",
+    },
+    flow: {
+      kicker: 'Le parcours d’un participant',
+      title: 'De la publicité au replay, tout est *relié*.',
+      steps: [
+        { t: 'Publicité Meta', d: 'Elle attire les bonnes personnes' },
+        { t: 'Landing page', d: 'Une page, une inscription' },
+        { t: 'Rappels', d: 'WhatsApp et e-mails automatiques' },
+        { t: 'Webinaire', d: 'Des slides cadrées, une relance après' },
+      ],
+      note: 'Tout est automatisé avec n8n. Chaque inscrit reçoit le bon message au bon moment, sans envoi à la main.',
+    },
+    formulas: {
+      kicker: 'Deux formules',
+      title: 'Vous choisissez *jusqu’où* je vais.',
+      setup: {
+        tag: 'Formule 1a',
+        name: 'Mise en place',
+        text: 'Je construis tout le dispositif : landing page, e-mails aux participants, automatisations WhatsApp. Je vous guide aussi pour préparer vos slides.',
+        who: 'Pour celles et ceux qui ont déjà une audience.',
+      },
+      plus: {
+        tag: 'Formule 1b',
+        name: 'Mise en place et marketing',
+        text: 'Tout ce qui précède, plus la publicité : je crée et pilote vos campagnes Meta pour remplir votre webinaire.',
+        who: 'Pour partir de zéro ou aller plus vite.',
+      },
+      quote: 'Sur devis',
+      quoteNote: 'Le prix dépend de votre webinaire. Je vous le donne à la fin de l’audit.',
+      monthly: 'Marketing digital au mois : publicités, contenus et suivi, en continu.',
+    },
+    promise: {
+      title: 'Ce que je promets, et ce que je ne promets pas.',
+      yes: 'Je mets tout en place pour que votre webinaire fonctionne, avec le plus grand sérieux.',
+      no: 'Je ne garantis pas un nombre de participants ni un nombre de ventes. Personne ne peut honnêtement le faire.',
+    },
+    background: {
+      kicker: 'Pourquoi moi',
+      title: 'J’ai été social media manager avant de construire des *systèmes*.',
+      text: 'Je relie les deux : le message qui donne envie, et la mécanique qui le livre sans effort manuel.',
+    },
+    finalTitle: 'On cadre *votre webinaire* ensemble ?',
+    finalText: 'Une demi-heure pour définir l’objectif, l’audience et la formule.',
   },
 
   offers: {

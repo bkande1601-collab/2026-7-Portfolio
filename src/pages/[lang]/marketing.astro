@@ -1,0 +1,113 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { t, em, href, langs, type Lang } from '../../content';
+import { formatPrice, webinarPrices } from '../../config/site';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const m = c.marketing;
+
+const money = (n: number | null) =>
+  n === null
+    ? m.formulas.quote
+    : new Intl.NumberFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { maximumFractionDigits: 0, useGrouping: 'always' }).format(n) + ' €';
+const monthly = formatPrice('marketing', lang);
+---
+
+<Base lang={lang} page="marketing" title={c.nav.marketing} description={m.hero.sub}>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="kicker">{m.hero.kicker}</span>
+      <h1 set:html={em(m.hero.title)} />
+      <p class="lead">{m.hero.sub}</p>
+      <div class="btn-row" style="margin-top:32px">
+        <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
+        <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Le parcours d'un participant -->
+  <section style="padding-top:clamp(32px,5vw,64px)">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{m.flow.kicker}</span>
+        <h2 set:html={em(m.flow.title)} />
+      </div>
+      <div class="pipeline reveal">
+        {
+          m.flow.steps.map((s, i) => (
+            <div class="pipe-step">
+              <div class="dot">{i + 1}</div>
+              <b>{s.t}</b>
+              <span>{s.d}</span>
+            </div>
+          ))
+        }
+      </div>
+      <p class="note reveal">{m.flow.note}</p>
+    </div>
+  </section>
+
+  <!-- Formules 1a et 1b -->
+  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{m.formulas.kicker}</span>
+        <h2 set:html={em(m.formulas.title)} />
+      </div>
+      <div class="formulas reveal">
+        <div class="formula">
+          <span class="formula-tag">{m.formulas.setup.tag}</span>
+          <h3>{m.formulas.setup.name}</h3>
+          <p>{m.formulas.setup.text}</p>
+          <p class="who">{m.formulas.setup.who}</p>
+          <p class="formula-price">{money(webinarPrices.setup)}</p>
+        </div>
+        <div class="formula plus">
+          <span class="formula-tag">{m.formulas.plus.tag}</span>
+          <h3>{m.formulas.plus.name}</h3>
+          <p>{m.formulas.plus.text}</p>
+          <p class="who">{m.formulas.plus.who}</p>
+          <p class="formula-price">{money(webinarPrices.plus)}</p>
+        </div>
+      </div>
+      <p class="note reveal">{m.formulas.quoteNote}</p>
+      <p class="rail-foot reveal" style="margin-top:28px">
+        {m.formulas.monthly}
+        <strong>{lang === 'fr' ? 'Dès' : 'From'} {monthly.amount} / {lang === 'fr' ? 'mois' : 'month'}.</strong>
+        <a class="textlink" href={href(lang, 'offers')}>{c.nav.offers}</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Promesse honnête -->
+  <section>
+    <div class="wrap">
+      <div class="promise reveal">
+        <h2>{m.promise.title}</h2>
+        <div class="promise-cols">
+          <p><b>{lang === 'fr' ? 'Je promets' : 'I promise'}</b>{m.promise.yes}</p>
+          <p><b>{lang === 'fr' ? 'Je ne promets pas' : 'I do not promise'}</b>{m.promise.no}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Parcours -->
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head reveal" style="margin-bottom:0">
+        <span class="kicker">{m.background.kicker}</span>
+        <h2 set:html={em(m.background.title)} />
+        <p class="lead">{m.background.text}</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={m.finalTitle} text={m.finalText} />
+</Base>

@@ -1917,3 +1917,78 @@ a:hover > .arrow::after {
 .other-list .price-n small:not([style]) { font-size: 0.6em; }
 .lab-row { flex-wrap: wrap; }
 .lab-state { white-space: normal; }
+
+/* ---------- page marketing : deux formules et promesse ---------- */
+.formulas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 3vw, 40px);
+  align-items: stretch;
+}
+.formula {
+  padding: clamp(22px, 3vw, 36px);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.formula.plus {
+  background: var(--lilas);
+  border-color: var(--lilas);
+}
+.formula-tag {
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.formula.plus .formula-tag,
+.formula.plus .who {
+  color: var(--violet-deep);
+}
+.formula .who {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.formula-price {
+  margin-top: auto;
+  padding-top: 12px;
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-stretch: 120%;
+  font-size: 1.5rem;
+  color: var(--cannelle);
+}
+.formula.plus .formula-price {
+  color: var(--violet-deep);
+}
+.promise h2 {
+  max-width: 24ch;
+  margin-bottom: 32px;
+}
+.promise-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 5vw, 72px);
+  border-top: 1px solid var(--line-2);
+  padding-top: 28px;
+}
+.promise-cols p {
+  font-size: 1.12rem;
+}
+.promise-cols b {
+  display: block;
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-stretch: 120%;
+  color: var(--violet);
+  margin-bottom: 8px;
+}
+@media (max-width: 760px) {
+  .formulas,
+  .promise-cols {
+    grid-template-columns: 1fr;
+  }
+}

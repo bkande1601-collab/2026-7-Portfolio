@@ -20,6 +20,7 @@ export const en: Content = {
   nav: {
     home: 'Home',
     automations: 'Automation & AI',
+    marketing: 'Marketing',
     offers: 'Services & pricing',
     journey: 'Journey',
     faq: 'FAQ',
@@ -162,6 +163,56 @@ export const en: Content = {
     stackTitle: 'The tools behind it',
     finalTitle: "Let's start with *the audit*.",
     finalText: 'Half an hour, one process, a first sized lead.',
+  },
+
+  marketing: {
+    hero: {
+      kicker: 'Digital marketing',
+      title: 'A *structured* webinar, from the ad to the follow-up.',
+      sub: 'I set up everything your webinar needs to fill up and run well: Meta ads, WhatsApp automations, emails, landing page and slides. Turnkey.',
+    },
+    flow: {
+      kicker: 'An attendee’s journey',
+      title: 'From the ad to the replay, everything is *connected*.',
+      steps: [
+        { t: 'Meta ad', d: 'It brings in the right people' },
+        { t: 'Landing page', d: 'One page, one sign-up' },
+        { t: 'Reminders', d: 'Automatic WhatsApp and emails' },
+        { t: 'Webinar', d: 'Structured slides, a follow-up after' },
+      ],
+      note: 'Everything runs on n8n. Each person who signs up gets the right message at the right time, with nothing sent by hand.',
+    },
+    formulas: {
+      kicker: 'Two formulas',
+      title: 'You choose *how far* I go.',
+      setup: {
+        tag: 'Formula 1a',
+        name: 'Setup',
+        text: 'I build the whole system: landing page, emails to attendees, WhatsApp automations. I also guide you in preparing your slides.',
+        who: 'For people who already have an audience.',
+      },
+      plus: {
+        tag: 'Formula 1b',
+        name: 'Setup and marketing',
+        text: 'Everything above, plus the advertising: I create and run your Meta campaigns to fill your webinar.',
+        who: 'To start from zero or move faster.',
+      },
+      quote: 'On quote',
+      quoteNote: 'The price depends on your webinar. I give it to you at the end of the audit.',
+      monthly: 'Monthly digital marketing: ads, content and follow-up, on an ongoing basis.',
+    },
+    promise: {
+      title: 'What I promise, and what I don’t.',
+      yes: 'I set up everything so that your webinar works, with the utmost care.',
+      no: 'I do not guarantee a number of attendees or a number of sales. No one can honestly do that.',
+    },
+    background: {
+      kicker: 'Why me',
+      title: 'I was a social media manager before I built *systems*.',
+      text: 'I connect the two: the message that makes people want it, and the machinery that delivers it with no manual effort.',
+    },
+    finalTitle: 'Shall we structure *your webinar* together?',
+    finalText: 'Half an hour to define the goal, the audience and the formula.',
   },
 
   offers: {
