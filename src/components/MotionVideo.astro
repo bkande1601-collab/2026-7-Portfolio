@@ -9,15 +9,20 @@ interface Props {
   label: string;
   soundOn: string;
   soundOff: string;
+  pauseLabel?: string;
+  playLabel?: string;
 }
-const { src, poster, label, soundOn, soundOff } = Astro.props;
+const { src, poster, label, soundOn, soundOff, pauseLabel = 'Pause', playLabel = 'Play' } = Astro.props;
 ---
 
 <div class="motion">
   <video src={src} poster={poster} autoplay muted loop playsinline preload="metadata" aria-label={label}></video>
-  <button class="sound-btn motion-sound" type="button" aria-pressed="false" data-on={soundOn} data-off={soundOff}>
-    <span aria-hidden="true">♪</span> <span class="motion-label">{soundOff}</span>
-  </button>
+  <div class="motion-bar">
+    <button class="sound-btn motion-pause" type="button" data-pause={pauseLabel} data-play={playLabel}>{pauseLabel}</button>
+    <button class="sound-btn motion-sound" type="button" aria-pressed="false" data-on={soundOn} data-off={soundOff}>
+      <span aria-hidden="true">♪</span> <span class="motion-label">{soundOff}</span>
+    </button>
+  </div>
 </div>
 
 <script>
@@ -25,9 +30,22 @@ const { src, poster, label, soundOn, soundOff } = Astro.props;
     const v = box.querySelector('video');
     const b = box.querySelector<HTMLButtonElement>('.motion-sound');
     const l = box.querySelector('.motion-label');
+    const pz = box.querySelector<HTMLButtonElement>('.motion-pause');
+    if (pz && v) {
+      pz.addEventListener('click', () => {
+        if (v.paused) {
+          v.play().catch(() => {});
+          pz.textContent = pz.dataset.pause!;
+        } else {
+          v.pause();
+          pz.textContent = pz.dataset.play!;
+        }
+      });
+    }
     if (!v || !b || !l) return;
     b.addEventListener('click', () => {
       v.muted = !v.muted;
+      v.volume = 0.35;
       if (!v.muted) v.play().catch(() => {});
       b.setAttribute('aria-pressed', String(!v.muted));
       l.textContent = v.muted ? b.dataset.off! : b.dataset.on!;

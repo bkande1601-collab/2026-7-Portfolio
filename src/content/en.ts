@@ -827,6 +827,10 @@ export const en: Content = {
     resume: 'Resume',
     close: 'Close',
     note: 'AI voice, in English',
+    mute: 'Mute',
+    unmute: 'Unmute',
+    volume: 'Volume',
+    off: 'Sound is off. You can turn it back on at the bottom of the page.',
     chips: [
       { t: 'Marketing', slug: 'marketing' },
       { t: 'Automation', slug: 'automations' },
@@ -854,6 +858,7 @@ export const en: Content = {
     github: 'GitHub',
     linkedin: 'LinkedIn',
     sitemap: 'Sitemap',
+    welcomeOn: 'Turn the welcome voice back on',
   },
 
   notFound: {

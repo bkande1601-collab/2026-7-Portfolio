@@ -825,6 +825,10 @@ export const fr = {
     resume: 'Reprendre',
     close: 'Fermer',
     note: 'Voix d’IA, en anglais',
+    mute: 'Couper le son',
+    unmute: 'Remettre le son',
+    volume: 'Volume',
+    off: 'Son désactivé. Vous pouvez le réactiver en bas de page.',
     chips: [
       { t: 'Marketing', slug: 'marketing' },
       { t: 'Automatisation', slug: 'automations' },
@@ -852,6 +856,7 @@ export const fr = {
     github: 'GitHub',
     linkedin: 'LinkedIn',
     sitemap: 'Plan',
+    welcomeOn: 'Réactiver la voix d’accueil',
   },
 
   notFound: {

@@ -40,7 +40,14 @@ const services = b.services as Record<string, { name: string; line: string }>;
     <div class="wrap">
       {
         !post.cover.cutout && (
-          <img class="article-photo" src={post.cover.src} alt="" width="1179" height="628" />
+          <img class="article-photo" src={post.cover.src} alt="" width="1600" height="900" />
+        )
+      }
+      {
+        post.cover.credit && (
+          <p class="photo-credit">
+            <a href={post.cover.credit.url} rel="noopener noreferrer" target="_blank">{post.cover.credit.label}</a>
+          </p>
         )
       }
       <article class="article">

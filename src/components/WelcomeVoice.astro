@@ -23,7 +23,7 @@ const lines = [
   { src: '/audio/welcome-5.m4a', en: 'Are you looking for marketing? Or maybe automation? Or do you just want to find out more?', fr: 'Vous cherchez du marketing ? Ou plutôt de l’automatisation ? Ou simplement vous renseigner ?' },
   { src: '/audio/welcome-6.m4a', en: 'I’ll let you browse the pages at your own pace.', fr: 'Je vous laisse parcourir les pages tranquillement.' },
 ];
-const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr : l.en })), listen: w.listen, pause: w.pause, resume: w.resume };
+const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr : l.en })), listen: w.listen, pause: w.pause, resume: w.resume, mute: w.mute, unmute: w.unmute, off: w.off };
 ---
 
 <aside class="welcome" id="welcome" role="region" aria-label={w.title} hidden>
@@ -36,6 +36,13 @@ const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr
   <p class="welcome-note">{w.note}</p>
   <div class="welcome-row">
     <button class="btn btn-primary btn-sm" id="welcome-play" type="button">{w.listen}</button>
+    <button class="welcome-mute" id="welcome-mute" type="button" aria-pressed="false" aria-label={w.mute} title={w.mute}>
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path class="spk" d="M4 9v6h4l5 4V5L8 9H4z" /><path class="wv" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><path class="xx" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+    </button>
+    <label class="welcome-vol">
+      <span class="sr-only">{w.volume}</span>
+      <input id="welcome-vol" type="range" min="0" max="100" step="5" value="35" aria-label={w.volume} />
+    </label>
   </div>
   <div class="welcome-chips" id="welcome-chips" hidden>
     {w.chips.map((x) => <a class="chip" href={href(lang, x.slug)}>{x.t}</a>)}
@@ -49,12 +56,14 @@ const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr
   const box = document.getElementById('welcome');
   if (box) {
     let seen = false;
+    let off = false;
     try {
       seen = sessionStorage.getItem(KEY) === '1';
+      off = localStorage.getItem('welcome-sound') === 'off';
     } catch {
       /* stockage indisponible : on affiche quand même */
     }
-    if (!seen) {
+    if (!seen && !off) {
       const data = JSON.parse(document.getElementById('welcome-data')!.textContent || '{}');
       const cap = document.getElementById('welcome-cap')!;
       const playBtn = document.getElementById('welcome-play') as HTMLButtonElement;
@@ -67,6 +76,50 @@ const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr
       let idx = 0;
       let started = false;
       let playing = false;
+      let silenced = false; // coupé par la personne : plus rien ne doit repartir
+      let timer = 0;
+
+      // le son part bas (35 %), la personne règle ou coupe
+      let vol = 0.35;
+      try {
+        const saved = parseFloat(localStorage.getItem('welcome-volume') || '');
+        if (!Number.isNaN(saved)) vol = Math.min(1, Math.max(0, saved));
+      } catch {
+        /* ignore */
+      }
+      const volInput = document.getElementById('welcome-vol') as HTMLInputElement;
+      const muteBtn = document.getElementById('welcome-mute') as HTMLButtonElement;
+      volInput.value = String(Math.round(vol * 100));
+      audios.forEach((a) => (a.volume = vol));
+      volInput.addEventListener('input', () => {
+        vol = Number(volInput.value) / 100;
+        audios.forEach((a) => (a.volume = vol));
+        try {
+          localStorage.setItem('welcome-volume', String(vol));
+        } catch {
+          /* ignore */
+        }
+      });
+      muteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // couper le son : on arrête la voix et on ne la relance plus sur les prochaines pages
+        silenced = true;
+        window.clearTimeout(timer);
+        audios.forEach((a) => a.pause());
+        setPlaying(false);
+        started = true;
+        try {
+          localStorage.setItem('welcome-sound', 'off');
+          sessionStorage.setItem(KEY, '1');
+        } catch {
+          /* ignore */
+        }
+        box.classList.add('muted');
+        muteBtn.setAttribute('aria-pressed', 'true');
+        cap.textContent = data.off;
+        playBtn.hidden = true;
+        chips.hidden = true;
+      });
 
       const mark = () => {
         try {
@@ -88,13 +141,15 @@ const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr
         chips.hidden = false;
         playBtn.hidden = true;
       };
-      const playSeg = (i: number) => {
+      const playSeg = (i: number): Promise<void> => {
+        if (silenced) return Promise.reject(new Error('silenced'));
         idx = i;
         showLine(i);
         const a = audios[i];
         a.currentTime = 0;
         a.onended = () => {
-          if (i < audios.length - 1) setTimeout(() => playSeg(i + 1), 220);
+          if (silenced) return;
+          if (i < audios.length - 1) timer = window.setTimeout(() => playSeg(i + 1).catch(() => {}), 220);
           else finish();
         };
         return a.play();
@@ -141,6 +196,8 @@ const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr
         }
       });
       document.getElementById('welcome-x')!.addEventListener('click', () => {
+        silenced = true;
+        window.clearTimeout(timer);
         audios.forEach((a) => a.pause());
         mark();
         box.hidden = true;

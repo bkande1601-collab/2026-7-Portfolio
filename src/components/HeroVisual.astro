@@ -47,6 +47,7 @@ const hasVideo = Boolean(site.heroVideo);
     if (v && b && l) {
       b.addEventListener('click', () => {
         v.muted = !v.muted;
+        v.volume = 0.35;
         if (!v.muted) v.play().catch(() => {});
         b.setAttribute('aria-pressed', String(!v.muted));
         l.textContent = v.muted ? b.dataset.off! : b.dataset.on!;

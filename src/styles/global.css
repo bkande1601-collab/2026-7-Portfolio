@@ -3697,8 +3697,9 @@ a:hover > .arrow::after {
   max-width: 920px;
   margin: 0 auto 36px;
   border-radius: 22px;
-  aspect-ratio: 16 / 8;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
+  object-position: center 62%;
 }
 .article .bullets {
   margin: 0 0 22px;
@@ -4234,4 +4235,124 @@ a:hover > .arrow::after {
   .ba-lists {
     grid-template-columns: 1fr;
   }
+}
+
+/* ---------- voix d'accueil : coupure et volume ---------- */
+.welcome-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.welcome-mute {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(198, 184, 228, 0.5);
+  background: transparent;
+  color: var(--lilas);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.welcome-mute:hover {
+  background: var(--lilas);
+  color: var(--violet-deep);
+}
+.welcome-mute .spk {
+  fill: currentColor;
+}
+.welcome-mute .xx {
+  display: none;
+}
+.welcome.muted .welcome-mute .wv {
+  display: none;
+}
+.welcome.muted .welcome-mute .xx {
+  display: block;
+}
+.welcome-vol {
+  flex: 1;
+  min-width: 90px;
+}
+.welcome-vol input {
+  width: 100%;
+  accent-color: var(--lilas);
+}
+.foot-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--muted);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.foot-btn:hover {
+  color: var(--text);
+}
+.photo-credit {
+  margin: 10px auto 0;
+  max-width: 920px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.photo-credit a {
+  color: var(--violet);
+}
+
+.motion-bar {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  gap: 8px;
+}
+.motion-bar .sound-btn {
+  position: static;
+}
+
+/* début de la page Agents IA : la vidéo d'abord */
+.video-hero {
+  background: var(--marine);
+  color: var(--beige);
+  padding-block: clamp(20px, 3vw, 40px) clamp(40px, 5vw, 72px);
+}
+.video-hero .crumb {
+  color: var(--beige);
+  border-bottom-color: rgba(246, 240, 228, 0.6);
+}
+.video-hero .motion {
+  border-radius: 28px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+}
+.video-hero-text {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-top: clamp(28px, 4vw, 48px);
+}
+.video-hero-text h1 {
+  color: var(--beige);
+  max-width: 18ch;
+}
+.video-hero-text h1 em {
+  color: var(--lilas);
+}
+.video-hero-text .lead {
+  color: rgba(246, 240, 228, 0.88);
+  max-width: 56ch;
+  margin-top: 14px;
+}
+.video-hero .kicker {
+  color: var(--lilas);
+}
+.video-hero .kicker::before {
+  background: var(--lilas);
+}
+.video-hero .cta-main {
+  background: var(--lilas);
+  color: var(--violet-deep);
 }

@@ -1,10 +1,12 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import CtaMenu from '../../../components/CtaMenu.astro';
 import Window from '../../../components/Window.astro';
 import CtaBand from '../../../components/CtaBand.astro';
+import CtaMenu from '../../../components/CtaMenu.astro';
 import Crumb from '../../../components/Crumb.astro';
+import MotionVideo from '../../../components/MotionVideo.astro';
 import { t, em, href, langs, type Lang } from '../../../content';
+import { site } from '../../../config/site';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -12,25 +14,39 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const c = t(lang);
 const a = c.automations;
+const video = site.agentVideo[lang];
 ---
 
 <Base lang={lang} page="automations/agents" title={c.nav.sub.agents} description={a.agent.text}>
-  <section class="page-hero has-photo">
-    <div class="wrap hero-split wide">
-      <div class="hero-text">
+  <!-- Dès l'arrivée : la vidéo qui explique ce qu'est un agent IA -->
+  <section class="video-hero">
+    <div class="wrap">
       <Crumb lang={lang} parent="automations" label={c.nav.automations} />
-      <span class="kicker" style="display:flex">{a.agent.kicker}</span>
-      <h1 set:html={em(a.agent.title)} />
-      <p class="lead">{a.agent.text}</p>
-      <div class="btn-row" style="margin-top:32px">
+      {
+        video ? (
+          <MotionVideo
+            src={video}
+            poster={site.agentVideoPoster[lang]}
+            label={a.agent.kicker}
+            soundOn={c.home.hero.soundOn}
+            soundOff={c.home.hero.soundOff}
+            pauseLabel={c.welcome.pause}
+            playLabel={c.welcome.resume}
+          />
+        ) : null
+      }
+      <div class="video-hero-text">
+        <div>
+          <span class="kicker">{a.agent.kicker}</span>
+          <h1 set:html={em(a.agent.title)} />
+          <p class="lead">{a.agent.text}</p>
+        </div>
         <CtaMenu lang={lang} />
       </div>
-      </div>
-      <img class="hero-photo" src="/photos/binta-sourire-detouree.webp" alt="Binta Kande souriante" width="1168" height="1013" />
     </div>
   </section>
 
-  <section style="padding-top:clamp(32px,5vw,64px)">
+  <section>
     <div class="wrap split">
       <div class="reveal">
         <Window title={a.agent.kicker} q={a.agent.q} a={a.agent.a} src={a.agent.src} lock={c.home.platform.chat.lock} />

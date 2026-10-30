@@ -153,6 +153,10 @@ src/
 - **Vidéo motion design de la plateforme :** `public/video/plateforme.mp4` (24 secondes, sans voix, avec une petite musique que le visiteur peut activer). Elle est utilisée sur les pages Automatisations et Systèmes. Pour mettre votre propre vidéo, déposez-la au même endroit ou changez `automationsVideo` dans `src/config/site.ts`.
 - **Blog :** 5 articles dans `src/content/blog.ts`, avec des encadrés vers les services, un encadré pour réserver un échange, et la ressource à télécharger.
 
-## Voix de bienvenue
+## Voix de bienvenue, son et vidéos
 
-Une voix d'IA dit un petit mot de bienvenue en anglais, une seule fois par visite (les sous-titres sont dans la langue de la page). Les navigateurs bloquent souvent le son automatique : dans ce cas la voix démarre au premier clic, et un bouton « Écouter » reste visible. Les 6 fichiers audio sont dans `public/audio/` (`welcome-1.m4a` à `welcome-6.m4a`, une phrase chacun). La voix actuelle est une voix système de Mac, correcte mais simple. Pour une voix plus naturelle, générez les 6 phrases avec un service de voix (ElevenLabs par exemple) et remplacez les fichiers. Les phrases et les sous-titres sont dans `src/components/WelcomeVoice.astro`.
+- **Voix de bienvenue :** une voix d'IA dit un petit mot en anglais, une seule fois par visite. Elle part à 35 % du volume. Le visiteur peut régler le volume, couper le son (le choix est mémorisé) et le réactiver en bas de page ("Réactiver la voix d'accueil"). Les sous-titres sont dans la langue de la page. Les navigateurs bloquent souvent le son automatique : dans ce cas la voix démarre au premier clic, et un bouton « Écouter » reste visible.
+- **Fichiers audio :** `public/audio/welcome-1.m4a` à `welcome-6.m4a` (une phrase chacun). La voix a été générée avec Kokoro (modèle libre, licence Apache 2.0), voix « af_heart ». Pour une autre voix, remplacez les 6 fichiers et mettez à jour les phrases dans `src/components/WelcomeVoice.astro`.
+- **Vidéo « C'est quoi un agent IA ? » :** `public/video/agent-ia-fr.mp4` et `agent-ia-en.mp4` (31 secondes, sans voix, avec musique). Elle ouvre la page Agents IA. Elle démarre en silence, avec un bouton pause et un bouton son (volume bas par défaut). Les chemins sont dans `agentVideo`, fichier `src/config/site.ts`.
+- **Vidéo de la plateforme interne :** `public/video/plateforme.mp4`, utilisée sur les pages Automatisations et Systèmes.
+- **Photo du blog :** la couverture de l'article sur les LLM est une photo libre de droits (licence Unsplash) de Milad Fakurian, créditée sous la photo.

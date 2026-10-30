@@ -36,6 +36,13 @@ export const site = {
   automationsVideo: '/video/plateforme.mp4',
   automationsVideoPoster: '/video/plateforme-poster.webp',
 
+  /**
+   * VIDÉO « C'EST QUOI UN AGENT IA ? » (début de la page Agents IA), une par langue.
+   * Fichiers dans public/video/. Laissez '' pour retirer la vidéo de la page.
+   */
+  agentVideo: { fr: '/video/agent-ia-fr.mp4', en: '/video/agent-ia-en.mp4' } as Record<'fr' | 'en', string>,
+  agentVideoPoster: { fr: '/video/agent-ia-fr.webp', en: '/video/agent-ia-en.webp' } as Record<'fr' | 'en', string>,
+
   /** Publication LinkedIn du hackathon Mirakl x Eugenia School. */
   hackathonLink: 'https://lnkd.in/p/eW7JqGUB',
 

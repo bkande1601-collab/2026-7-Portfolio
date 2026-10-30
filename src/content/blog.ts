@@ -22,7 +22,7 @@ export type Post = {
   date: string;
   minutes: number;
   /** photo de couverture : un détourage sur fond de couleur, ou une photo entière */
-  cover: { src: string; tone: 'rouille' | 'violet' | 'marine' | 'lilas'; cutout: boolean };
+  cover: { src: string; tone: 'rouille' | 'violet' | 'marine' | 'lilas'; cutout: boolean; credit?: { label: string; url: string } };
   resource: string;
   fr: PostText;
   en: PostText;
@@ -205,7 +205,13 @@ export const posts: Post[] = [
     slug: 'choisir-un-llm',
     date: '2026-10-31',
     minutes: 5,
-    cover: { src: '/photos/hackathon-mirakl-eugenia.webp', tone: 'marine', cutout: false },
+    cover: {
+      src: '/photos/llm-unsplash-milad-fakurian.webp',
+      tone: 'marine',
+      cutout: false,
+      // photo libre de droits (licence Unsplash) : on cite l'auteur
+      credit: { label: 'Photo : Milad Fakurian, Unsplash', url: 'https://unsplash.com/photos/sin5WZzF1U0' },
+    },
     resource: 'choisir-un-llm',
     fr: {
       tag: 'Intelligence artificielle',
