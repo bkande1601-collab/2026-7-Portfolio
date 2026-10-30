@@ -1,0 +1,30 @@
+---
+/** Cartes qui mènent vers les sous-pages d'une rubrique. */
+import { t, href, type Lang } from '../content';
+
+interface Item {
+  name: string;
+  line: string;
+  slug: string;
+}
+interface Props {
+  lang: Lang;
+  items: Item[];
+}
+const { lang, items } = Astro.props;
+const c = t(lang);
+---
+
+<div class="formulas reveal">
+  {
+    items.map((it, i) => (
+      <div class={`formula${i === 1 ? ' plus' : ''}`}>
+        <h3>{it.name}</h3>
+        <p>{it.line}</p>
+        <a class="textlink" style="margin-top:auto;align-self:flex-start" href={href(lang, it.slug)}>
+          <span class="arrow">{c.nav.more}&nbsp;</span>
+        </a>
+      </div>
+    ))
+  }
+</div>

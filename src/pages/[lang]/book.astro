@@ -12,11 +12,11 @@ const b = c.book;
 
 // textes et libellés passés au script du navigateur
 const i18n = {
+  ...b,
   lang,
   duration: booking.durationMin,
   needs: Object.fromEntries(b.needs.map((n) => [n.v, n.t])),
   budgets: Object.fromEntries(b.budgets.map((n) => [n.v, n.t])),
-  ...b,
 };
 ---
 
@@ -35,12 +35,22 @@ const i18n = {
         {b.steps.map((s, i) => <li data-i={i}><b>{i + 1}</b>{s}</li>)}
       </ol>
 
-      <!-- Étape 1 : questionnaire -->
+      <!-- Étape 1 : la demande -->
       <form class="form" id="step-1" novalidate>
         <div class="two">
           <div class="field">
-            <label for="b-name">{b.fields.name}</label>
-            <input id="b-name" name="name" type="text" autocomplete="name" required />
+            <label for="b-first">{b.fields.firstName}</label>
+            <input id="b-first" name="firstName" type="text" autocomplete="given-name" required />
+          </div>
+          <div class="field">
+            <label for="b-last">{b.fields.lastName}</label>
+            <input id="b-last" name="lastName" type="text" autocomplete="family-name" required />
+          </div>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label for="b-phone">{b.fields.phone}</label>
+            <input id="b-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required />
           </div>
           <div class="field">
             <label for="b-email">{b.fields.email}</label>
@@ -71,25 +81,50 @@ const i18n = {
           <label for="b-message">{b.fields.message} <span>({b.fields.optional})</span></label>
           <textarea id="b-message" name="message" placeholder={b.fields.messagePlaceholder}></textarea>
         </div>
+
+        <fieldset class="mode">
+          <legend>{b.mode.label}</legend>
+          <label class="mode-opt">
+            <input type="radio" name="mode" value="meet" checked />
+            <span><b>{b.mode.meet}</b><small>{b.mode.meetNote}</small></span>
+          </label>
+          <label class="mode-opt">
+            <input type="radio" name="mode" value="mail" />
+            <span><b>{b.mode.mail}</b><small>{b.mode.mailNote}</small></span>
+          </label>
+        </fieldset>
+
         <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <p class="form-msg" id="b-msg1" role="alert"></p>
         <div class="btn-row">
-          <button class="btn btn-primary" type="submit"><span class="arrow">{b.next}&nbsp;</span></button>
+          <button class="btn btn-primary" type="submit" id="b-submit"><span class="arrow">{b.next}&nbsp;</span></button>
         </div>
         <p class="tz" style="margin:0">{b.privacy}</p>
       </form>
 
-      <!-- Étape 2 : jour et heure -->
+      <!-- Étape 2 : le calendrier -->
       <div id="step-2" hidden>
         <div class="notice" id="preview-note" hidden style="margin-bottom:24px">{b.preview}</div>
         <p id="loading" class="lead">{b.loading}</p>
         <p id="no-slots" class="lead" hidden>{b.noSlotsAll}</p>
-        <div id="picker" hidden>
-          <span class="sub-label">{b.pickDay}</span>
-          <div class="days" id="days" role="group" aria-label={b.pickDay}></div>
-          <span class="sub-label">{b.pickTime}</span>
-          <div class="times" id="times" role="group" aria-label={b.pickTime}></div>
-          <p class="tz" id="tz"></p>
+        <div id="picker" class="cal-wrap" hidden>
+          <div class="cal">
+            <div class="cal-head">
+              <button type="button" id="cal-prev" aria-label={b.cal.prev}>‹</button>
+              <b id="cal-title" aria-live="polite"></b>
+              <button type="button" id="cal-next" aria-label={b.cal.next}>›</button>
+            </div>
+            <div class="cal-week" aria-hidden="true">
+              {b.weekdays.map((d) => <span>{d}</span>)}
+            </div>
+            <div class="cal-grid" id="cal-grid" role="group" aria-label={b.pickDay}></div>
+            <p class="tz" id="cal-empty" hidden>{b.cal.noDays}</p>
+          </div>
+          <div class="cal-times">
+            <span class="sub-label" id="times-title">{b.pickTime}</span>
+            <div class="times" id="times" role="group" aria-label={b.pickTime}></div>
+            <p class="tz" id="tz"></p>
+          </div>
         </div>
         <div class="btn-row between">
           <button class="btn btn-ghost" type="button" id="back-2">{b.back}</button>
@@ -111,7 +146,7 @@ const i18n = {
 
       <!-- Succès -->
       <div class="success" id="done" hidden tabindex="-1">
-        <h2>{b.successTitle}</h2>
+        <h2 id="done-title">{b.successTitle}</h2>
         <p id="done-text">{b.successText}</p>
         <div class="btn-row" style="margin-top:24px">
           <a class="btn btn-ghost" href={href(lang)}>{c.nav.home}</a>
@@ -135,7 +170,6 @@ const i18n = {
 
   let preview = false;
   let slots: Slot[] = [];
-  let chosenDay = '';
   let chosen: Slot | '' = '';
   let loaded = false;
   const answers: Record<string, string> = {};
@@ -158,24 +192,73 @@ const i18n = {
   const fmtLong = (iso: string) =>
     new Intl.DateTimeFormat(locale, { timeZone: userTz, weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
 
-  // ---- étape 1
-  $('step-1').addEventListener('submit', (e) => {
+  // ---- étape 1 : la demande
+  const form = $('step-1') as HTMLFormElement;
+  const submit = $('b-submit') as HTMLButtonElement;
+  const modeOf = () => (form.elements.namedItem('mode') as RadioNodeList).value || 'meet';
+  const setLabel = () => {
+    submit.innerHTML = '';
+    const sp = document.createElement('span');
+    if (modeOf() === 'meet') {
+      sp.className = 'arrow';
+      sp.textContent = t.next + '\u00a0';
+    } else sp.textContent = t.sendMail;
+    submit.appendChild(sp);
+  };
+  form.querySelectorAll('input[name="mode"]').forEach((r) => r.addEventListener('change', setLabel));
+
+  const emailOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const phoneOk = (v: string) => /^[+()\d][\d\s().+\-]{5,24}$/.test(v) && v.replace(/\D/g, '').length >= 6;
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const f = new FormData(e.target as HTMLFormElement);
-    f.forEach((v, k) => (answers[k] = String(v).trim()));
+    new FormData(form).forEach((v, k) => (answers[k] = String(v).trim()));
     const m = $('b-msg1');
     m.className = 'form-msg';
-    if (!answers.name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(answers.email || '') || !answers.need) {
+    if (!answers.firstName || !answers.lastName || !emailOk(answers.email || '') || !answers.need) {
       m.textContent = t.errorFields;
       m.classList.add('err');
       return;
     }
+    if (!phoneOk(answers.phone || '')) {
+      m.textContent = t.errorPhone;
+      m.classList.add('err');
+      return;
+    }
     m.textContent = '';
+
+    if (modeOf() === 'mail') {
+      submit.disabled = true;
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...answers, subject: t.needs[answers.need] || answers.need, lang }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        steps.forEach((el) => (el.hidden = true));
+        stepper.hidden = true;
+        $('done-title').textContent = t.mailTitle;
+        $('done-text').textContent = t.mailText;
+        $('done').hidden = false;
+        $('done').focus();
+      } catch {
+        m.textContent = t.error;
+        m.classList.add('err');
+        submit.disabled = false;
+      }
+      return;
+    }
     show(1);
     if (!loaded) loadSlots();
   });
 
-  // ---- étape 2
+  // ---- étape 2 : le calendrier
+  let months: string[] = []; // 'YYYY-MM'
+  let mi = 0;
+  let byDay = new Map<string, Slot[]>();
+  let chosenDay = '';
+
   async function loadSlots() {
     $('loading').hidden = false;
     $('picker').hidden = true;
@@ -195,43 +278,66 @@ const i18n = {
       $('no-slots').hidden = false;
       return;
     }
-    renderDays();
-    $('picker').hidden = false;
-    $('tz').textContent = `${t.tz} ${userTz.replace('_', ' ')}`;
-  }
-
-  function renderDays() {
-    const days = Array.from(new Set(slots.map(dayKey)));
-    const box = $('days');
-    box.innerHTML = '';
-    days.forEach((d) => {
-      const first = slots.find((s) => dayKey(s) === d)!;
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'day';
-      b.setAttribute('aria-pressed', 'false');
-      const wd = new Intl.DateTimeFormat(locale, { timeZone: userTz, weekday: 'short' }).format(new Date(first));
-      const dn = new Intl.DateTimeFormat(locale, { timeZone: userTz, day: 'numeric' }).format(new Date(first));
-      const mo = new Intl.DateTimeFormat(locale, { timeZone: userTz, month: 'short' }).format(new Date(first));
-      b.innerHTML = `<small></small><b></b><small></small>`;
-      const parts = b.children;
-      parts[0].textContent = wd;
-      parts[1].textContent = dn;
-      parts[2].textContent = mo;
-      b.addEventListener('click', () => pickDay(d, b));
-      box.appendChild(b);
+    byDay = new Map();
+    slots.forEach((s) => {
+      const k = dayKey(s);
+      byDay.set(k, [...(byDay.get(k) || []), s]);
     });
-    $('times').innerHTML = '';
-  }
-
-  function pickDay(d: string, el: HTMLElement) {
-    chosenDay = d;
+    months = Array.from(new Set(Array.from(byDay.keys()).map((k) => k.slice(0, 7)))).sort();
+    mi = 0;
+    chosenDay = '';
     chosen = '';
     ($('next-2') as HTMLButtonElement).disabled = true;
-    $('days').querySelectorAll('.day').forEach((x) => x.setAttribute('aria-pressed', String(x === el)));
+    $('times').innerHTML = '';
+    $('picker').hidden = false;
+    $('tz').textContent = `${t.tz} ${userTz.replace('_', ' ')}`;
+    renderMonth();
+  }
+
+  function renderMonth() {
+    const [y, mo] = months[mi].split('-').map(Number);
+    const first = new Date(Date.UTC(y, mo - 1, 1, 12));
+    const days = new Date(Date.UTC(y, mo, 0, 12)).getUTCDate();
+    const offset = (first.getUTCDay() + 6) % 7; // lundi en premier
+    $('cal-title').textContent = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', month: 'long', year: 'numeric' }).format(first);
+    ($('cal-prev') as HTMLButtonElement).disabled = mi === 0;
+    ($('cal-next') as HTMLButtonElement).disabled = mi === months.length - 1;
+    const grid = $('cal-grid');
+    grid.innerHTML = '';
+    for (let i = 0; i < offset; i++) grid.appendChild(document.createElement('span'));
+    for (let d = 1; d <= days; d++) {
+      const key = `${months[mi]}-${String(d).padStart(2, '0')}`;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cal-day';
+      b.textContent = String(d);
+      const free = byDay.has(key);
+      b.disabled = !free;
+      if (free) {
+        b.classList.add('free');
+        b.setAttribute('aria-pressed', String(key === chosenDay));
+        b.setAttribute(
+          'aria-label',
+          new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(Date.UTC(y, mo - 1, d, 12))),
+        );
+        b.addEventListener('click', () => pickDay(key));
+      }
+      grid.appendChild(b);
+    }
+  }
+
+  function pickDay(key: string) {
+    chosenDay = key;
+    chosen = '';
+    ($('next-2') as HTMLButtonElement).disabled = true;
+    $('cal-grid').querySelectorAll('.cal-day.free').forEach((x) => {
+      x.setAttribute('aria-pressed', String(x.textContent === String(Number(key.slice(8))) && key.startsWith(months[mi])));
+    });
+    const list = byDay.get(key) || [];
+    const [y, mo, d] = key.split('-').map(Number);
+    $('times-title').textContent = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(Date.UTC(y, mo - 1, d, 12)));
     const box = $('times');
     box.innerHTML = '';
-    const list = slots.filter((s) => dayKey(s) === d);
     if (!list.length) {
       box.textContent = t.noSlotsDay;
       return;
@@ -251,6 +357,18 @@ const i18n = {
     });
   }
 
+  $('cal-prev').addEventListener('click', () => {
+    if (mi > 0) {
+      mi--;
+      renderMonth();
+    }
+  });
+  $('cal-next').addEventListener('click', () => {
+    if (mi < months.length - 1) {
+      mi++;
+      renderMonth();
+    }
+  });
   $('back-2').addEventListener('click', () => show(0));
   $('next-2').addEventListener('click', () => {
     if (!chosen) return;
@@ -258,16 +376,17 @@ const i18n = {
     show(2);
   });
 
-  // ---- étape 3
+  // ---- étape 3 : confirmation
   function renderRecap() {
     const rows: [string, string][] = [
-      [t.fields.name, answers.name],
+      [t.fields.name, `${answers.firstName} ${answers.lastName}`],
+      [t.fields.phone, answers.phone],
       [t.fields.email, answers.email],
       ...(answers.company ? ([[t.fields.company, answers.company]] as [string, string][]) : []),
       [t.fields.need, t.needs[answers.need] || answers.need],
       ...(answers.budget ? ([[t.fields.budget, t.budgets[answers.budget] || answers.budget]] as [string, string][]) : []),
       ...(answers.message ? ([[t.fields.message, answers.message]] as [string, string][]) : []),
-      ['⏱', `${fmtLong(chosen as string)} · ${t.duration} min`],
+      ['', `${fmtLong(chosen as string)} \u00b7 ${t.duration} min`],
     ];
     const dl = $('recap');
     dl.innerHTML = '';

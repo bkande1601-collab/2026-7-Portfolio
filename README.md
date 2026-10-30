@@ -129,3 +129,12 @@ src/
 - Les formulaires ont un champ piège anti-robot, une validation côté serveur et un échappement HTML dans les e-mails.
 - Un créneau n'est réservé que s'il fait partie de ce que le serveur propose réellement à cet instant (horaires, marges, délai, pas déjà pris).
 - Pour limiter davantage le spam en production, activez le **Vercel Firewall / Attack Challenge Mode** si besoin.
+
+## Réservation, sous-pages et assistant
+
+- **Calendrier de réservation :** la page `/fr/book` propose un calendrier du mois. Les jours libres viennent de ton Google Agenda (libre ou occupé seulement). Dès que Google Agenda est branché (voir plus haut), l'événement est créé avec un lien Google Meet, au nom « Meeting Prénom x Binta | Services ». Ce nom se change dans `eventTitle`, fichier `src/config/site.ts`.
+- **Ton lien Notion Calendar** (`calendar.notion.so/meet/...`) n'est pas utilisé : Notion Calendar s'appuie sur Google Agenda, donc brancher Google Agenda suffit pour que tes créneaux soient à jour.
+- **Sans rendez-vous :** la personne peut choisir « Juste m'envoyer ma demande ». Tu reçois alors un e-mail (il faut Resend configuré).
+- **Sous-pages :** le menu a des sous-menus. Les pages sont dans `src/pages/[lang]/marketing/`, `automations/` et `products/`. Les textes sont dans `src/content/fr.ts` et `en.ts`.
+- **Liens Stripe :** colle-les dans `stripeLinks`, fichier `src/config/site.ts`.
+- **Assistant du site :** il répond en mode aperçu sans clé. Pour de vraies réponses d'IA, ajoute `ANTHROPIC_API_KEY` dans Vercel (voir `.env.example`).

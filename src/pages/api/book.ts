@@ -4,13 +4,15 @@ import { availableSlots } from '../../lib/slots';
 import { createEvent } from '../../lib/google';
 import { ownerBookingMail, sendMail, visitorBookingMail, ownerEmail, type BookingData } from '../../lib/email';
 import { clean, isEmail, json, readJson, toLang } from '../../lib/http';
-import { booking, site } from '../../config/site';
+import { booking, eventTitle, site } from '../../config/site';
 import { t } from '../../content';
 
 export const prerender = false;
 
 const NEEDS = ['automation', 'agent', 'tool', 'content', 'webinar', 'cos', 'other'];
-const BUDGETS = ['lt200', '200-800', '800-2000', 'gt2000', 'unknown', ''];
+const BUDGETS = ['200-800', '800-2000', 'gt2000', 'unknown', ''];
+
+const validPhone = (v: string) => /^[+()\d][\d\s().+-]{5,24}$/.test(v) && v.replace(/\D/g, '').length >= 6;
 
 export const POST: APIRoute = async ({ request }) => {
   const body = await readJson(request);
@@ -20,14 +22,17 @@ export const POST: APIRoute = async ({ request }) => {
   if (clean(body.website, 200)) return json({ ok: true });
 
   const lang = toLang(body.lang);
-  const name = clean(body.name, 120);
+  const firstName = clean(body.firstName, 80);
+  const lastName = clean(body.lastName, 80);
+  const name = `${firstName} ${lastName}`.trim();
+  const phone = clean(body.phone, 30);
   const email = clean(body.email, 254).toLowerCase();
   const need = clean(body.need, 30);
   const budget = clean(body.budget, 20);
   const slotIso = clean(body.slot, 40);
   const tz = clean(body.tz, 60) || booking.timezone;
 
-  if (!name || !isEmail(email) || !NEEDS.includes(need) || !BUDGETS.includes(budget)) {
+  if (!firstName || !lastName || !validPhone(phone) || !isEmail(email) || !NEEDS.includes(need) || !BUDGETS.includes(budget)) {
     return json({ error: 'invalid' }, 400);
   }
   const startMs = Date.parse(slotIso);
@@ -50,6 +55,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const data: BookingData = {
     name,
+    phone,
     email,
     company: clean(body.company, 160),
     need,
@@ -66,6 +72,7 @@ export const POST: APIRoute = async ({ request }) => {
   const budgetLabel = c.book.budgets.find((n) => n.v === budget)?.t ?? 'Non renseigné';
   const description = [
     `${name} <${email}>`,
+    `Téléphone : ${phone}`,
     data.company && `Entreprise : ${data.company}`,
     `Besoin : ${needLabel}`,
     `Budget : ${budgetLabel}`,
@@ -79,7 +86,7 @@ export const POST: APIRoute = async ({ request }) => {
   let eventLink = '';
   try {
     const ev = await createEvent({
-      summary: `Échange : ${name}${data.company ? ` (${data.company})` : ''}`,
+      summary: eventTitle(firstName),
       description,
       startMs,
       endMs: startMs + booking.durationMin * 60_000,

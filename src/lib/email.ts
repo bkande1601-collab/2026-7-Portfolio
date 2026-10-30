@@ -156,7 +156,7 @@ const L = {
     when: 'Quand',
     where: 'Où',
     meetLater: 'Le lien Google Meet est dans votre invitation.',
-    fields: { name: 'Nom', email: 'E-mail', company: 'Entreprise', need: 'Besoin', budget: 'Budget', message: 'Message' },
+    fields: { name: 'Nom', phone: 'Téléphone', email: 'E-mail', company: 'Entreprise', need: 'Besoin', budget: 'Budget', message: 'Message' },
     footer: 'Vous recevez cet e-mail suite à une réservation sur mon site.',
     contactSubject: 'J’ai bien reçu votre message',
     contactPre: 'Accusé de réception de votre message.',
@@ -185,7 +185,7 @@ const L = {
     when: 'When',
     where: 'Where',
     meetLater: 'The Google Meet link is in your invitation.',
-    fields: { name: 'Name', email: 'Email', company: 'Company', need: 'Need', budget: 'Budget', message: 'Message' },
+    fields: { name: 'Name', phone: 'Phone', email: 'Email', company: 'Company', need: 'Need', budget: 'Budget', message: 'Message' },
     footer: 'You are receiving this email because you booked a call on my website.',
     contactSubject: 'I received your message',
     contactPre: 'Acknowledgement of your message.',
@@ -204,6 +204,7 @@ const L = {
 /* ---------- RÉSERVATION : e-mail au visiteur ---------- */
 export type BookingData = {
   name: string;
+  phone: string;
   email: string;
   company: string;
   need: string;
@@ -251,6 +252,7 @@ export function visitorBookingMail(d: BookingData): Mail {
 
   const answers = table(
     row(l.fields.name, esc(d.name)) +
+      row(l.fields.phone, esc(d.phone)) +
       row(l.fields.email, esc(d.email)) +
       (d.company ? row(l.fields.company, esc(d.company)) : '') +
       row(l.fields.need, esc(needLabel)) +
@@ -295,6 +297,7 @@ export function ownerBookingMail(d: BookingData, eventLink: string): Mail {
     para(`<strong>${esc(when)}</strong> (${esc(booking.timezone)}) · ${booking.durationMin} min · ${d.lang.toUpperCase()}`) +
     table(
       row(f.name, esc(d.name)) +
+        row(f.phone, `<a href="tel:${esc(d.phone)}">${esc(d.phone)}</a>`) +
         row(f.email, `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) +
         row(f.company, esc(d.company || 'Non renseigné')) +
         row(f.need, esc(needLabel)) +
@@ -312,9 +315,11 @@ export function ownerBookingMail(d: BookingData, eventLink: string): Mail {
 }
 
 /* ---------- MESSAGE ---------- */
-export function contactMails(d: { name: string; email: string; subject: string; message: string; lang: Lang }) {
+export function contactMails(d: { name: string; email: string; subject: string; message: string; lang: Lang; phone?: string; company?: string; need?: string; budget?: string }) {
+  const needLabel = d.need ? t(d.lang).book.needs.find((n) => n.v === d.need)?.t ?? d.need : '';
+  const budgetLabel = d.budget ? t(d.lang).book.budgets.find((n) => n.v === d.budget)?.t ?? d.budget : '';
   const l = L[d.lang];
-  const msgHtml = esc(d.message).replace(/\n/g, '<br>');
+  const msgHtml = esc(d.message || (d.lang === 'fr' ? '(aucun message)' : '(no message)')).replace(/\n/g, '<br>');
   const origin = env('SITE_URL').replace(/\/$/, '');
   const bookUrl = origin ? `${origin}/${d.lang}/book` : '';
 
@@ -342,7 +347,7 @@ export function contactMails(d: { name: string; email: string; subject: string; 
       preheader: `${d.name} vous a écrit.`,
       title: 'Nouveau message',
       body:
-        table(row('Nom', esc(d.name)) + row('E-mail', `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) + row('Sujet', esc(d.subject || 'Non renseigné')) + row('Langue', d.lang.toUpperCase())) +
+        table(row('Nom', esc(d.name)) + (d.phone ? row('Téléphone', `<a href="tel:${esc(d.phone)}">${esc(d.phone)}</a>`) : '') + (d.company ? row('Entreprise', esc(d.company)) : '') + (needLabel ? row('Besoin', esc(needLabel)) : '') + (budgetLabel ? row('Budget', esc(budgetLabel)) : '') + row('E-mail', `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) + row('Sujet', esc(d.subject || 'Non renseigné')) + row('Langue', d.lang.toUpperCase())) +
         `<blockquote style="margin:0;padding:12px 18px;border-left:3px solid ${C.apricot};background:#fbf3ea;">${msgHtml}</blockquote>`,
       footer: 'Répondez directement à cet e-mail pour écrire à la personne.',
     }),

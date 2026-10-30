@@ -23,6 +23,16 @@ export const fr = {
     offers: 'Tarifs',
     journey: 'Parcours',
     faq: 'FAQ',
+    sub: {
+      content: 'Contenu pour les réseaux',
+      webinars: 'Webinaires',
+      agents: 'Agents IA',
+      systems: 'Systèmes et outils internes',
+      diagnostic: 'Diagnostic IA',
+      prompt: 'Prompt maître',
+    },
+    more: 'Voir le détail',
+    back: 'Retour',
     menu: 'Menu',
     close: 'Fermer',
     skip: 'Aller au contenu',
@@ -172,6 +182,22 @@ export const fr = {
       title: 'Je retire le travail *répétitif* de votre équipe.',
       sub: "Des automatisations sur mesure, des agents IA branchés sur vos outils et vos documents, des outils internes sur mesure. C'est mon cœur de métier.",
     },
+    overview: {
+      kicker: 'Deux services',
+      title: 'Un agent, ou un *système* complet.',
+      items: [
+        {
+          name: 'Agents IA',
+          line: 'Un assistant qui connaît vos documents, ou un agent qui fait une tâche précise pour vous.',
+          slug: 'automations/agents',
+        },
+        {
+          name: 'Systèmes et outils internes',
+          line: 'Une plateforme sur mesure qui parle à vos outils, pour passer du manuel à l’automatique.',
+          slug: 'automations/systems',
+        },
+      ],
+    },
     flow: {
       kicker: 'Un exemple concret',
       title: 'Un lead arrive. Personne n’a rien touché.',
@@ -217,6 +243,26 @@ export const fr = {
       title: 'Du contenu pour vos réseaux, *créé et publié* pour vous.',
       sub: 'Instagram, TikTok, LinkedIn : je définis votre ligne, je produis les visuels, les vidéos et les textes, et je vous envoie un bilan chaque semaine.',
     },
+    intro: {
+      title: 'Du marketing qui vous *ressemble*, de la stratégie à la publication.',
+      sub: 'Réseaux sociaux ou webinaires : je m’occupe de tout, et vous gardez la main sur ce qui est publié.',
+    },
+    overview: {
+      kicker: 'Deux services',
+      title: 'Choisissez *votre* porte d’entrée.',
+      items: [
+        {
+          name: 'Contenu pour les réseaux',
+          line: 'Stratégie, création, publication et bilan chaque semaine sur Instagram, TikTok et LinkedIn.',
+          slug: 'marketing/content',
+        },
+        {
+          name: 'Webinaires',
+          line: 'Publicités, landing page, WhatsApp, e-mails et slides : tout est mis en place pour votre webinaire.',
+          slug: 'marketing/webinars',
+        },
+      ],
+    },
     content: {
       kicker: 'Ce que je fais pour vos réseaux',
       title: 'Du plan éditorial au *bilan* de la semaine.',
@@ -248,8 +294,9 @@ export const fr = {
       title: 'Des réseaux sociaux au *marketing* complet.',
       items: [
         { who: 'MNGRS.AI', role: 'Social media manager', text: 'Stratégie sur 3 plateformes, production de contenus visuels et vidéo, reporting chaque semaine.' },
+        { who: 'WeTalk Podcast', role: 'Podcast sur l’entrepreneuriat', text: 'Conception éditoriale, diffusion sur toutes les plateformes et branding.' },
         { who: 'La Squadra Paris', role: 'Chargée de marketing digital', text: 'E-commerce, publicité, CRM, réseaux sociaux et analytics : 7 fonctions réunies sur un seul poste.' },
-        { who: 'Freelance', role: 'Depuis 2024', text: 'Sites, stratégie digitale, un podcast sur l’entrepreneuriat et des ateliers de networking.' },
+        { who: 'Freelance', role: 'Depuis 2024', text: 'Sites Shopify et Framer, stratégie digitale et ateliers de networking.' },
       ],
     },
     webinars: {
@@ -279,6 +326,8 @@ export const fr = {
       promiseTitle: 'Ce que je promets, et ce que je ne promets pas.',
       yes: 'Je mets tout en place pour que votre webinaire fonctionne, avec le plus grand sérieux.',
       no: 'Je ne garantis pas un nombre de participants ni un nombre de ventes. Personne ne peut honnêtement le faire.',
+      finalTitle: 'On cadre *votre webinaire* ensemble ?',
+      finalText: '30 minutes pour définir l’objectif, l’audience et la formule.',
       promiseYes: 'Je promets',
       promiseNo: 'Je ne promets pas',
     },
@@ -304,6 +353,7 @@ export const fr = {
     items: [
       {
         key: 'diagnostic',
+        slug: 'products/diagnostic',
         name: 'Diagnostic de votre business',
         line: 'Où en est votre business, ce qui vous freine, et ce que l’IA et le marketing peuvent changer pour vous.',
         gets: [
@@ -315,6 +365,7 @@ export const fr = {
       },
       {
         key: 'prompt',
+        slug: 'products/prompt',
         name: 'Prompt maître sur mesure',
         line: 'Un prompt long et précis, écrit pour vous : votre activité, vos clients, votre manière de parler.',
         gets: [
@@ -440,12 +491,31 @@ export const fr = {
     hero: {
       kicker: 'Réserver un audit',
       title: '30 minutes pour *mettre à plat* votre besoin.',
-      sub: '3 petites étapes. Vous recevez l’invitation avec le lien Google Meet par e-mail.',
+      sub: 'Dites-moi qui vous êtes et ce que vous cherchez. Puis choisissez un créneau en visio, ou envoyez simplement votre demande par e-mail.',
     },
-    steps: ['Votre besoin', 'Jour et heure', 'Confirmation'],
+    steps: ['Votre demande', 'Jour et heure', 'Confirmation'],
+    mode: {
+      label: 'Que souhaitez-vous ?',
+      meet: 'Réserver un échange en visio',
+      meetNote: '30 minutes, avec un lien Google Meet',
+      mail: 'Juste m’envoyer ma demande',
+      mailNote: 'Je vous réponds par e-mail',
+    },
+    sendMail: 'Envoyer ma demande',
+    cal: {
+      prev: 'Mois précédent',
+      next: 'Mois suivant',
+      noDays: 'Aucun jour disponible ce mois-ci.',
+    },
+    mailTitle: 'Demande bien reçue.',
+    mailText: 'Un e-mail de confirmation vous attend. Je vous réponds vite.',
+    errorPhone: 'Merci de renseigner un numéro de téléphone valide.',
     fields: {
+      firstName: 'Prénom',
+      lastName: 'Nom',
+      phone: 'Numéro de téléphone',
       name: 'Nom',
-      email: 'E-mail',
+      email: 'Adresse e-mail',
       company: 'Entreprise',
       need: 'Votre besoin',
       budget: 'Budget envisagé',
@@ -463,7 +533,6 @@ export const fr = {
       { v: 'other', t: 'Je ne sais pas encore' },
     ],
     budgets: [
-      { v: 'lt200', t: 'Moins de 200 €' },
       { v: '200-800', t: 'De 200 à 800 €' },
       { v: '800-2000', t: 'De 800 à 2 000 €' },
       { v: 'gt2000', t: 'Plus de 2 000 €' },
@@ -486,7 +555,7 @@ export const fr = {
     successText: 'Un e-mail de confirmation avec le lien Google Meet vient de partir.',
     successPreview: 'Mode aperçu : aucun rendez-vous réel n’a été créé.',
     error: 'La réservation a échoué. Le créneau vient peut-être d’être pris : choisissez-en un autre.',
-    errorFields: 'Merci de compléter nom, e-mail et besoin.',
+    errorFields: 'Merci de compléter prénom, nom, téléphone, e-mail et besoin.',
     weekdays: ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'],
     privacy: 'Vos réponses ne servent qu’à préparer notre échange.',
   },
@@ -498,8 +567,11 @@ export const fr = {
       sub: 'Je réponds en général sous 2 jours ouvrés. Vous recevez un accusé de réception tout de suite.',
     },
     fields: {
+      firstName: 'Prénom',
+      lastName: 'Nom',
+      phone: 'Numéro de téléphone',
       name: 'Nom',
-      email: 'E-mail',
+      email: 'Adresse e-mail',
       subject: 'Sujet',
       message: 'Message',
       messagePlaceholder: 'Dites-moi ce dont vous avez besoin.',
@@ -509,7 +581,7 @@ export const fr = {
     okTitle: 'Message bien reçu.',
     okText: 'Un accusé de réception vient d’être envoyé à votre adresse. Je reviens vers vous vite.',
     err: 'L’envoi a échoué. Réessayez ou prenez rendez-vous directement.',
-    invalid: 'Merci de renseigner nom, e-mail valide et message.',
+    invalid: 'Merci de renseigner prénom, nom, e-mail valide et message.',
     or: 'Vous préférez en parler de vive voix ?',
   },
 
@@ -532,7 +604,7 @@ export const fr = {
       {
         when: 'Juil. 2024 à aujourd’hui',
         title: 'Freelance',
-        text: 'Sites Shopify et Framer pensés pour convertir, stratégie digitale, automatisations et agents IA. J’ai aussi créé un podcast sur l’entrepreneuriat et organisé des ateliers de networking.',
+        text: 'Sites Shopify et Framer pensés pour convertir, stratégie digitale, automatisations et agents IA. J’ai aussi créé WeTalk Podcast, un podcast sur l’entrepreneuriat, et organisé des ateliers de networking.',
         todo: false,
       },
       {

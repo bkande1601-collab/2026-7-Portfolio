@@ -19,8 +19,8 @@ export const site = {
   /** Image d'attente de la vidéo (optionnel), ex. '/video/poster.jpg' */
   heroVideoPoster: '',
   /** Photo de l'accueil, affichée tant qu'il n'y a pas de vidéo. */
-  heroPhoto: '/photos/binta-porte.webp',
-  heroPhotoAlt: 'Binta Kande devant une grande porte en bois, lunettes de soleil, cravate violette',
+  heroPhoto: '/photos/binta-accueil-violet.webp',
+  heroPhotoAlt: 'Portrait de Binta Kande en haut violet, les bras croisés',
 
   /**
    * PHOTO (page Parcours). Déposez l'image dans public/ (ex. public/binta.jpg)
@@ -115,6 +115,12 @@ export const booking = {
     6: [],
   } as Record<number, [string, string][]>,
 } as const;
+
+/**
+ * Nom de l'événement créé dans Google Agenda.
+ * Résultat : « Meeting Prénom x Binta | Services »
+ */
+export const eventTitle = (firstName: string) => `Meeting ${firstName} x Binta | Services`;
 
 /** Formate un prix selon la langue. */
 export function formatPrice(key: PriceKey, lang: 'fr' | 'en') {

@@ -25,6 +25,16 @@ export const en: Content = {
     offers: 'Pricing',
     journey: 'Journey',
     faq: 'FAQ',
+    sub: {
+      content: 'Social media content',
+      webinars: 'Webinars',
+      agents: 'AI agents',
+      systems: 'Systems and internal tools',
+      diagnostic: 'AI diagnosis',
+      prompt: 'Master prompt',
+    },
+    more: 'See details',
+    back: 'Back',
     menu: 'Menu',
     close: 'Close',
     skip: 'Skip to content',
@@ -174,6 +184,22 @@ export const en: Content = {
       title: 'I take the *repetitive* work off your team.',
       sub: 'Custom automations, AI agents plugged into your tools and documents, custom internal tools. This is my core craft.',
     },
+    overview: {
+      kicker: 'Two services',
+      title: 'An agent, or a complete *system*.',
+      items: [
+        {
+          name: 'AI agents',
+          line: 'An assistant that knows your documents, or an agent that does one precise task for you.',
+          slug: 'automations/agents',
+        },
+        {
+          name: 'Systems and internal tools',
+          line: 'A custom platform that talks to your tools, to go from manual to automatic.',
+          slug: 'automations/systems',
+        },
+      ],
+    },
     flow: {
       kicker: 'A concrete example',
       title: 'A lead comes in. Nobody touched anything.',
@@ -219,6 +245,26 @@ export const en: Content = {
       title: 'Content for your social media, *created and published* for you.',
       sub: 'Instagram, TikTok, LinkedIn: I define your line, I produce the visuals, videos and copy, and I send you a report every week.',
     },
+    intro: {
+      title: 'Marketing that *looks like you*, from strategy to publishing.',
+      sub: 'Social media or webinars: I take care of everything, and you stay in control of what is published.',
+    },
+    overview: {
+      kicker: 'Two services',
+      title: 'Choose *your* way in.',
+      items: [
+        {
+          name: 'Social media content',
+          line: 'Strategy, creation, publishing and a weekly report on Instagram, TikTok and LinkedIn.',
+          slug: 'marketing/content',
+        },
+        {
+          name: 'Webinars',
+          line: 'Ads, landing page, WhatsApp, emails and slides: everything is set up for your webinar.',
+          slug: 'marketing/webinars',
+        },
+      ],
+    },
     content: {
       kicker: 'What I do for your social media',
       title: 'From the editorial plan to the *weekly report*.',
@@ -250,8 +296,9 @@ export const en: Content = {
       title: 'From social media to *full* marketing.',
       items: [
         { who: 'MNGRS.AI', role: 'Social media manager', text: 'Strategy across 3 platforms, visual and video content, a report every week.' },
+        { who: 'WeTalk Podcast', role: 'Entrepreneurship podcast', text: 'Editorial design, distribution on all platforms and branding.' },
         { who: 'La Squadra Paris', role: 'Digital marketing manager', text: 'E-commerce, ads, CRM, social media and analytics: 7 functions in a single role.' },
-        { who: 'Freelance', role: 'Since 2024', text: 'Websites, digital strategy, an entrepreneurship podcast and networking workshops.' },
+        { who: 'Freelance', role: 'Since 2024', text: 'Shopify and Framer sites, digital strategy and networking workshops.' },
       ],
     },
     webinars: {
@@ -281,6 +328,8 @@ export const en: Content = {
       promiseTitle: 'What I promise, and what I do not.',
       yes: 'I set up everything so that your webinar works, with the utmost care.',
       no: 'I do not guarantee a number of attendees or a number of sales. No one can honestly do that.',
+      finalTitle: 'Shall we structure *your webinar* together?',
+      finalText: '30 minutes to define the goal, the audience and the formula.',
       promiseYes: 'I promise',
       promiseNo: 'I do not promise',
     },
@@ -306,6 +355,7 @@ export const en: Content = {
     items: [
       {
         key: 'diagnostic',
+        slug: 'products/diagnostic',
         name: 'Business diagnosis',
         line: 'Where your business stands, what holds you back, and what AI and marketing can change for you.',
         gets: [
@@ -317,6 +367,7 @@ export const en: Content = {
       },
       {
         key: 'prompt',
+        slug: 'products/prompt',
         name: 'Tailored master prompt',
         line: 'A long, precise prompt written for you: your business, your customers, the way you speak.',
         gets: [
@@ -442,12 +493,31 @@ export const en: Content = {
     hero: {
       kicker: 'Book an audit',
       title: '30 minutes to *map out* your need.',
-      sub: '3 short steps. You receive the invite with the Google Meet link by email.',
+      sub: 'Tell me who you are and what you are looking for. Then pick a video slot, or simply send your request by email.',
     },
-    steps: ['Your need', 'Day and time', 'Confirmation'],
+    steps: ['Your request', 'Day and time', 'Confirmation'],
+    mode: {
+      label: 'What would you like?',
+      meet: 'Book a video call',
+      meetNote: '30 minutes, with a Google Meet link',
+      mail: 'Just send me my request',
+      mailNote: 'I reply by email',
+    },
+    sendMail: 'Send my request',
+    cal: {
+      prev: 'Previous month',
+      next: 'Next month',
+      noDays: 'No day available this month.',
+    },
+    mailTitle: 'Request received.',
+    mailText: 'A confirmation email is waiting for you. I will reply soon.',
+    errorPhone: 'Please enter a valid phone number.',
     fields: {
+      firstName: 'First name',
+      lastName: 'Last name',
+      phone: 'Phone number',
       name: 'Name',
-      email: 'Email',
+      email: 'Email address',
       company: 'Company',
       need: 'Your need',
       budget: 'Budget in mind',
@@ -465,7 +535,6 @@ export const en: Content = {
       { v: 'other', t: "I don't know yet" },
     ],
     budgets: [
-      { v: 'lt200', t: 'Under €200' },
       { v: '200-800', t: '€200 to €800' },
       { v: '800-2000', t: '€800 to €2,000' },
       { v: 'gt2000', t: 'Over €2,000' },
@@ -488,7 +557,7 @@ export const en: Content = {
     successText: 'A confirmation email with the Google Meet link is on its way.',
     successPreview: 'Preview mode: no real appointment was created.',
     error: 'Booking failed. The slot may have just been taken, please pick another.',
-    errorFields: 'Please fill in name, email and need.',
+    errorFields: 'Please fill in first name, last name, phone, email and need.',
     weekdays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     privacy: 'Your answers are only used to prepare our conversation.',
   },
@@ -500,8 +569,11 @@ export const en: Content = {
       sub: 'I usually reply within 2 working days. You get an acknowledgement right away.',
     },
     fields: {
+      firstName: 'First name',
+      lastName: 'Last name',
+      phone: 'Phone number',
       name: 'Name',
-      email: 'Email',
+      email: 'Email address',
       subject: 'Subject',
       message: 'Message',
       messagePlaceholder: 'Tell me what you need.',
@@ -511,7 +583,7 @@ export const en: Content = {
     okTitle: 'Message received.',
     okText: 'An acknowledgement has just been sent to your address. I will get back to you soon.',
     err: 'Sending failed. Please try again or book a call directly.',
-    invalid: 'Please provide a name, a valid email and a message.',
+    invalid: 'Please enter first name, last name, a valid email and a message.',
     or: 'Prefer to talk it through live?',
   },
 
@@ -534,7 +606,7 @@ export const en: Content = {
       {
         when: 'Jul. 2024 to today',
         title: 'Freelance',
-        text: 'Shopify and Framer sites built to convert, digital strategy, automations and AI agents. I also created an entrepreneurship podcast and organised networking workshops.',
+        text: 'Shopify and Framer sites built to convert, digital strategy, automations and AI agents. I also created WeTalk Podcast, an entrepreneurship podcast, and organised networking workshops.',
         todo: false,
       },
       {

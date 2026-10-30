@@ -1,0 +1,85 @@
+---
+import Base from '../../../layouts/Base.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import Crumb from '../../../components/Crumb.astro';
+import { t, em, href, langs, type Lang } from '../../../content';
+import { formatPrice } from '../../../config/site';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const m = c.marketing;
+const monthly = formatPrice('marketing', lang);
+---
+
+<Base lang={lang} page="marketing/content" title={c.nav.sub.content} description={m.hero.sub}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumb lang={lang} parent="marketing" label={c.nav.marketing} />
+      <span class="kicker" style="display:flex">{c.nav.sub.content}</span>
+      <h1 set:html={em(m.hero.title)} />
+      <p class="lead">{m.hero.sub}</p>
+      <div class="btn-row" style="margin-top:32px">
+        <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
+        <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:clamp(32px,5vw,64px)">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{m.content.kicker}</span>
+        <h2 set:html={em(m.content.title)} />
+      </div>
+      <div class="pipeline reveal">
+        {
+          m.content.steps.map((s, i) => (
+            <div class="pipe-step">
+              <div class="dot">{i + 1}</div>
+              <b>{s.t}</b>
+              <span>{s.d}</span>
+            </div>
+          ))
+        }
+      </div>
+      <p class="note reveal">{m.content.note}</p>
+    </div>
+  </section>
+
+  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+    <div class="wrap monthly">
+      <div class="reveal">
+        <span class="kicker">{m.monthly.kicker}</span>
+        <h2>{m.monthly.name}</h2>
+        <p class="lead">{m.monthly.text}</p>
+        <div class="btn-row" style="margin-top:28px">
+          <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
+        </div>
+      </div>
+      <div class="monthly-price reveal">
+        <small>{m.monthly.from}</small>
+        <b>{monthly.n} €</b>
+        <span>{m.monthly.perMonth}</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{m.also.kicker}</span>
+      </div>
+      <div class="also reveal">
+        {m.also.items.map((it) => <div><b>{it.t}</b><span>{it.d}</span></div>)}
+      </div>
+      <p class="sublinks reveal" style="margin-top:36px">
+        <a class="textlink" href={href(lang, 'marketing/webinars')}><span class="arrow">{c.nav.sub.webinars}&nbsp;</span></a>
+      </p>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={m.finalTitle} text={m.finalText} />
+</Base>

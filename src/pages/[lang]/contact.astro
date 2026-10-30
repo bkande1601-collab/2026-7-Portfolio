@@ -25,12 +25,22 @@ const i18n = { ok: k.okTitle, err: k.err, invalid: k.invalid, sending: k.sending
       <form class="form" id="contact-form" novalidate data-lang={lang}>
         <div class="two">
           <div class="field">
-            <label for="c-name">{k.fields.name}</label>
-            <input id="c-name" name="name" type="text" autocomplete="name" required />
+            <label for="c-first">{k.fields.firstName}</label>
+            <input id="c-first" name="firstName" type="text" autocomplete="given-name" required />
           </div>
+          <div class="field">
+            <label for="c-last">{k.fields.lastName}</label>
+            <input id="c-last" name="lastName" type="text" autocomplete="family-name" required />
+          </div>
+        </div>
+        <div class="two">
           <div class="field">
             <label for="c-email">{k.fields.email}</label>
             <input id="c-email" name="email" type="email" inputmode="email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="c-phone">{k.fields.phone} <span>({c.book.fields.optional})</span></label>
+            <input id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" />
           </div>
         </div>
         <div class="field">
@@ -75,7 +85,7 @@ const i18n = { ok: k.okTitle, err: k.err, invalid: k.invalid, sending: k.sending
     const body = Object.fromEntries(f.entries()) as Record<string, string>;
     body.lang = form.dataset.lang || 'fr';
     msg.className = 'form-msg';
-    if (!body.name?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email || '') || !body.message?.trim()) {
+    if (!body.firstName?.trim() || !body.lastName?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email || '') || !body.message?.trim()) {
       msg.textContent = t.invalid;
       msg.classList.add('err');
       return;

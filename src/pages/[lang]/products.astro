@@ -32,7 +32,7 @@ const p = c.products;
             return (
               <li class="product reveal">
                 <div class="product-main">
-                  <h2>{it.name}</h2>
+                  <h2><a class="rung-link" href={href(lang, it.slug)}>{it.name}</a></h2>
                   <p class="lead">{it.line}</p>
                   <div class="product-buy">
                     <span class="product-price">{price.amount}</span>
@@ -41,6 +41,7 @@ const p = c.products;
                     ) : (
                       <span class="btn btn-primary" aria-disabled="true" style="opacity:.55;cursor:default">{p.soon}</span>
                     )}
+                    <a class="textlink" href={href(lang, it.slug)}><span class="arrow">{c.nav.more}&nbsp;</span></a>
                   </div>
                 </div>
                 <ol class="gets">

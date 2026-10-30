@@ -1,0 +1,11 @@
+---
+import { href, type Lang } from '../content';
+interface Props {
+  lang: Lang;
+  parent: string;
+  label: string;
+}
+const { lang, parent, label } = Astro.props;
+---
+
+<a class="crumb" href={href(lang, parent)}>← {label}</a>

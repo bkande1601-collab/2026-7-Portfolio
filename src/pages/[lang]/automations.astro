@@ -1,9 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
 import BeforeAfter from '../../components/BeforeAfter.astro';
-import Window from '../../components/Window.astro';
 import Marquee from '../../components/Marquee.astro';
 import CtaBand from '../../components/CtaBand.astro';
+import SubCards from '../../components/SubCards.astro';
 import { t, em, href, langs, type Lang } from '../../content';
 
 export function getStaticPaths() {
@@ -27,25 +27,13 @@ const a = c.automations;
     </div>
   </section>
 
-  <!-- Pipeline : un exemple concret -->
   <section style="padding-top:clamp(32px,5vw,64px)">
     <div class="wrap">
       <div class="section-head reveal">
-        <span class="kicker">{a.flow.kicker}</span>
-        <h2 set:html={em(a.flow.title)} />
+        <span class="kicker">{a.overview.kicker}</span>
+        <h2 set:html={em(a.overview.title)} />
       </div>
-      <div class="pipeline reveal">
-        {
-          a.flow.steps.map((s, i) => (
-            <div class="pipe-step">
-              <div class="dot">{i + 1}</div>
-              <b>{s.t}</b>
-              <span>{s.d}</span>
-            </div>
-          ))
-        }
-      </div>
-      <p class="note reveal">{a.flow.note}</p>
+      <SubCards lang={lang} items={a.overview.items} />
     </div>
   </section>
 
@@ -55,43 +43,7 @@ const a = c.automations;
     </div>
   </section>
 
-  <!-- Agent IA -->
   <section>
-    <div class="wrap split">
-      <div class="reveal">
-        <span class="kicker">{a.agent.kicker}</span>
-        <h2 set:html={em(a.agent.title)} />
-        <p class="lead">{a.agent.text}</p>
-      </div>
-      <div class="reveal">
-        <Window title={a.agent.kicker} q={a.agent.q} a={a.agent.a} src={a.agent.src} lock={c.home.platform.chat.lock} />
-      </div>
-    </div>
-  </section>
-
-  <!-- Outil interne -->
-  <section style="padding-top:0">
-    <div class="wrap split rev">
-      <div class="reveal">
-        <Window
-          title={c.home.platform.chat.title}
-          modules={c.home.platform.modules}
-          q={c.home.platform.chat.q}
-          a={c.home.platform.chat.a}
-          src={c.home.platform.chat.src}
-          lock={c.home.platform.chat.lock}
-        />
-      </div>
-      <div class="reveal">
-        <span class="kicker">{a.tool.kicker}</span>
-        <h2 set:html={em(a.tool.title)} />
-        <p class="lead">{a.tool.text}</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Process -->
-  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
     <div class="wrap">
       <div class="section-head reveal">
         <span class="kicker">{a.process.kicker}</span>

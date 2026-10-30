@@ -71,6 +71,30 @@ const origin = Astro.site ? Astro.site.origin : '';
         items.forEach((el) => el.classList.add('in'));
       }
 
+      // sous-menus : un bouton ▾ pour le clavier et le tactile
+      const subItems = document.querySelectorAll<HTMLElement>('.nav-item.has-sub');
+      const closeAll = (except?: HTMLElement) =>
+        subItems.forEach((it) => {
+          if (it !== except) {
+            it.dataset.open = 'false';
+            it.querySelector('.sub-toggle')?.setAttribute('aria-expanded', 'false');
+          }
+        });
+      subItems.forEach((it) => {
+        const b = it.querySelector<HTMLButtonElement>('.sub-toggle');
+        b?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const open = it.dataset.open !== 'true';
+          closeAll(it);
+          it.dataset.open = String(open);
+          b.setAttribute('aria-expanded', String(open));
+        });
+      });
+      document.addEventListener('click', () => closeAll());
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAll();
+      });
+
       // menu mobile
       const btn = document.getElementById('menu-btn');
       const nav = document.getElementById('site-nav');

@@ -1,0 +1,63 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Window from '../../../components/Window.astro';
+import Marquee from '../../../components/Marquee.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import Crumb from '../../../components/Crumb.astro';
+import { t, em, href, langs, type Lang } from '../../../content';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const a = c.automations;
+---
+
+<Base lang={lang} page="automations/systems" title={c.nav.sub.systems} description={a.tool.text}>
+  <section class="page-hero">
+    <div class="wrap">
+      <Crumb lang={lang} parent="automations" label={c.nav.automations} />
+      <span class="kicker" style="display:flex">{a.tool.kicker}</span>
+      <h1 set:html={em(a.tool.title)} />
+      <p class="lead">{a.tool.text}</p>
+      <div class="btn-row" style="margin-top:32px">
+        <a class="btn btn-primary" href={href(lang, 'book')}>{c.cta.book}</a>
+        <a class="btn btn-ghost" href={href(lang, 'contact')}>{c.cta.message}</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:clamp(32px,5vw,64px)">
+    <div class="wrap">
+      <div class="reveal">
+        <Window
+          title={c.home.platform.chat.title}
+          modules={c.home.platform.modules}
+          q={c.home.platform.chat.q}
+          a={c.home.platform.chat.a}
+          src={c.home.platform.chat.src}
+          lock={c.home.platform.chat.lock}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">{a.process.kicker}</span>
+        <h2>{a.process.title}</h2>
+      </div>
+      <div class="steps-line reveal">
+        {a.process.steps.map((s) => <div><b>{s.t}</b><span>{s.d}</span></div>)}
+      </div>
+      <p class="sublinks reveal" style="margin-top:36px">
+        <a class="textlink" href={href(lang, 'automations/agents')}><span class="arrow">{c.nav.sub.agents}&nbsp;</span></a>
+      </p>
+    </div>
+  </section>
+
+  <Marquee label={a.stackTitle} />
+  <CtaBand lang={lang} title={a.finalTitle} text={a.finalText} />
+</Base>

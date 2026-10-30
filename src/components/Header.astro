@@ -10,13 +10,36 @@ interface Props {
 const { lang, page, otherHref } = Astro.props;
 const c = t(lang);
 
+/** Le menu : une entrée, et ses sous-pages si elle en a. */
 const links = [
-  { slug: 'marketing', label: c.nav.marketing },
-  { slug: 'automations', label: c.nav.automations },
-  { slug: 'products', label: c.nav.products },
-  { slug: 'offers', label: c.nav.offers },
-  { slug: 'journey', label: c.nav.journey },
+  {
+    slug: 'marketing',
+    label: c.nav.marketing,
+    children: [
+      { slug: 'marketing/content', label: c.nav.sub.content },
+      { slug: 'marketing/webinars', label: c.nav.sub.webinars },
+    ],
+  },
+  {
+    slug: 'automations',
+    label: c.nav.automations,
+    children: [
+      { slug: 'automations/agents', label: c.nav.sub.agents },
+      { slug: 'automations/systems', label: c.nav.sub.systems },
+    ],
+  },
+  {
+    slug: 'products',
+    label: c.nav.products,
+    children: [
+      { slug: 'products/diagnostic', label: c.nav.sub.diagnostic },
+      { slug: 'products/prompt', label: c.nav.sub.prompt },
+    ],
+  },
+  { slug: 'offers', label: c.nav.offers, children: [] },
+  { slug: 'journey', label: c.nav.journey, children: [] },
 ];
+const isHere = (slug: string) => page === slug || page.startsWith(`${slug}/`);
 ---
 
 <header class="site-header">
@@ -37,11 +60,31 @@ const links = [
 
     <nav class="nav" id="site-nav" data-open="false" aria-label="Navigation">
       {
-        links.map((l) => (
-          <a class="link" href={href(lang, l.slug)} aria-current={page === l.slug ? 'page' : undefined}>
-            {l.label}
-          </a>
-        ))
+        links.map((l) =>
+          l.children.length ? (
+            <div class="nav-item has-sub" data-open="false">
+              <a class="link" href={href(lang, l.slug)} aria-current={page === l.slug ? 'page' : isHere(l.slug) ? 'true' : undefined}>
+                {l.label}
+              </a>
+              <button class="sub-toggle" type="button" aria-expanded="false" aria-label={`${c.nav.menu} : ${l.label}`}>
+                <span aria-hidden="true">▾</span>
+              </button>
+              <ul class="sub">
+                {l.children.map((ch) => (
+                  <li>
+                    <a href={href(lang, ch.slug)} aria-current={page === ch.slug ? 'page' : undefined}>
+                      {ch.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <a class="link" href={href(lang, l.slug)} aria-current={page === l.slug ? 'page' : undefined}>
+              {l.label}
+            </a>
+          ),
+        )
       }
       <div class="nav-tools">
         <a class="lang" href={otherHref} hreflang={lang === 'fr' ? 'en' : 'fr'} lang={lang === 'fr' ? 'en' : 'fr'} title={c.switchLang.title}>
