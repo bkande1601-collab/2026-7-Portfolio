@@ -31,7 +31,7 @@ const h = c.home;
         </div>
         <p class="credential">{h.hero.credential}</p>
       </div>
-      <HeroVisual label={h.hero.videoLabel} pending={h.hero.videoPending} />
+      <HeroVisual label={h.hero.videoLabel} pending={h.hero.videoPending} soundOn={h.hero.soundOn} soundOff={h.hero.soundOff} />
     </div>
   </section>
 
@@ -72,7 +72,7 @@ const h = c.home;
   </section>
 
   <!-- 4. Comment ça se passe -->
-  <section style="background:var(--bg-2);border-block:1px solid var(--line)">
+  <section class="band-marine">
     <div class="wrap">
       <div class="section-head reveal">
         <span class="kicker">{h.how.kicker}</span>
@@ -85,7 +85,7 @@ const h = c.home;
   </section>
 
   <!-- 5. Qui je suis -->
-  <section>
+  <section class="band-lilas">
     <div class="wrap who">
       <div class="who-photo reveal">
         <img src="/photos/binta-contact.webp" alt={h.who.photoAlt} width="640" height="800" loading="lazy" />

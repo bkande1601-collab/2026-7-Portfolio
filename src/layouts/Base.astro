@@ -5,6 +5,7 @@ import { t, href, type Lang } from '../content';
 import { site } from '../config/site';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ChatWidget from '../components/ChatWidget.astro';
 
 interface Props {
   lang: Lang;
@@ -48,6 +49,7 @@ const origin = Astro.site ? Astro.site.origin : '';
       <slot />
     </main>
     <Footer lang={lang} />
+    <ChatWidget lang={lang} />
 
     <script>
       // apparition douce au scroll

@@ -2337,3 +2337,403 @@ a:hover > .arrow::after {
 .product .lead {
   margin-top: 16px;
 }
+
+/* ==========================================================================
+   COULEURS VIVES, tirées de la photo de la porte : cuivre du bois, marine,
+   violet de la cravate, un peu de rouge. Ce bloc passe en dernier.
+   ========================================================================== */
+:root {
+  --rouille: #a3430f; /* cuivre du bois */
+  --rouille-deep: #5e2208; /* ombre du bois */
+  --marine: #1f1d3f;
+  --rouge: #9b1c1f;
+  --cannelle: var(--rouille);
+}
+
+/* hero : fond bois, titre ivoire, photo qui tient la page */
+.hero {
+  background: radial-gradient(120% 90% at 85% 10%, var(--rouille) 0%, var(--rouille-deep) 60%, #3b1405 100%);
+  color: var(--beige);
+  padding-block: clamp(36px, 5vw, 72px);
+}
+.hero h1 {
+  color: var(--beige);
+}
+.hero h1 em {
+  color: var(--lilas);
+}
+.hero .kicker,
+.hero .credential {
+  color: rgba(246, 240, 228, 0.85);
+}
+.hero .kicker::before {
+  background: var(--lilas);
+}
+.hero .credential::before {
+  background: var(--lilas);
+}
+.hero .lead {
+  color: rgba(246, 240, 228, 0.92);
+}
+.hero .btn-primary {
+  background: var(--lilas);
+  color: var(--violet-deep);
+}
+.hero .btn-primary:hover {
+  background: #fff;
+}
+.hero .btn-ghost {
+  color: var(--beige);
+  border-color: rgba(246, 240, 228, 0.55);
+}
+.hero .btn-ghost:hover {
+  background: var(--beige);
+  border-color: var(--beige);
+  color: var(--rouille-deep);
+}
+.hero .video-slot {
+  border: 0;
+  border-radius: 28px;
+  aspect-ratio: 4 / 4.9;
+  background: var(--rouille-deep);
+}
+.hero .video-slot img {
+  object-position: center 20%;
+}
+.sound-btn {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  background: var(--beige);
+  color: var(--violet-deep);
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font: 700 0.9rem var(--font-body);
+  cursor: pointer;
+}
+.sound-btn:hover {
+  background: var(--lilas);
+}
+
+/* bande de compétences : violet vif */
+.skills {
+  background: var(--violet);
+  color: #fff;
+}
+.skills li::after {
+  background: var(--lilas);
+}
+.skills li:nth-child(3n + 2) {
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: var(--lilas);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+
+/* en-têtes de pages intérieures : lilas */
+.page-hero {
+  background: var(--lilas);
+  padding-bottom: clamp(40px, 6vw, 80px);
+}
+.page-hero h1,
+.page-hero .lead,
+.page-hero .kicker {
+  color: var(--violet-deep);
+}
+.page-hero h1 em {
+  color: var(--rouille);
+}
+.page-hero .kicker::before {
+  background: var(--violet-deep);
+}
+.page-hero .btn-ghost {
+  border-color: var(--violet-deep);
+  color: var(--violet-deep);
+}
+.page-hero .btn-ghost:hover {
+  background: var(--violet-deep);
+  color: #fff;
+}
+
+/* blocs de couleur */
+.band-marine {
+  background: var(--marine);
+  color: var(--beige);
+  border-block: 0;
+}
+.band-marine h2,
+.band-marine .kicker {
+  color: var(--beige);
+}
+.band-marine .kicker::before {
+  background: var(--lilas);
+}
+.band-marine .steps-line {
+  border-top-color: rgba(246, 240, 228, 0.3);
+}
+.band-marine .steps-line b {
+  color: #fff;
+}
+.band-marine .steps-line span {
+  color: rgba(246, 240, 228, 0.82);
+}
+.band-marine .steps-line > div::before {
+  background: var(--lilas);
+}
+.band-lilas {
+  background: var(--lilas);
+}
+.band-lilas h2,
+.band-lilas .lead,
+.band-lilas .kicker {
+  color: var(--violet-deep);
+}
+.band-lilas h2 em {
+  color: var(--rouille);
+}
+.band-lilas .kicker::before {
+  background: var(--violet-deep);
+}
+.band-lilas .textlink {
+  border-bottom-color: var(--violet-deep);
+  color: var(--violet-deep);
+}
+
+/* trois portes : une couleur chacune */
+.path-n {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 0.95rem;
+}
+.paths li:nth-child(1) .path-n {
+  background: var(--rouille);
+}
+.paths li:nth-child(2) .path-n {
+  background: var(--violet);
+}
+.paths li:nth-child(3) .path-n {
+  background: var(--rouge);
+}
+.path:hover {
+  background: var(--lilas);
+}
+.path:hover .path-line {
+  color: var(--violet-deep);
+}
+
+/* échelle de prix : un point par couleur */
+.stop::after {
+  background: var(--rouille);
+}
+.stop:nth-child(3)::after,
+.stop:nth-child(4)::after {
+  background: var(--violet);
+}
+.stop:nth-child(5)::after {
+  background: var(--rouge);
+}
+
+/* bandeau final : violet */
+.cta-band {
+  background: var(--violet);
+  color: #fff;
+}
+.cta-band h2,
+.cta-band h2 em {
+  color: #fff;
+}
+.cta-band h2 em {
+  text-decoration: underline;
+  text-decoration-color: var(--lilas);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+.cta-inner p {
+  color: rgba(255, 255, 255, 0.9);
+}
+.cta-band .btn-primary {
+  background: #fff;
+  color: var(--violet-deep);
+}
+.cta-band .btn-primary:hover {
+  background: var(--lilas);
+}
+.cta-band .btn-ghost {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+.cta-band .btn-ghost:hover {
+  background: #fff;
+  color: var(--violet-deep);
+}
+
+/* carte Boost / formule en couleur franche */
+.formula.plus {
+  background: var(--violet);
+  border-color: var(--violet);
+  color: #fff;
+}
+.formula.plus h3,
+.formula.plus .formula-tag,
+.formula.plus .who,
+.formula.plus .formula-price {
+  color: #fff;
+}
+.monthly-price {
+  background: var(--rouille);
+}
+.monthly-price small {
+  color: #fff;
+}
+
+/* ---------- assistant du site (chatbot) ---------- */
+.chat {
+  position: fixed;
+  right: clamp(12px, 2vw, 24px);
+  bottom: clamp(12px, 2vw, 24px);
+  z-index: 90;
+}
+.chat-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--violet);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 22px;
+  font: 700 1rem var(--font-body);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.chat-open:hover {
+  background: var(--violet-deep);
+}
+.chat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #b8f0c8;
+}
+.chat-panel {
+  position: absolute;
+  right: 0;
+  bottom: 62px;
+  width: min(390px, calc(100vw - 24px));
+  max-height: min(600px, calc(100dvh - 110px));
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: 22px;
+  overflow: hidden;
+}
+.chat-panel[hidden] {
+  display: none;
+}
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--violet);
+  color: #fff;
+  font-family: var(--font-head);
+}
+.chat-x {
+  background: none;
+  border: 0;
+  color: #fff;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.chat-log {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  min-height: 160px;
+}
+.msg {
+  margin: 0;
+  max-width: 88%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.msg.bot {
+  background: var(--lilas);
+  color: var(--violet-deep);
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+.msg.me {
+  background: var(--violet);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+}
+.msg.wait {
+  opacity: 0.7;
+}
+.chat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 16px 12px;
+}
+.chat-chips[hidden] {
+  display: none;
+}
+.chip {
+  background: transparent;
+  border: 1px solid var(--violet);
+  color: var(--violet);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font: 600 0.82rem var(--font-body);
+  cursor: pointer;
+}
+.chip:hover {
+  background: var(--violet);
+  color: #fff;
+}
+.chat-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+}
+.chat-form input[type='text']:not(.hp) {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font: inherit;
+  background: #fff;
+  color: var(--text);
+}
+.chat-note {
+  margin: 0;
+  padding: 0 16px 14px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.chat-note a {
+  color: var(--violet);
+}
+@media (max-width: 520px) {
+  .chat-open {
+    padding: 12px 18px;
+  }
+}

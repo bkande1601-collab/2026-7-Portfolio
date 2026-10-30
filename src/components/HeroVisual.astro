@@ -4,8 +4,10 @@ import { site } from '../config/site';
 interface Props {
   label: string;
   pending: string;
+  soundOn: string;
+  soundOff: string;
 }
-const { label } = Astro.props;
+const { label, soundOn, soundOff } = Astro.props;
 const hasVideo = Boolean(site.heroVideo);
 ---
 
@@ -17,6 +19,7 @@ const hasVideo = Boolean(site.heroVideo);
   {
     hasVideo ? (
       <video
+        id="hero-video"
         src={site.heroVideo}
         poster={site.heroVideoPoster || site.heroPhoto || undefined}
         autoplay
@@ -30,4 +33,24 @@ const hasVideo = Boolean(site.heroVideo);
       <img src={site.heroPhoto} alt={site.heroPhotoAlt} width="800" height="840" fetchpriority="high" />
     )
   }
+  {hasVideo && (
+    <button class="sound-btn" id="sound-btn" type="button" aria-pressed="false" data-on={soundOn} data-off={soundOff}>
+      <span aria-hidden="true">♪</span> <span id="sound-label">{soundOff}</span>
+    </button>
+  )}
 </div>
+{hasVideo && (
+  <script>
+    const v = document.getElementById('hero-video') as HTMLVideoElement | null;
+    const b = document.getElementById('sound-btn') as HTMLButtonElement | null;
+    const l = document.getElementById('sound-label');
+    if (v && b && l) {
+      b.addEventListener('click', () => {
+        v.muted = !v.muted;
+        if (!v.muted) v.play().catch(() => {});
+        b.setAttribute('aria-pressed', String(!v.muted));
+        l.textContent = v.muted ? b.dataset.off! : b.dataset.on!;
+      });
+    }
+  </script>
+)}

@@ -19,8 +19,8 @@ export const site = {
   /** Image d'attente de la vidéo (optionnel), ex. '/video/poster.jpg' */
   heroVideoPoster: '',
   /** Photo de l'accueil, affichée tant qu'il n'y a pas de vidéo. */
-  heroPhoto: '/photos/binta-accueil.webp',
-  heroPhotoAlt: 'Portrait de Binta Kande, en haut lilas, les bras croisés',
+  heroPhoto: '/photos/binta-porte.webp',
+  heroPhotoAlt: 'Binta Kande devant une grande porte en bois, lunettes de soleil, cravate violette',
 
   /**
    * PHOTO (page Parcours). Déposez l'image dans public/ (ex. public/binta.jpg)

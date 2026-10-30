@@ -43,6 +43,8 @@ export const fr = {
       credential: 'MSc IA & Data',
       videoLabel: 'Vidéo motion design',
       videoPending: 'Ma vidéo arrive ici',
+      soundOn: 'Son activé',
+      soundOff: 'Activer le son',
     },
     skills: [
       'Agents IA',
@@ -67,7 +69,7 @@ export const fr = {
       afterLabel: 'Après',
       before: [
         'Une demande arrive par e-mail',
-        'On la recopie dans trois outils',
+        'On la recopie dans 3 outils',
         'On relance, on oublie, on retrouve',
         'Le reporting part le jeudi, à la main',
       ],
@@ -88,7 +90,7 @@ export const fr = {
       chat: {
         title: 'Assistant IA',
         q: 'Quelle est la procédure quand un collaborateur quitte l’entreprise ?',
-        a: 'Trois étapes : retirer les accès le dernier jour, récupérer le matériel, puis lancer l’entretien de départ. Je peux créer les tâches dans la to-do tout de suite.',
+        a: '3 étapes : retirer les accès le dernier jour, récupérer le matériel, puis lancer l’entretien de départ. Je peux créer les tâches dans la to-do tout de suite.',
         src: 'Sources : Procédure départs v3 · Charte IT',
         lock: 'Chiffré AES-256-GCM',
       },
@@ -96,7 +98,7 @@ export const fr = {
 
     paths: {
       kicker: 'Que cherchez-vous ?',
-      title: 'Trois façons de *travailler* ensemble.',
+      title: '3 façons de *travailler* ensemble.',
       from: 'dès',
       items: [
         {
@@ -143,7 +145,7 @@ export const fr = {
 
     lab: {
       kicker: 'Dans le labo',
-      title: 'Trois chantiers *en cours*.',
+      title: '3 chantiers *en cours*.',
       sub: 'Je les construis en parallèle. Laissez votre e-mail, je vous préviens à la sortie. Pas de newsletter, juste l’annonce.',
       items: [
         { name: "Un SaaS d'automatisation", state: 'Construction', progress: 62 },
@@ -161,7 +163,7 @@ export const fr = {
     },
 
     finalTitle: 'Dites-moi ce que vous *cherchez*.',
-    finalText: 'Trente minutes pour mettre à plat votre besoin : du contenu, une automatisation ou un agent IA.',
+    finalText: '30 minutes pour mettre à plat votre besoin : du contenu, une automatisation ou un agent IA.',
   },
 
   automations: {
@@ -186,7 +188,7 @@ export const fr = {
       title: 'Un assistant qui *connaît* vos documents et cite ses sources.',
       text: "Recherche hybride (sémantique et mots-clés) sur vos procédures, contrats et notes. Il répond, montre d'où vient la réponse, et reste dans le périmètre que vous lui donnez.",
       q: 'Quel est notre délai de paiement standard chez les clients grands comptes ?',
-      a: '45 jours fin de mois, sauf accord écrit. Deux clients ont une clause à 60 jours.',
+      a: '45 jours fin de mois, sauf accord écrit. 2 clients ont une clause à 60 jours.',
       src: 'Conditions générales v4 · Contrat Atlas §6',
     },
     tool: {
@@ -206,7 +208,7 @@ export const fr = {
     },
     stackTitle: 'Les outils derrière',
     finalTitle: 'Commençons par *l’audit*.',
-    finalText: 'Une demi-heure, un process, une première piste chiffrée.',
+    finalText: '30 minutes, un process, une première piste chiffrée.',
   },
 
   marketing: {
@@ -245,8 +247,8 @@ export const fr = {
       kicker: 'D’où vient cette expérience',
       title: 'Des réseaux sociaux au *marketing* complet.',
       items: [
-        { who: 'MNGRS.AI', role: 'Social media manager', text: 'Stratégie sur trois plateformes, production de contenus visuels et vidéo, reporting chaque semaine.' },
-        { who: 'La Squadra Paris', role: 'Chargée de marketing digital', text: 'E-commerce, publicité, CRM, réseaux sociaux et analytics : sept fonctions réunies sur un seul poste.' },
+        { who: 'MNGRS.AI', role: 'Social media manager', text: 'Stratégie sur 3 plateformes, production de contenus visuels et vidéo, reporting chaque semaine.' },
+        { who: 'La Squadra Paris', role: 'Chargée de marketing digital', text: 'E-commerce, publicité, CRM, réseaux sociaux et analytics : 7 fonctions réunies sur un seul poste.' },
         { who: 'Freelance', role: 'Depuis 2024', text: 'Sites, stratégie digitale, un podcast sur l’entrepreneuriat et des ateliers de networking.' },
       ],
     },
@@ -281,7 +283,7 @@ export const fr = {
       promiseNo: 'Je ne promets pas',
     },
     finalTitle: 'On parle de *vos réseaux* ?',
-    finalText: 'Une demi-heure pour définir votre objectif, vos plateformes et le bon rythme.',
+    finalText: '30 minutes pour définir votre objectif, vos plateformes et le bon rythme.',
   },
 
   products: {
@@ -292,7 +294,7 @@ export const fr = {
     },
     how: {
       kicker: 'Comment ça marche',
-      title: 'Trois étapes, sans rendez-vous.',
+      title: '3 étapes, sans rendez-vous.',
       steps: [
         { t: 'Vous payez', d: 'Paiement sécurisé sur Stripe. Je ne vois jamais votre carte.' },
         { t: 'Vous répondez', d: 'Un formulaire : qui vous êtes, votre site, votre LinkedIn, votre problème, vos objectifs.' },
@@ -306,7 +308,7 @@ export const fr = {
         line: 'Où en est votre business, ce qui vous freine, et ce que l’IA et le marketing peuvent changer pour vous.',
         gets: [
           { t: 'Une analyse de votre business', d: 'Votre activité, vos points de friction.' },
-          { t: 'Trois pistes concrètes', d: 'Où gagner du temps ou de l’argent.' },
+          { t: '3 pistes concrètes', d: 'Où gagner du temps ou de l’argent.' },
           { t: 'Un plan d’action', d: 'Des actions prêtes à appliquer dès la réception.' },
         ],
         cta: 'Acheter le diagnostic',
@@ -358,7 +360,7 @@ export const fr = {
         key: 'diagnostic',
         name: 'Diagnostic IA',
         line: 'Votre business analysé par des agents IA, en remplissant un formulaire.',
-        out: 'Une analyse, trois pistes et un plan d’action, par e-mail.',
+        out: 'Une analyse, 3 pistes et un plan d’action, par e-mail.',
         href: 'products',
       },
       {
@@ -437,8 +439,8 @@ export const fr = {
   book: {
     hero: {
       kicker: 'Réserver un audit',
-      title: 'Trente minutes pour *mettre à plat* votre besoin.',
-      sub: 'Trois petites étapes. Vous recevez l’invitation avec le lien Google Meet par e-mail.',
+      title: '30 minutes pour *mettre à plat* votre besoin.',
+      sub: '3 petites étapes. Vous recevez l’invitation avec le lien Google Meet par e-mail.',
     },
     steps: ['Votre besoin', 'Jour et heure', 'Confirmation'],
     fields: {
@@ -493,7 +495,7 @@ export const fr = {
     hero: {
       kicker: 'Envoyer un message',
       title: 'Une question, une idée ? *Écrivez-moi.*',
-      sub: 'Je réponds en général sous deux jours ouvrés. Vous recevez un accusé de réception tout de suite.',
+      sub: 'Je réponds en général sous 2 jours ouvrés. Vous recevez un accusé de réception tout de suite.',
     },
     fields: {
       name: 'Nom',
@@ -542,7 +544,7 @@ export const fr = {
       {
         when: '2025',
         title: 'Chargée de marketing digital, La Squadra Paris',
-        text: 'E-commerce, publicité, CRM, réseaux sociaux, analytics : sept fonctions sur un poste. E-mailing et automatisations pour la fidélisation.',
+        text: 'E-commerce, publicité, CRM, réseaux sociaux, analytics : 7 fonctions sur un poste. E-mailing et automatisations pour la fidélisation.',
         todo: false,
       },
       {
@@ -600,6 +602,20 @@ export const fr = {
       },
     ],
     finalTitle: 'Une autre question ? *Posez-la.*',
+  },
+
+  chat: {
+    open: 'Une question ?',
+    title: 'Assistant de Binta',
+    hello: 'Bonjour ! Je réponds à vos questions sur les offres, les prix et la façon de travailler ensemble.',
+    placeholder: 'Écrivez votre question',
+    send: 'Envoyer',
+    close: 'Fermer',
+    chips: ['Quels sont vos tarifs ?', 'Du contenu pour mes réseaux', 'Comment marche le diagnostic à 19 € ?'],
+    note: 'Assistant IA, il peut se tromper. Pour un devis, réservez un échange.',
+    preview: 'Mode aperçu',
+    error: 'Je n’ai pas pu répondre. Écrivez-moi directement, je vous réponds vite.',
+    thinking: 'Je réfléchis…',
   },
 
   footer: {

@@ -45,6 +45,8 @@ export const en: Content = {
       credential: 'MSc in AI & Data',
       videoLabel: 'Motion design video',
       videoPending: 'My video goes here',
+      soundOn: 'Sound on',
+      soundOff: 'Turn sound on',
     },
     skills: [
       'AI agents',
@@ -69,7 +71,7 @@ export const en: Content = {
       afterLabel: 'After',
       before: [
         'A request lands in an inbox',
-        'It gets copied into three tools',
+        'It gets copied into 3 tools',
         'Chasing, forgetting, finding again',
         'The report goes out Thursday, by hand',
       ],
@@ -90,7 +92,7 @@ export const en: Content = {
       chat: {
         title: 'AI assistant',
         q: 'What is the procedure when someone leaves the company?',
-        a: 'Three steps: remove access on the last day, collect equipment, then run the exit interview. I can create the tasks in the to-do right now.',
+        a: '3 steps: remove access on the last day, collect equipment, then run the exit interview. I can create the tasks in the to-do right now.',
         src: 'Sources: Offboarding procedure v3 · IT policy',
         lock: 'Encrypted AES-256-GCM',
       },
@@ -98,7 +100,7 @@ export const en: Content = {
 
     paths: {
       kicker: 'What are you looking for?',
-      title: 'Three ways to *work* together.',
+      title: '3 ways to *work* together.',
       from: 'from',
       items: [
         {
@@ -145,7 +147,7 @@ export const en: Content = {
 
     lab: {
       kicker: 'In the lab',
-      title: 'Three projects *in progress*.',
+      title: '3 projects *in progress*.',
       sub: "I'm building them in parallel. Leave your email and I'll let you know at launch. No newsletter, just the announcement.",
       items: [
         { name: 'An automation SaaS', state: 'Building', progress: 62 },
@@ -163,7 +165,7 @@ export const en: Content = {
     },
 
     finalTitle: 'Tell me what you are *looking for*.',
-    finalText: 'Thirty minutes to map out your need: content, an automation or an AI agent.',
+    finalText: '30 minutes to map out your need: content, an automation or an AI agent.',
   },
 
   automations: {
@@ -188,7 +190,7 @@ export const en: Content = {
       title: 'An assistant that *knows* your documents and cites its sources.',
       text: 'Hybrid search (semantic and keyword) across your procedures, contracts and notes. It answers, shows where the answer comes from, and stays inside the scope you give it.',
       q: 'What is our standard payment term for large accounts?',
-      a: '45 days end of month, unless agreed otherwise in writing. Two clients have a 60-day clause.',
+      a: '45 days end of month, unless agreed otherwise in writing. 2 clients have a 60-day clause.',
       src: 'General terms v4 · Atlas contract §6',
     },
     tool: {
@@ -208,7 +210,7 @@ export const en: Content = {
     },
     stackTitle: 'The tools behind it',
     finalTitle: "Let's start with *the audit*.",
-    finalText: 'Half an hour, one process, a first sized lead.',
+    finalText: '30 minutes, one process, a first sized lead.',
   },
 
   marketing: {
@@ -247,8 +249,8 @@ export const en: Content = {
       kicker: 'Where this experience comes from',
       title: 'From social media to *full* marketing.',
       items: [
-        { who: 'MNGRS.AI', role: 'Social media manager', text: 'Strategy across three platforms, visual and video content, a report every week.' },
-        { who: 'La Squadra Paris', role: 'Digital marketing manager', text: 'E-commerce, ads, CRM, social media and analytics: seven functions in a single role.' },
+        { who: 'MNGRS.AI', role: 'Social media manager', text: 'Strategy across 3 platforms, visual and video content, a report every week.' },
+        { who: 'La Squadra Paris', role: 'Digital marketing manager', text: 'E-commerce, ads, CRM, social media and analytics: 7 functions in a single role.' },
         { who: 'Freelance', role: 'Since 2024', text: 'Websites, digital strategy, an entrepreneurship podcast and networking workshops.' },
       ],
     },
@@ -283,7 +285,7 @@ export const en: Content = {
       promiseNo: 'I do not promise',
     },
     finalTitle: 'Shall we talk about *your social media*?',
-    finalText: 'Half an hour to define your goal, your platforms and the right rhythm.',
+    finalText: '30 minutes to define your goal, your platforms and the right rhythm.',
   },
 
   products: {
@@ -294,7 +296,7 @@ export const en: Content = {
     },
     how: {
       kicker: 'How it works',
-      title: 'Three steps, no appointment.',
+      title: '3 steps, no appointment.',
       steps: [
         { t: 'You pay', d: 'Secure payment on Stripe. I never see your card.' },
         { t: 'You answer', d: 'A form: who you are, your site, your LinkedIn, your problem, your goals.' },
@@ -308,7 +310,7 @@ export const en: Content = {
         line: 'Where your business stands, what holds you back, and what AI and marketing can change for you.',
         gets: [
           { t: 'An analysis of your business', d: 'Your activity, your friction points.' },
-          { t: 'Three concrete leads', d: 'Where to save time or money.' },
+          { t: '3 concrete leads', d: 'Where to save time or money.' },
           { t: 'An action plan', d: 'Actions ready to apply as soon as you receive it.' },
         ],
         cta: 'Buy the diagnosis',
@@ -360,7 +362,7 @@ export const en: Content = {
         key: 'diagnostic',
         name: 'AI diagnosis',
         line: 'Your business analysed by AI agents, by filling in a form.',
-        out: 'An analysis, three leads and an action plan, by email.',
+        out: 'An analysis, 3 leads and an action plan, by email.',
         href: 'products',
       },
       {
@@ -439,8 +441,8 @@ export const en: Content = {
   book: {
     hero: {
       kicker: 'Book an audit',
-      title: 'Thirty minutes to *map out* your need.',
-      sub: 'Three short steps. You receive the invite with the Google Meet link by email.',
+      title: '30 minutes to *map out* your need.',
+      sub: '3 short steps. You receive the invite with the Google Meet link by email.',
     },
     steps: ['Your need', 'Day and time', 'Confirmation'],
     fields: {
@@ -495,7 +497,7 @@ export const en: Content = {
     hero: {
       kicker: 'Send a message',
       title: 'A question, an idea? *Write to me.*',
-      sub: 'I usually reply within two working days. You get an acknowledgement right away.',
+      sub: 'I usually reply within 2 working days. You get an acknowledgement right away.',
     },
     fields: {
       name: 'Name',
@@ -544,7 +546,7 @@ export const en: Content = {
       {
         when: '2025',
         title: 'Digital marketing manager, La Squadra Paris',
-        text: 'E-commerce, ads, CRM, social media, analytics: seven functions in one role. Email marketing and automations for retention.',
+        text: 'E-commerce, ads, CRM, social media, analytics: 7 functions in one role. Email marketing and automations for retention.',
         todo: false,
       },
       {
@@ -602,6 +604,20 @@ export const en: Content = {
       },
     ],
     finalTitle: 'Another question? *Ask it.*',
+  },
+
+  chat: {
+    open: 'A question?',
+    title: 'Binta’s assistant',
+    hello: 'Hello! I answer your questions about the offers, the prices and how we can work together.',
+    placeholder: 'Type your question',
+    send: 'Send',
+    close: 'Close',
+    chips: ['What are your prices?', 'Content for my social media', 'How does the 19 € diagnosis work?'],
+    note: 'AI assistant, it can be wrong. For a quote, book a call.',
+    preview: 'Preview mode',
+    error: 'I could not answer. Write to me directly and I will reply quickly.',
+    thinking: 'Thinking…',
   },
 
   footer: {
