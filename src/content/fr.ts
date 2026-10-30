@@ -39,6 +39,7 @@ export const fr = {
       eyebrow: 'Automatisations, agents IA et marketing digital',
       title: 'Des automatisations et du marketing qui *tournent* vraiment.',
       sub: "Je construis des agents IA et des automatisations pour les entreprises, et je mets en place leur marketing digital : publicités, webinaires, réseaux sociaux. Des systèmes en production, pas des démos.",
+      credential: 'MSc IA & Data',
       videoLabel: 'Vidéo motion design',
       videoPending: 'Ma vidéo arrive ici',
     },

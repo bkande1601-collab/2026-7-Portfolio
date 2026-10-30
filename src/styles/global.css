@@ -403,6 +403,25 @@ a:hover > .arrow::after {
   }
 }
 
+/* petite mention sous les boutons */
+.credential {
+  margin-top: 22px;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.credential::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--violet);
+}
+
 /* emplacement vidéo */
 .video-slot {
   position: relative;

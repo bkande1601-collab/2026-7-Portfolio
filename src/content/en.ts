@@ -41,6 +41,7 @@ export const en: Content = {
       eyebrow: 'Automation, AI agents and digital marketing',
       title: 'Automation and marketing that *actually* run.',
       sub: 'I build AI agents and automations for businesses, and set up their digital marketing: ads, webinars, social media. Systems in production, not demos.',
+      credential: 'MSc in AI & Data',
       videoLabel: 'Motion design video',
       videoPending: 'My video goes here',
     },
