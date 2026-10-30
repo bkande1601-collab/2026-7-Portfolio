@@ -1,8 +1,5 @@
 ---
-import '@fontsource-variable/bricolage-grotesque';
-import '@fontsource-variable/inter';
-import '@fontsource/instrument-serif/400-italic.css';
-import '@fontsource/instrument-serif/400.css';
+import '@fontsource-variable/archivo/wdth.css';
 import '../styles/global.css';
 import { t, href, type Lang } from '../content';
 import { site } from '../config/site';
@@ -31,7 +28,7 @@ const origin = Astro.site ? Astro.site.origin : '';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDesc} />
-    <meta name="theme-color" content="#14100d" />
+    <meta name="theme-color" content="#f6f0e4" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" hreflang="fr" href={`${origin}${href('fr', page)}`} />
     <link rel="alternate" hreflang="en" href={`${origin}${href('en', page)}`} />

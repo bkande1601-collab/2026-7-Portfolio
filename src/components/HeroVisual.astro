@@ -5,16 +5,20 @@ interface Props {
   label: string;
   pending: string;
 }
-const { label, pending } = Astro.props;
+const { label } = Astro.props;
 const hasVideo = Boolean(site.heroVideo);
 ---
 
-<div class="video-slot" role="img" aria-label={label}>
+<!--
+  Tant que `heroVideo` est vide (src/config/site.ts), la photo s'affiche ici.
+  Dès qu'une vidéo est renseignée, elle prend la place de la photo.
+-->
+<div class="video-slot" role={hasVideo ? 'img' : undefined} aria-label={hasVideo ? label : undefined}>
   {
     hasVideo ? (
       <video
         src={site.heroVideo}
-        poster={site.heroVideoPoster || undefined}
+        poster={site.heroVideoPoster || site.heroPhoto || undefined}
         autoplay
         muted
         loop
@@ -23,42 +27,7 @@ const hasVideo = Boolean(site.heroVideo);
         aria-label={label}
       />
     ) : (
-      <>
-        <svg viewBox="0 0 500 400" aria-hidden="true" focusable="false">
-          <!-- liaisons -->
-          <path class="flow-line hot" d="M110 200 H190" />
-          <path class="flow-line hot" d="M300 200 H330" />
-          <path class="flow-line" d="M330 200 C355 200 355 110 385 110" />
-          <path class="flow-line" d="M330 200 H385" />
-          <path class="flow-line" d="M330 200 C355 200 355 290 385 290" />
-
-          <!-- entrée -->
-          <rect class="node-box" x="24" y="164" width="92" height="72" rx="14" />
-          <text class="node-t" x="40" y="195">Demande</text>
-          <text class="node-s" x="40" y="214">e-mail · form</text>
-
-          <!-- n8n -->
-          <rect class="node-box" x="190" y="154" width="110" height="92" rx="16" style="stroke:var(--apricot)" />
-          <circle class="pulse" cx="212" cy="176" r="4" fill="var(--apricot)" />
-          <text class="node-t" x="224" y="181">n8n</text>
-          <text class="node-s" x="206" y="206">orchestre</text>
-          <text class="node-s" x="206" y="222">+ agent IA</text>
-
-          <!-- sorties -->
-          <rect class="node-box" x="385" y="82" width="92" height="56" rx="12" />
-          <text class="node-t" x="400" y="115">Notion</text>
-          <rect class="node-box" x="385" y="172" width="92" height="56" rx="12" />
-          <text class="node-t" x="400" y="205">HubSpot</text>
-          <rect class="node-box" x="385" y="262" width="92" height="56" rx="12" />
-          <text class="node-t" x="400" y="295">Agenda</text>
-
-          <text class="node-s" x="24" y="350" fill="var(--sky)">AES-256-GCM · logs · alertes</text>
-        </svg>
-        <div class="slot-tag">
-          <b>{label}</b>
-          <span>{pending}</span>
-        </div>
-      </>
+      <img src={site.heroPhoto} alt={site.heroPhotoAlt} width="800" height="840" fetchpriority="high" />
     )
   }
 </div>

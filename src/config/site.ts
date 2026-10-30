@@ -18,12 +18,15 @@ export const site = {
   heroVideo: '',
   /** Image d'attente de la vidéo (optionnel), ex. '/video/poster.jpg' */
   heroVideoPoster: '',
+  /** Photo de l'accueil, affichée tant qu'il n'y a pas de vidéo. */
+  heroPhoto: '/photos/binta-accueil.webp',
+  heroPhotoAlt: 'Portrait de Binta Kande, en haut lilas, les bras croisés',
 
   /**
    * PHOTO (page Parcours). Déposez l'image dans public/ (ex. public/binta.jpg)
    * puis mettez '/binta.jpg'. Laissez '' pour garder l'emplacement vide.
    */
-  photo: '',
+  photo: '/photos/binta-parcours.webp',
 
   /** Liens du pied de page. Un lien vide ('') est masqué. */
   links: {
