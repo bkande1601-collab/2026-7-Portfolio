@@ -208,14 +208,14 @@ export const en: Content = {
       kicker: 'Two formulas',
       title: 'You choose *how far* I go.',
       setup: {
-        tag: 'Formula 1a',
-        name: 'Setup',
+        tag: 'Without ads',
+        name: 'Foundation',
         text: 'I build the whole system: landing page, emails to attendees, WhatsApp automations. I also guide you in preparing your slides.',
         who: 'For people who already have an audience.',
       },
       plus: {
-        tag: 'Formula 1b',
-        name: 'Setup and marketing',
+        tag: 'With ads',
+        name: 'Boost',
         text: 'Everything above, plus the advertising: I create and run your Meta campaigns to fill your webinar.',
         who: 'To start from zero or move faster.',
       },

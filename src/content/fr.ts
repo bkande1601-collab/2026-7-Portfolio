@@ -206,14 +206,14 @@ export const fr = {
       kicker: 'Deux formules',
       title: 'Vous choisissez *jusqu’où* je vais.',
       setup: {
-        tag: 'Formule 1a',
-        name: 'Mise en place',
+        tag: 'Sans publicité',
+        name: 'Socle',
         text: 'Je construis tout le dispositif : landing page, e-mails aux participants, automatisations WhatsApp. Je vous guide aussi pour préparer vos slides.',
         who: 'Pour celles et ceux qui ont déjà une audience.',
       },
       plus: {
-        tag: 'Formule 1b',
-        name: 'Mise en place et marketing',
+        tag: 'Avec publicité',
+        name: 'Boost',
         text: 'Tout ce qui précède, plus la publicité : je crée et pilote vos campagnes Meta pour remplir votre webinaire.',
         who: 'Pour partir de zéro ou aller plus vite.',
       },
