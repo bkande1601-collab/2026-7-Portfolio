@@ -33,7 +33,17 @@ export async function sendMail(m: Mail): Promise<boolean> {
 export const ownerEmail = () => env('OWNER_EMAIL');
 
 /* ---------- cadre commun ---------- */
-const C = { bg: '#f4ece2', card: '#fffaf4', dark: '#1a1410', text: '#2a211b', muted: '#7a6a5c', apricot: '#f4a77c', honey: '#e8b75a', line: '#eadccc' };
+/** Charte du site (src/styles/global.css) : ivoire, violet, violet profond, cannelle. */
+const C = { bg: '#f6f0e4', card: '#fbf7ee', dark: '#3b2a63', text: '#2b1d16', muted: '#675549', violet: '#694cac', lilas: '#e4d9f1', cannelle: '#8a4b36', line: '#e2d6c3' };
+const FONT = "'Archivo',Helvetica,Arial,sans-serif";
+
+/** Logo (public/email/logo.png) ; sans SITE_URL, repli sur le nom en texte. */
+const logo = () => {
+  const origin = env('SITE_URL').replace(/\/$/, '');
+  return origin
+    ? `<img src="${origin}/email/logo.png" width="190" alt="${esc(site.brand)}" style="display:block;border:0;width:190px;height:auto;">`
+    : `<span style="font:700 20px/1 ${FONT};color:#f6f0e4;letter-spacing:-0.02em;">${esc(site.brand)}</span>`;
+};
 
 export function shell(opts: { preheader: string; title: string; body: string; footer: string }) {
   return `<!doctype html><html><body style="margin:0;padding:0;background:${C.bg};">
@@ -41,19 +51,19 @@ export function shell(opts: { preheader: string; title: string; body: string; fo
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};padding:28px 12px;">
 <tr><td align="center">
 <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-  <tr><td style="background:${C.dark};border-radius:20px 20px 0 0;padding:26px 32px;">
-    <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${C.apricot};margin-right:10px;"></span><span style="font:700 18px/1 Helvetica,Arial,sans-serif;color:#f1e8de;letter-spacing:-0.02em;">${esc(site.brand)}</span>
+  <tr><td style="background:${C.dark};border-radius:20px 20px 0 0;padding:26px 32px;border-bottom:4px solid ${C.violet};">
+    ${logo()}
   </td></tr>
-  <tr><td style="background:${C.card};padding:36px 32px 28px;border-radius:0 0 20px 20px;font:16px/1.65 Helvetica,Arial,sans-serif;color:${C.text};">
-    <h1 style="margin:0 0 18px;font:700 28px/1.15 Helvetica,Arial,sans-serif;letter-spacing:-0.03em;color:${C.dark};">${opts.title}</h1>
+  <tr><td style="background:${C.card};padding:36px 32px 28px;border-radius:0 0 20px 20px;font:16px/1.65 ${FONT};color:${C.text};">
+    <h1 style="margin:0 0 18px;font:800 28px/1.15 ${FONT};letter-spacing:-0.03em;color:${C.dark};">${opts.title}</h1>
     ${opts.body}
   </td></tr>
-  <tr><td style="padding:18px 8px;font:12px/1.5 Helvetica,Arial,sans-serif;color:${C.muted};text-align:center;">${opts.footer}</td></tr>
+  <tr><td style="padding:18px 8px;font:12px/1.5 ${FONT};color:${C.muted};text-align:center;">${opts.footer}</td></tr>
 </table></td></tr></table></body></html>`;
 }
 
 export const button = (href: string, label: string) =>
-  `<p style="margin:26px 0;"><a href="${esc(href)}" style="display:inline-block;background:${C.apricot};color:#1a120c;text-decoration:none;font:700 16px/1 Helvetica,Arial,sans-serif;padding:15px 26px;border-radius:999px;">${esc(label)}</a></p>`;
+  `<p style="margin:26px 0;"><a href="${esc(href)}" style="display:inline-block;background:${C.violet};color:#fffaf4;text-decoration:none;font:700 16px/1 ${FONT};padding:15px 28px;border-radius:999px;">${esc(label)}</a></p>`;
 
 export const row = (k: string, v: string) =>
   `<tr><td style="padding:10px 0;border-bottom:1px solid ${C.line};width:130px;color:${C.muted};font-size:14px;vertical-align:top;">${esc(k)}</td><td style="padding:10px 0;border-bottom:1px solid ${C.line};font-size:15px;">${v}</td></tr>`;
@@ -286,9 +296,9 @@ export function visitorBookingMail(d: BookingData): Mail {
     (d.meetLink
       ? `<p style="margin:-8px 0 24px;font-size:14px;"><a href="${esc(gcalLink(d))}" style="color:${C.muted};">${l.addCal}</a></p>`
       : '') +
-    `<h2 style="margin:28px 0 6px;font:700 18px/1.2 Helvetica,Arial,sans-serif;color:${C.dark};">${l.prepTitle}</h2>` +
+    `<h2 style="margin:28px 0 6px;font:800 18px/1.2 ${FONT};color:${C.dark};">${l.prepTitle}</h2>` +
     `<ul style="margin:10px 0 24px;padding-left:20px;">${tips}</ul>` +
-    `<h2 style="margin:28px 0 0;font:700 18px/1.2 Helvetica,Arial,sans-serif;color:${C.dark};">${l.yours}</h2>` +
+    `<h2 style="margin:28px 0 0;font:800 18px/1.2 ${FONT};color:${C.dark};">${l.yours}</h2>` +
     answers +
     para(l.outro) +
     `<p style="margin:24px 0 0;">${l.sign}<br><strong>${esc(site.name)}</strong></p>`;
@@ -354,7 +364,7 @@ export function contactMails(d: { name: string; email: string; subject: string; 
       body:
         para(l.contactBody) +
         para(l.contactRecap) +
-        `<blockquote style="margin:0 0 20px;padding:12px 18px;border-left:3px solid ${C.apricot};background:#fbf3ea;color:${C.text};">${d.subject ? `<strong>${esc(d.subject)}</strong><br>` : ''}${msgHtml}</blockquote>` +
+        `<blockquote style="margin:0 0 20px;padding:12px 18px;border-left:3px solid ${C.violet};background:${C.lilas};color:${C.text};">${d.subject ? `<strong>${esc(d.subject)}</strong><br>` : ''}${msgHtml}</blockquote>` +
         (bookUrl ? para(l.contactBook) + button(bookUrl, t(d.lang).cta.book) : '') +
         `<p style="margin:24px 0 0;">${l.sign}<br><strong>${esc(site.name)}</strong></p>`,
       footer: d.lang === 'fr' ? 'Accusé de réception automatique.' : 'Automatic acknowledgement.',
@@ -370,7 +380,7 @@ export function contactMails(d: { name: string; email: string; subject: string; 
       title: 'Nouveau message',
       body:
         table(row('Nom', esc(d.name)) + (d.phone ? row('Téléphone', `<a href="tel:${esc(d.phone)}">${esc(d.phone)}</a>`) : '') + (d.company ? row('Entreprise', esc(d.company)) : '') + (d.siteUrl ? row('Site web', esc(d.siteUrl)) : '') + (needLabel ? row('Besoin', esc(needLabel)) : '') + (budgetLabel ? row('Budget', esc(budgetLabel)) : '') + (d.source ? row('Page d’origine', esc(sourceText(d.source))) : '') + row('E-mail', `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`) + row('Sujet', esc(d.subject || 'Non renseigné')) + row('Langue', d.lang.toUpperCase())) +
-        `<blockquote style="margin:0;padding:12px 18px;border-left:3px solid ${C.apricot};background:#fbf3ea;">${msgHtml}</blockquote>`,
+        `<blockquote style="margin:0;padding:12px 18px;border-left:3px solid ${C.violet};background:${C.lilas};">${msgHtml}</blockquote>`,
       footer: 'Répondez directement à cet e-mail pour écrire à la personne.',
     }),
     replyTo: d.email,

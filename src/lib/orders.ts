@@ -124,7 +124,7 @@ export async function syncOrder(sessionId: string): Promise<Order | null> {
 }
 
 /* ---------- e-mails ---------- */
-function clientPaidMail(o: Order): Mail {
+export function clientPaidMail(o: Order): Mail {
   const lang = toLang(o.lang);
   const fr = lang === 'fr';
   const name = productName(o.product, lang);
