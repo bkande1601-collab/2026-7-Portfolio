@@ -684,6 +684,7 @@ export const fr = {
       { v: 'site', t: 'Un site web (création, refonte ou diagnostic de sécurité)' },
       { v: 'cos', t: 'Chief of Staff externalisée' },
       { v: 'other', t: 'Je ne sais pas encore' },
+      { v: 'custom', t: 'Autre (je précise)' },
     ],
     budgets: [
       { v: '200-800', t: 'De 200 à 800 €' },

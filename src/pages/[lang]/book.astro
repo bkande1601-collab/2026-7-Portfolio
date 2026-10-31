@@ -79,6 +79,7 @@ const i18n = {
               <option value="" disabled selected>{lang === 'fr' ? 'Choisir' : 'Choose'}</option>
               {b.needs.map((n) => <option value={n.v}>{n.t}</option>)}
             </select>
+            <input id="b-need-other" name="needOther" type="text" maxlength="160" hidden placeholder={lang === 'fr' ? 'Dites-moi en quelques mots' : 'Tell me in a few words'} aria-label={lang === 'fr' ? 'Précisez votre besoin' : 'Specify your need'} style="margin-top:8px" />
           </div>
           <div class="field">
             <label for="b-budget">{b.fields.budget} <span>({b.fields.optional})</span></label>
@@ -217,6 +218,15 @@ const i18n = {
   const fmtLong = (iso: string) =>
     new Intl.DateTimeFormat(locale, { timeZone: userTz, weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
 
+  // « Autre » : un champ apparaît pour préciser
+  const needSel = $('b-need') as HTMLSelectElement;
+  const needOther = $('b-need-other') as HTMLInputElement;
+  needSel.addEventListener('change', () => {
+    needOther.hidden = needSel.value !== 'custom';
+    needOther.required = needSel.value === 'custom';
+    if (!needOther.hidden) needOther.focus();
+  });
+
   // ---- étape 1 : la demande
   const form = $('step-1') as HTMLFormElement;
   const submit = $('b-submit') as HTMLButtonElement;
@@ -258,7 +268,7 @@ const i18n = {
         const res = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...answers, subject: t.needs[answers.need] || answers.need, lang }),
+          body: JSON.stringify({ ...answers, subject: answers.need === 'custom' && answers.needOther ? `${t.needs.custom} : ${answers.needOther}` : t.needs[answers.need] || answers.need, lang }),
         });
         if (!res.ok) throw new Error(String(res.status));
         steps.forEach((el) => (el.hidden = true));
@@ -409,7 +419,7 @@ const i18n = {
       [t.fields.email, answers.email],
       ...(answers.company ? ([[t.fields.company, answers.company]] as [string, string][]) : []),
       ...(answers.siteUrl ? ([[t.fields.site, answers.siteUrl]] as [string, string][]) : []),
-      [t.fields.need, t.needs[answers.need] || answers.need],
+      [t.fields.need, answers.need === 'custom' && answers.needOther ? `${t.needs.custom} : ${answers.needOther}` : t.needs[answers.need] || answers.need],
       ...(answers.budget ? ([[t.fields.budget, t.budgets[answers.budget] || answers.budget]] as [string, string][]) : []),
       ...(answers.message ? ([[t.fields.message, answers.message]] as [string, string][]) : []),
       ['', `${fmtLong(chosen as string)} \u00b7 ${t.duration} min`],

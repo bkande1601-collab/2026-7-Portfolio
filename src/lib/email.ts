@@ -221,6 +221,7 @@ export type BookingData = {
   email: string;
   company: string;
   need: string;
+  needOther?: string;
   budget: string;
   message: string;
   lang: Lang;
@@ -228,6 +229,12 @@ export type BookingData = {
   tz: string;
   meetLink: string;
 };
+
+/** Libellé du besoin ; pour « Autre », on ajoute ce que la personne a précisé. */
+export function needText(lang: Lang, need: string, other?: string) {
+  const label = t(lang).book.needs.find((n) => n.v === need)?.t ?? need;
+  return need === 'custom' && other ? `${label} : ${other}` : label;
+}
 
 function longDate(ms: number, lang: Lang, tz: string) {
   return new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', {
@@ -257,7 +264,7 @@ export function visitorBookingMail(d: BookingData): Mail {
   const l = L[d.lang];
   const c = t(d.lang);
   const when = longDate(d.startMs, d.lang, d.tz);
-  const needLabel = c.book.needs.find((n) => n.v === d.need)?.t ?? d.need;
+  const needLabel = needText(d.lang, d.need, d.needOther);
   const budgetLabel = c.book.budgets.find((n) => n.v === d.budget)?.t ?? '';
   const tips = (prep[d.lang][d.need] ?? prep[d.lang].other)
     .map((x) => `<li style="margin:0 0 8px;">${esc(x)}</li>`)
@@ -303,7 +310,7 @@ export function visitorBookingMail(d: BookingData): Mail {
 export function ownerBookingMail(d: BookingData, eventLink: string): Mail {
   const when = longDate(d.startMs, d.lang, booking.timezone);
   const c = t(d.lang);
-  const needLabel = c.book.needs.find((n) => n.v === d.need)?.t ?? d.need;
+  const needLabel = needText(d.lang, d.need, d.needOther);
   const budgetLabel = c.book.budgets.find((n) => n.v === d.budget)?.t ?? 'Non renseigné';
   const f = L.fr.fields;
   const body =
@@ -330,8 +337,8 @@ export function ownerBookingMail(d: BookingData, eventLink: string): Mail {
 }
 
 /* ---------- MESSAGE ---------- */
-export function contactMails(d: { name: string; email: string; subject: string; message: string; lang: Lang; phone?: string; company?: string; need?: string; budget?: string; source?: string; siteUrl?: string }) {
-  const needLabel = d.need ? t(d.lang).book.needs.find((n) => n.v === d.need)?.t ?? d.need : '';
+export function contactMails(d: { name: string; email: string; subject: string; message: string; lang: Lang; phone?: string; company?: string; need?: string; needOther?: string; budget?: string; source?: string; siteUrl?: string }) {
+  const needLabel = d.need ? needText(d.lang, d.need, d.needOther) : '';
   const budgetLabel = d.budget ? t(d.lang).book.budgets.find((n) => n.v === d.budget)?.t ?? d.budget : '';
   const l = L[d.lang];
   const msgHtml = esc(d.message || (d.lang === 'fr' ? '(aucun message)' : '(no message)')).replace(/\n/g, '<br>');

@@ -686,6 +686,7 @@ export const en: Content = {
       { v: 'site', t: 'A website (design, redesign or security diagnosis)' },
       { v: 'cos', t: 'Outsourced Chief of Staff' },
       { v: 'other', t: "I don't know yet" },
+      { v: 'custom', t: 'Other (I will specify)' },
     ],
     budgets: [
       { v: '200-800', t: '€200 to €800' },

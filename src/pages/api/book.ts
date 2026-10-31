@@ -10,7 +10,7 @@ import { sourceText } from '../../lib/source';
 
 export const prerender = false;
 
-const NEEDS = ['automation', 'agent', 'tool', 'content', 'webinar', 'site', 'cos', 'other'];
+const NEEDS = ['automation', 'agent', 'tool', 'content', 'webinar', 'site', 'cos', 'other', 'custom'];
 const BUDGETS = ['200-800', '800-2000', 'gt2000', 'unknown', ''];
 
 const validPhone = (v: string) => /^[+()\d][\d\s().+-]{5,24}$/.test(v) && v.replace(/\D/g, '').length >= 6;
@@ -64,6 +64,7 @@ export const POST: APIRoute = async ({ request }) => {
     email,
     company: clean(body.company, 160),
     need,
+    needOther: need === 'custom' ? clean(body.needOther, 160) : '',
     budget,
     message: clean(body.message, 2000),
     lang,
@@ -73,7 +74,7 @@ export const POST: APIRoute = async ({ request }) => {
   };
 
   const c = t(lang);
-  const needLabel = c.book.needs.find((n) => n.v === need)?.t ?? need;
+  const needLabel = needText(lang, need, data.needOther);
   const budgetLabel = c.book.budgets.find((n) => n.v === budget)?.t ?? 'Non renseigné';
   const description = [
     `${name} <${email}>`,

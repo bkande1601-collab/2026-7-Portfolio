@@ -19,6 +19,7 @@ export const POST: APIRoute = async ({ request }) => {
   const siteUrl = clean(body.siteUrl, 200);
   const company = clean(body.company, 160);
   const need = clean(body.need, 30);
+  const needOther = need === 'custom' ? clean(body.needOther, 160) : '';
   const budget = clean(body.budget, 20);
   const email = clean(body.email, 254).toLowerCase();
   const subject = clean(body.subject, 160);
@@ -29,7 +30,7 @@ export const POST: APIRoute = async ({ request }) => {
   // Sans Resend configuré : mode aperçu, on accepte sans rien envoyer.
   if (!hasResend() || !ownerEmail()) return json({ ok: true, preview: true });
 
-  const { toVisitor, toOwner } = contactMails({ name, email, subject, message, lang, phone, company, need, budget, source, siteUrl });
+  const { toVisitor, toOwner } = contactMails({ name, email, subject, message, lang, phone, company, need, needOther, budget, source, siteUrl });
   const ownerSent = await sendMail(toOwner).catch(() => false);
   if (!ownerSent) {
     console.error('contact: owner mail failed');
