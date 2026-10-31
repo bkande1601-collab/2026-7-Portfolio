@@ -16,8 +16,11 @@ interface Props {
   page?: string;
   title?: string;
   description?: string;
+  noindex?: boolean;
 }
-const { lang, page = '', title, description } = Astro.props;
+const { lang, page = '', title, description, noindex = false } = Astro.props;
+const umamiUrl = (import.meta.env.PUBLIC_UMAMI_URL ?? '').replace(/\/$/, '');
+const umamiId = import.meta.env.PUBLIC_UMAMI_ID ?? '';
 const c = t(lang);
 const other: Lang = lang === 'fr' ? 'en' : 'fr';
 const pageTitle = title ? `${title} | ${site.name}` : c.meta.title;
@@ -43,6 +46,8 @@ const origin = Astro.site ? Astro.site.origin : '';
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDesc} />
     <meta property="og:locale" content={c.locale} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {umamiUrl && umamiId && <script defer src={`${umamiUrl}/script.js`} data-website-id={umamiId}></script>}
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>

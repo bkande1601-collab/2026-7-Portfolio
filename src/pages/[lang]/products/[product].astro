@@ -1,4 +1,5 @@
 ---
+import BuyButton from '../../../components/BuyButton.astro';
 import Base from '../../../layouts/Base.astro';
 import CtaBand from '../../../components/CtaBand.astro';
 import Crumb from '../../../components/Crumb.astro';
@@ -29,11 +30,7 @@ const other = p.items.find((x) => x.key !== key)!;
       <p class="lead">{it.line}</p>
       <div class="product-buy" style="margin-top:28px">
         <span class="product-price" style="color:var(--violet-deep)">{price.amount}</span>
-        {link ? (
-          <a class="btn btn-primary" href={link} rel="noopener noreferrer">{it.cta}</a>
-        ) : (
-          <span class="btn btn-primary" aria-disabled="true" style="opacity:.6;cursor:default">{p.soon}</span>
-        )}
+        <BuyButton product={key} lang={lang} label={it.cta} soon={p.soon} link={link} />
       </div>
       </div>
       <img class="hero-photo" src="/photos/binta-accueil-violet.webp" alt="Binta Kande en haut violet, les bras croisés" width="1108" height="1313" />

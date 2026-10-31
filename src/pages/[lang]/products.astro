@@ -1,4 +1,5 @@
 ---
+import BuyButton from '../../components/BuyButton.astro';
 import Base from '../../layouts/Base.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { t, em, href, langs, type Lang } from '../../content';
@@ -39,11 +40,7 @@ const p = c.products;
                   <p class="lead">{it.line}</p>
                   <div class="product-buy">
                     <span class="product-price">{price.amount}</span>
-                    {link ? (
-                      <a class="btn btn-primary" href={link} rel="noopener noreferrer">{it.cta}</a>
-                    ) : (
-                      <span class="btn btn-primary" aria-disabled="true" style="opacity:.55;cursor:default">{p.soon}</span>
-                    )}
+                    <BuyButton product={it.key as 'diagnostic' | 'prompt'} lang={lang} label={it.cta} soon={p.soon} link={link} />
                     <a class="textlink" href={href(lang, it.slug)}><span class="arrow">{c.nav.more}&nbsp;</span></a>
                   </div>
                 </div>

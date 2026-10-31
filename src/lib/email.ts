@@ -12,7 +12,7 @@ export const esc = (s: string) =>
 
 const firstName = (full: string) => full.trim().split(/\s+/)[0] || full;
 
-type Mail = { to: string; subject: string; html: string; replyTo?: string };
+export type Mail = { to: string; subject: string; html: string; replyTo?: string };
 
 export async function sendMail(m: Mail): Promise<boolean> {
   if (!hasResend()) return false;
@@ -35,7 +35,7 @@ export const ownerEmail = () => env('OWNER_EMAIL');
 /* ---------- cadre commun ---------- */
 const C = { bg: '#f4ece2', card: '#fffaf4', dark: '#1a1410', text: '#2a211b', muted: '#7a6a5c', apricot: '#f4a77c', honey: '#e8b75a', line: '#eadccc' };
 
-function shell(opts: { preheader: string; title: string; body: string; footer: string }) {
+export function shell(opts: { preheader: string; title: string; body: string; footer: string }) {
   return `<!doctype html><html><body style="margin:0;padding:0;background:${C.bg};">
 <span style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(opts.preheader)}</span>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};padding:28px 12px;">
@@ -52,15 +52,15 @@ function shell(opts: { preheader: string; title: string; body: string; footer: s
 </table></td></tr></table></body></html>`;
 }
 
-const button = (href: string, label: string) =>
+export const button = (href: string, label: string) =>
   `<p style="margin:26px 0;"><a href="${esc(href)}" style="display:inline-block;background:${C.apricot};color:#1a120c;text-decoration:none;font:700 16px/1 Helvetica,Arial,sans-serif;padding:15px 26px;border-radius:999px;">${esc(label)}</a></p>`;
 
-const row = (k: string, v: string) =>
+export const row = (k: string, v: string) =>
   `<tr><td style="padding:10px 0;border-bottom:1px solid ${C.line};width:130px;color:${C.muted};font-size:14px;vertical-align:top;">${esc(k)}</td><td style="padding:10px 0;border-bottom:1px solid ${C.line};font-size:15px;">${v}</td></tr>`;
 
-const table = (rows: string) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0;">${rows}</table>`;
+export const table = (rows: string) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0;">${rows}</table>`;
 
-const para = (s: string) => `<p style="margin:0 0 16px;">${s}</p>`;
+export const para = (s: string) => `<p style="margin:0 0 16px;">${s}</p>`;
 
 /* ---------- conseils de préparation selon le besoin ---------- */
 const prep: Record<Lang, Record<string, string[]>> = {

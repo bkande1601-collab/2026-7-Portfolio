@@ -1,0 +1,157 @@
+---
+import Base from '../../layouts/Base.astro';
+import { t, href, type Lang } from '../../content';
+import { hasDb, db } from '../../lib/db';
+import { hasStripe, isProduct } from '../../lib/stripe';
+import { syncOrder, productName } from '../../lib/orders';
+import { questionnaires } from '../../config/questionnaires';
+
+export const prerender = false;
+
+const lang: Lang = Astro.params.lang === 'en' ? 'en' : 'fr';
+const fr = lang === 'fr';
+const c = t(lang);
+Astro.response.headers.set('Cache-Control', 'no-store');
+
+const sessionId = Astro.url.searchParams.get('session_id') ?? '';
+let state: 'unconfigured' | 'unknown' | 'pending' | 'form' | 'done' = 'unconfigured';
+let product: 'diagnostic' | 'prompt' | null = null;
+
+if (hasDb() && hasStripe() && /^cs_[A-Za-z0-9_]+$/.test(sessionId)) {
+  try {
+    const order = await syncOrder(sessionId);
+    if (!order) state = 'unknown';
+    else if (order.status === 'pending' || order.status === 'failed' || order.status === 'expired') state = 'pending';
+    else if (isProduct(order.product)) {
+      product = order.product;
+      const a = await db().query('SELECT 1 FROM answers WHERE order_id = $1', [order.id]);
+      state = a.rowCount ? 'done' : 'form';
+    } else state = 'unknown';
+  } catch {
+    state = 'unknown';
+  }
+} else if (hasDb() && hasStripe()) {
+  state = 'unknown';
+}
+
+const questions = product ? questionnaires[product] : [];
+const L = {
+  kicker: fr ? 'Merci pour votre commande' : 'Thank you for your order',
+  title: fr ? 'Quelques questions pour préparer votre résultat' : 'A few questions to prepare your result',
+  lead: fr ? 'Prenez 5 minutes. Plus vos réponses sont précises, plus votre résultat l’est.' : 'Take 5 minutes. The more precise your answers, the more precise your result.',
+  send: fr ? 'Envoyer mes réponses' : 'Send my answers',
+  sending: fr ? 'Envoi…' : 'Sending…',
+  optional: fr ? 'facultatif' : 'optional',
+  err: fr ? 'Une erreur est survenue. Réessayez dans un instant.' : 'Something went wrong. Please try again in a moment.',
+  invalid: fr ? 'Merci de remplir les champs obligatoires.' : 'Please fill in the required fields.',
+  okTitle: fr ? 'C’est reçu, merci.' : 'Received, thank you.',
+  okText: fr ? 'Je lis vos réponses et je prépare votre résultat. Vous le recevrez par e-mail.' : 'I am reading your answers and preparing your result. You will receive it by email.',
+  pendingTitle: fr ? 'Votre paiement est en cours de confirmation' : 'Your payment is being confirmed',
+  pendingText: fr ? 'Cela peut prendre quelques instants. Rechargez la page dans une minute.' : 'This can take a moment. Reload the page in a minute.',
+  unknownTitle: fr ? 'Commande introuvable' : 'Order not found',
+  unknownText: fr ? 'Ouvrez le lien reçu par e-mail après votre paiement, ou écrivez-moi.' : 'Open the link you received by email after your payment, or write to me.',
+  thanksText: fr ? 'Merci pour votre commande. Vous recevrez un e-mail avec la suite.' : 'Thank you for your order. You will receive an email with the next steps.',
+};
+---
+
+<Base lang={lang} page="merci" title={L.kicker} noindex>
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="kicker">{L.kicker}</span>
+      {state === 'form' && (
+        <>
+          <h1>{L.title}</h1>
+          <p class="lead">{productName(product!, lang)}. {L.lead}</p>
+        </>
+      )}
+      {state === 'done' && <h1>{L.okTitle}</h1>}
+      {state === 'pending' && <h1>{L.pendingTitle}</h1>}
+      {state === 'unknown' && <h1>{L.unknownTitle}</h1>}
+      {state === 'unconfigured' && <h1>{L.okTitle}</h1>}
+    </div>
+  </section>
+
+  <section style="padding-top:clamp(16px,3vw,32px)">
+    <div class="wrap">
+      {state === 'form' && (
+        <form class="form" id="q-form" novalidate data-session={sessionId}>
+          {questions.map((q) => (
+            <div class="field">
+              <label for={`q-${q.id}`}>
+                {q.label[lang]} {!q.required && <span>({L.optional})</span>}
+              </label>
+              {q.hint && <p class="hint" style="margin:0 0 6px;opacity:.7;font-size:.9em">{q.hint[lang]}</p>}
+              {q.type === 'textarea' ? (
+                <textarea id={`q-${q.id}`} name={q.id} data-required={q.required ? '1' : ''} maxlength="3000"></textarea>
+              ) : (
+                <input id={`q-${q.id}`} name={q.id} type="text" data-required={q.required ? '1' : ''} maxlength="3000" />
+              )}
+            </div>
+          ))}
+          <p class="form-msg" id="q-msg" role="alert" aria-live="polite"></p>
+          <div class="btn-row">
+            <button class="btn btn-primary" type="submit" id="q-submit">{L.send}</button>
+          </div>
+        </form>
+      )}
+
+      <div class="success" id="q-success" hidden={state !== 'done'} tabindex="-1">
+        <h2>{L.okTitle}</h2>
+        <p>{L.okText}</p>
+        <div class="btn-row" style="margin-top:24px">
+          <a class="btn btn-ghost" href={href(lang)}>{fr ? 'Retour à l’accueil' : 'Back to home'}</a>
+        </div>
+      </div>
+
+      {state === 'pending' && <p class="lead">{L.pendingText}</p>}
+      {state === 'unknown' && <p class="lead">{L.unknownText}</p>}
+      {state === 'unconfigured' && <p class="lead">{L.thanksText}</p>}
+    </div>
+  </section>
+
+  <script type="application/json" id="q-i18n" set:html={JSON.stringify({ err: L.err, invalid: L.invalid, send: L.send, sending: L.sending, lang })} />
+</Base>
+
+<script>
+  const form = document.getElementById('q-form') as HTMLFormElement | null;
+  if (form) {
+    const msg = document.getElementById('q-msg')!;
+    const success = document.getElementById('q-success')!;
+    const btn = document.getElementById('q-submit') as HTMLButtonElement;
+    const t = JSON.parse(document.getElementById('q-i18n')!.textContent || '{}');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const answers: Record<string, string> = {};
+      let missing = false;
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea').forEach((el) => {
+        answers[el.name] = el.value.trim();
+        if (el.dataset.required && !el.value.trim()) missing = true;
+      });
+      msg.className = 'form-msg';
+      if (missing) {
+        msg.textContent = t.invalid;
+        msg.classList.add('err');
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = t.sending;
+      try {
+        const res = await fetch('/api/questionnaire', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: form.dataset.session, answers }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        form.hidden = true;
+        success.hidden = false;
+        success.focus();
+      } catch {
+        msg.textContent = t.err;
+        msg.classList.add('err');
+        btn.disabled = false;
+        btn.textContent = t.send;
+      }
+    });
+  }
+</script>

@@ -1,0 +1,52 @@
+---
+/**
+ * Bouton d'achat. Avec PUBLIC_CHECKOUT=on, il ouvre le paiement Stripe (/api/checkout).
+ * Sinon : l'ancien lien de paiement s'il existe, ou « Bientôt disponible ».
+ */
+import type { Lang } from '../content';
+interface Props {
+  product: 'diagnostic' | 'prompt';
+  lang: Lang;
+  label: string;
+  soon: string;
+  link?: string;
+}
+const { product, lang, label, soon, link = '' } = Astro.props;
+const enabled = import.meta.env.PUBLIC_CHECKOUT === 'on';
+const err = lang === 'fr' ? 'Le paiement est indisponible pour le moment. Réessayez dans un instant.' : 'Payment is unavailable right now. Please try again in a moment.';
+---
+
+{
+  enabled ? (
+    <>
+      <button class="btn btn-primary" type="button" data-buy={product} data-lang={lang} data-err={err}>{label}</button>
+    </>
+  ) : link ? (
+    <a class="btn btn-primary" href={link} rel="noopener noreferrer">{label}</a>
+  ) : (
+    <span class="btn btn-primary" aria-disabled="true" style="opacity:.55;cursor:default">{soon}</span>
+  )
+}
+
+<script>
+  document.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-buy]');
+    if (!btn || btn.disabled) return;
+    const label = btn.textContent;
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product: btn.dataset.buy, lang: btn.dataset.lang }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error('checkout');
+      location.assign(data.url);
+    } catch {
+      btn.disabled = false;
+      btn.textContent = label;
+      alert(btn.dataset.err);
+    }
+  });
+</script>
