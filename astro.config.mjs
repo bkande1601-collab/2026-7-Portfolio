@@ -8,5 +8,5 @@ export default defineConfig({
   site: process.env.SITE_URL || 'https://example.com',
   adapter: node({ mode: 'standalone' }),
   trailingSlash: 'never',
-  build: { format: 'file' },
+  build: { format: 'directory' },
 });
