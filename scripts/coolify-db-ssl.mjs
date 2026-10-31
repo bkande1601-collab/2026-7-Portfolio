@@ -62,9 +62,14 @@ try {
   console.log(`Application : ${app.name} (${app.fqdn ?? 'sans domaine'})`);
 
   const envs = await api('GET', `/applications/${app.uuid}/envs`);
-  const current = envs.find((e) => e.key === 'DATABASE_URL' && !e.is_preview);
-  if (!current?.value) throw new Error('DATABASE_URL introuvable dans Coolify');
-  const url = new URL(current.value);
+  const matches = envs.filter((e) => e.key === 'DATABASE_URL');
+  const current = matches.find((e) => !e.is_preview && (e.real_value || e.value)) ?? matches.find((e) => e.real_value || e.value);
+  const raw = current?.real_value || current?.value;
+  if (!raw) {
+    console.log('Variables trouvées :', envs.map((e) => `${e.key}${e.is_preview ? ' (preview)' : ''}`).join(', ') || 'aucune');
+    throw new Error('DATABASE_URL introuvable ou vide dans Coolify');
+  }
+  const url = new URL(raw);
   if (url.searchParams.get('sslmode') === 'disable') console.log('DATABASE_URL est déjà en sslmode=disable.');
   url.searchParams.set('sslmode', 'disable');
   await api('PATCH', `/applications/${app.uuid}/envs/bulk`, {
