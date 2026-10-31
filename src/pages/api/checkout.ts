@@ -30,8 +30,10 @@ export const POST: APIRoute = async ({ request }) => {
     if (!session.url) return json({ error: 'no_url' }, 502);
     if (hasDb()) await createPending(session.id, product, lang).catch(() => console.error('checkout: pending order not saved'));
     return json({ url: session.url });
-  } catch {
-    console.error('checkout: stripe session failed');
+  } catch (e) {
+    // Le message d'erreur Stripe ne contient pas de secret (la clé y apparaît masquée)
+    const err = e as { type?: string; code?: string; message?: string };
+    console.error('checkout: stripe session failed', err.type, err.code, err.message);
     return json({ error: 'stripe_failed' }, 502);
   }
 };
