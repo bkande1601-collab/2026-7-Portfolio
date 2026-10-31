@@ -82,6 +82,62 @@ def logo_c(fg, c1, c2, c3, bg, name):
     body = orbit(115, 115, 98, c1, c2, c3) + f'<path d="{wd}" fill="{fg}"/><path d="{td}" fill="{fg}" opacity=".7"/>'
     write(name, round(max(262 + ww, 264 + tw) + 40), 230, body, bg)
 
+# ---------- ÉTOILE : symbole en étoile à 4 branches, tracé propre
+def star(cx, cy, R, fill, pinch=0.16):
+    p = R * pinch
+    d = (f'M{cx},{cy - R} Q{cx + p},{cy - p} {cx + R},{cy} Q{cx + p},{cy + p} {cx},{cy + R} '
+         f'Q{cx - p},{cy + p} {cx - R},{cy} Q{cx - p},{cy - p} {cx},{cy - R}Z')
+    return f'<path d="{d}" fill="{fill}"/>'
+
+def ring(cx, cy, rx, ry, rot, stroke, w, op=1):
+    return f'<ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" fill="none" stroke="{stroke}" stroke-width="{w}" opacity="{op}" transform="rotate({rot} {cx} {cy})"/>'
+
+# E1 : étoile dans un carré arrondi (icône + nom)
+def logo_e1(sq, star_c, ring_c, fg, bg, name):
+    body = (f'<rect width="230" height="230" rx="46" fill="{sq}"/>'
+            + ring(115, 115, 86, 34, -30, ring_c, 6, .85) + star(115, 115, 74, star_c)
+            + f'<circle cx="188" cy="82" r="8" fill="{star_c}"/>')
+    wd, ww = text_path(bold, 'Binta Kande', 74, 268, 118, -0.03)
+    td, tw = text_path(semi, 'AUTOMATISATION · IA · MARKETING', 17, 270, 158, 0.14)
+    body += f'<path d="{wd}" fill="{fg}"/><path d="{td}" fill="{fg}" opacity=".7"/>'
+    write(name, round(max(268 + ww, 270 + tw) + 40), 230, body, bg)
+
+# E2 : étoile et orbite seules, sans carré (le vrai symbole)
+def logo_e2(star_c, ring_c, fg, bg, name):
+    body = ring(115, 115, 100, 40, -30, ring_c, 7, .9) + ring(115, 115, 100, 40, 30, ring_c, 7, .5) + star(115, 115, 82, star_c, .14) + f'<circle cx="198" cy="76" r="9" fill="{star_c}"/>'
+    wd, ww = text_path(cond, 'BINTA KANDE', 78, 262, 108, 0.06)
+    td, tw = text_path(semi, 'AUTOMATISATION · IA · MARKETING', 17, 264, 150, 0.14)
+    body += f'<path d="{wd}" fill="{fg}"/><path d="{td}" fill="{fg}" opacity=".7"/>'
+    write(name, round(max(262 + ww, 264 + tw) + 40), 230, body, bg)
+
+# E3 : BK avec une étoile à la place du point final
+def logo_e3(sq, ltr, star_c, bg, name, with_word=True):
+    size = 104
+    _, bw = text_path(bold, 'B', size, 0, 0, 0)
+    _, kw = text_path(bold, 'K', size, 0, 0, 0)
+    sr = 20
+    total = bw + kw - 6 + 6 + 2 * sr
+    x0 = (230 - total) / 2
+    bd, _ = text_path(bold, 'B', size, x0, 150, 0)
+    kd, kwid = text_path(bold, 'K', size, x0 + bw - 6, 150, 0)
+    cx = x0 + bw - 6 + kwid + 6 + sr
+    body = (f'<rect width="230" height="230" rx="46" fill="{sq}"/><path d="{bd}" fill="{ltr}"/><path d="{kd}" fill="{ltr}"/>'
+            + star(round(cx, 1), 132, sr + 6, star_c, .2))
+    W = 230
+    if with_word:
+        col = sq if bg == BEIGE else ltr
+        wd, ww = text_path(bold, 'Binta Kande', 74, 268, 118, -0.03)
+        td, tw = text_path(semi, 'AUTOMATISATION · IA · MARKETING', 17, 270, 158, 0.14)
+        body += f'<path d="{wd}" fill="{col}"/><path d="{td}" fill="{col}" opacity=".7"/>'
+        W = round(max(268 + ww, 270 + tw) + 40)
+    write(name, W, 230, body, bg)
+
+logo_e1(DEEP, ROUILLE, LILAS, DEEP, BEIGE, 'logo-etoile-1-carre.svg')
+logo_e1(ROUILLE, BEIGE, DEEP, BEIGE, DEEP, 'logo-etoile-1-carre-cuivre.svg')
+logo_e2(ROUILLE, VIOLET, DEEP, BEIGE, 'logo-etoile-2-orbite.svg')
+logo_e2(ROUILLE, LILAS, BEIGE, DEEP, 'logo-etoile-2-orbite-fonce.svg')
+logo_e3(DEEP, BEIGE, ROUILLE, BEIGE, 'logo-etoile-3-bk.svg')
+logo_e3(ROUILLE, BEIGE, DEEP, DEEP, 'logo-etoile-3-bk-cuivre.svg')
 logo_a(DEEP, ROUILLE, BEIGE, 'logo-a-point-cuivre.svg', 1)
 logo_a(BEIGE, ROUILLE, DEEP, 'logo-a-point-cuivre-fonce.svg', 1)
 logo_b(DEEP, BEIGE, ROUILLE, BEIGE, 'logo-b-monogramme.svg')
