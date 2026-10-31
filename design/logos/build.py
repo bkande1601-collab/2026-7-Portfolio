@@ -132,19 +132,20 @@ def write(name, w, h, body, bg=None):
     open(os.path.join(HERE, name), 'w').write(
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-label="Binta Kande">{r}{body}</svg>\n')
 
-# 1 : orbites tissées
-lockup('logo-1-tisse.svg', sym_tisse(VIOLET, ROUILLE, ROUILLE, BEIGE, 'a'), DEEP, BEIGE)
-lockup('logo-1-tisse-fonce.svg', sym_tisse(LILAS, ROUILLE, BEIGE, DEEP, 'b'), BEIGE, DEEP)
-solo('symbole-1-tisse.svg', sym_tisse(VIOLET, ROUILLE, ROUILLE, BEIGE, 'c'), BEIGE)
-# 2 : orbites à épaisseur variable
-lockup('logo-2-plume.svg', sym_plume(DEEP, VIOLET, ROUILLE, ROUILLE, BEIGE), DEEP, BEIGE)
-lockup('logo-2-plume-fonce.svg', sym_plume(BEIGE, LILAS, ROUILLE, BEIGE, DEEP), BEIGE, DEEP)
-solo('symbole-2-plume.svg', sym_plume(DEEP, VIOLET, ROUILLE, ROUILLE, BEIGE), BEIGE)
-# 3 : une seule orbite épaisse
-lockup('logo-3-simple.svg', sym_simple(VIOLET, ROUILLE, ROUILLE, BEIGE), DEEP, BEIGE)
-lockup('logo-3-simple-fonce.svg', sym_simple(LILAS, ROUILLE, BEIGE, DEEP), BEIGE, DEEP)
-solo('symbole-3-simple.svg', sym_simple(VIOLET, ROUILLE, ROUILLE, BEIGE), BEIGE)
-# 4 : sceau (icône d'appli, avatar)
-solo('icone-sceau-fonce.svg', sym_sceau(DEEP, LILAS, ROUILLE, BEIGE), None)
-solo('icone-sceau-cuivre.svg', sym_sceau(ROUILLE, BEIGE, DEEP, BEIGE), None)
-print('ok')
+if __name__ == '__main__':
+    # 1 : orbites tissées
+    lockup('logo-1-tisse.svg', sym_tisse(VIOLET, ROUILLE, ROUILLE, BEIGE, 'a'), DEEP, BEIGE)
+    lockup('logo-1-tisse-fonce.svg', sym_tisse(LILAS, ROUILLE, BEIGE, DEEP, 'b'), BEIGE, DEEP)
+    solo('symbole-1-tisse.svg', sym_tisse(VIOLET, ROUILLE, ROUILLE, BEIGE, 'c'), BEIGE)
+    # 2 : orbites à épaisseur variable
+    lockup('logo-2-plume.svg', sym_plume(DEEP, VIOLET, ROUILLE, ROUILLE, BEIGE), DEEP, BEIGE)
+    lockup('logo-2-plume-fonce.svg', sym_plume(BEIGE, LILAS, ROUILLE, BEIGE, DEEP), BEIGE, DEEP)
+    solo('symbole-2-plume.svg', sym_plume(DEEP, VIOLET, ROUILLE, ROUILLE, BEIGE), BEIGE)
+    # 3 : une seule orbite épaisse
+    lockup('logo-3-simple.svg', sym_simple(VIOLET, ROUILLE, ROUILLE, BEIGE), DEEP, BEIGE)
+    lockup('logo-3-simple-fonce.svg', sym_simple(LILAS, ROUILLE, BEIGE, DEEP), BEIGE, DEEP)
+    solo('symbole-3-simple.svg', sym_simple(VIOLET, ROUILLE, ROUILLE, BEIGE), BEIGE)
+    # 4 : sceau (icône d'appli, avatar)
+    solo('icone-sceau-fonce.svg', sym_sceau(DEEP, LILAS, ROUILLE, BEIGE), None)
+    solo('icone-sceau-cuivre.svg', sym_sceau(ROUILLE, BEIGE, DEEP, BEIGE), None)
+    print('ok')
