@@ -14,7 +14,7 @@ const c = t(lang);
 Astro.response.headers.set('Cache-Control', 'no-store');
 
 const sessionId = Astro.url.searchParams.get('session_id') ?? '';
-let state: 'unconfigured' | 'unknown' | 'pending' | 'form' | 'done' = 'unconfigured';
+let state: 'unconfigured' | 'unknown' | 'pending' | 'form' | 'done' | 'error' = 'unconfigured';
 let product: 'diagnostic' | 'prompt' | null = null;
 
 if (hasDb() && hasStripe() && /^cs_[A-Za-z0-9_]+$/.test(sessionId)) {
@@ -27,8 +27,9 @@ if (hasDb() && hasStripe() && /^cs_[A-Za-z0-9_]+$/.test(sessionId)) {
       const a = await db().query('SELECT 1 FROM answers WHERE order_id = $1', [order.id]);
       state = a.rowCount ? 'done' : 'form';
     } else state = 'unknown';
-  } catch {
-    state = 'unknown';
+  } catch (e) {
+    console.error('merci: order lookup failed', (e as { code?: string }).code, (e as Error).message);
+    state = 'error';
   }
 } else if (hasDb() && hasStripe()) {
   state = 'unknown';
@@ -48,6 +49,8 @@ const L = {
   okText: fr ? 'Je lis vos réponses et je prépare votre résultat. Vous le recevrez par e-mail.' : 'I am reading your answers and preparing your result. You will receive it by email.',
   pendingTitle: fr ? 'Votre paiement est en cours de confirmation' : 'Your payment is being confirmed',
   pendingText: fr ? 'Cela peut prendre quelques instants. Rechargez la page dans une minute.' : 'This can take a moment. Reload the page in a minute.',
+  errorTitle: fr ? 'Votre paiement est bien reçu' : 'Your payment has been received',
+  errorText: fr ? 'Le questionnaire est momentanément indisponible. Vous recevrez un e-mail avec le lien pour le remplir dans quelques minutes. Sans nouvelle de ma part, écrivez-moi à hello@bintakande.com.' : 'The questionnaire is temporarily unavailable. You will receive an email with the link to fill it in within a few minutes. If you hear nothing, write to me at hello@bintakande.com.',
   unknownTitle: fr ? 'Commande introuvable' : 'Order not found',
   unknownText: fr ? 'Ouvrez le lien reçu par e-mail après votre paiement, ou écrivez-moi.' : 'Open the link you received by email after your payment, or write to me.',
   thanksText: fr ? 'Merci pour votre commande. Vous recevrez un e-mail avec la suite.' : 'Thank you for your order. You will receive an email with the next steps.',
@@ -67,6 +70,7 @@ const L = {
       {state === 'done' && <h1>{L.okTitle}</h1>}
       {state === 'pending' && <h1>{L.pendingTitle}</h1>}
       {state === 'unknown' && <h1>{L.unknownTitle}</h1>}
+      {state === 'error' && <h1>{L.errorTitle}</h1>}
       {state === 'unconfigured' && <h1>{L.okTitle}</h1>}
     </div>
   </section>
@@ -105,6 +109,7 @@ const L = {
 
       {state === 'pending' && <p class="lead">{L.pendingText}</p>}
       {state === 'unknown' && <p class="lead">{L.unknownText}</p>}
+      {state === 'error' && <p class="lead">{L.errorText}</p>}
       {state === 'unconfigured' && <p class="lead">{L.thanksText}</p>}
     </div>
   </section>

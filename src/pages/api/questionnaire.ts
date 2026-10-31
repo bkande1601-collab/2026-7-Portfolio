@@ -16,7 +16,13 @@ export const POST: APIRoute = async ({ request }) => {
   const sessionId = clean(body.session_id, 200);
   if (!/^cs_[A-Za-z0-9_]+$/.test(sessionId)) return json({ error: 'bad_request' }, 400);
 
-  const order = await syncOrder(sessionId);
+  let order;
+  try {
+    order = await syncOrder(sessionId);
+  } catch (e) {
+    console.error('questionnaire: order lookup failed', (e as { code?: string }).code, (e as Error).message);
+    return json({ error: 'unavailable' }, 503);
+  }
   if (!order) return json({ error: 'unknown_order' }, 404);
   if (order.status === 'pending' || order.status === 'failed' || order.status === 'expired') return json({ error: 'not_paid' }, 402);
   if (!isProduct(order.product)) return json({ error: 'bad_product' }, 400);

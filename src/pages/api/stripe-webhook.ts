@@ -75,8 +75,8 @@ export const POST: APIRoute = async ({ request }) => {
       [event.id, event.type, obj.id ?? null, JSON.stringify(event.data.object)],
     );
     return json({ ok: true });
-  } catch {
-    console.error('stripe-webhook: handler failed', event.type);
+  } catch (e) {
+    console.error('stripe-webhook: handler failed', event.type, (e as { code?: string }).code, (e as Error).message);
     return json({ error: 'handler_failed' }, 500);
   }
 };

@@ -21,6 +21,7 @@ export const POST: APIRoute = async ({ request }) => {
       mode: 'payment',
       line_items: [{ price, quantity: 1 }],
       customer_creation: 'always',
+      phone_number_collection: { enabled: true },
       locale: lang,
       metadata: { product, lang },
       payment_intent_data: { metadata: { product, lang } },
