@@ -165,6 +165,7 @@ src/
 
 - **Bande-annonce de 7 secondes** : jouée une fois par visite à l'arrivée sur l'accueil (`src/components/Trailer.astro`). Fichiers `public/video/trailer-*.mp4` (paysage) et `trailer-portrait-*.mp4` (mobile). `trailer: false` dans `src/config/site.ts` la retire.
 - **Voix de bienvenue** : démarre juste après la bande-annonce. Le bouton haut-parleur reste visible pour couper ou relancer le son (choix mémorisé).
+- **Qualité** : toutes les vidéos sont en Full HD (1920 x 1080, 30 images par seconde, H.264) et la bande-annonce mobile en 1080 x 1920. La musique est composée pour le projet (pad chaud, basse, arpège, kick doux, 120 battements par minute pour la bande-annonce, calée sur les mots).
 - **Vidéos de 30 secondes**, une par langue, dans `public/video/` : `agent-ia`, `contenu`, `webinaire`, `preuves` (+ une image d'attente `.webp` chacune). `videos` dans `site.ts` permet de les retirer page par page.
 - **Prix du webinaire** : `prices.webinar` dans `site.ts`.
 - **Création de site** : page `/marketing/sites`, sans prix affiché.
