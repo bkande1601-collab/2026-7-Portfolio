@@ -32,15 +32,14 @@ const { src, poster, label, soundOn, soundOff, pauseLabel = 'Pause', playLabel =
     const l = box.querySelector('.motion-label');
     const pz = box.querySelector<HTMLButtonElement>('.motion-pause');
     if (pz && v) {
-      pz.addEventListener('click', () => {
-        if (v.paused) {
-          v.play().catch(() => {});
-          pz.textContent = pz.dataset.pause!;
-        } else {
-          v.pause();
-          pz.textContent = pz.dataset.play!;
-        }
-      });
+      const sync = () => { pz.textContent = v.paused ? pz.dataset.play! : pz.dataset.pause!; };
+      const toggle = () => { if (v.paused) v.play().catch(() => {}); else v.pause(); };
+      pz.addEventListener('click', toggle);
+      v.addEventListener('click', toggle);
+      v.addEventListener('play', sync);
+      v.addEventListener('pause', sync);
+      v.style.cursor = 'pointer';
+      sync();
     }
     if (!v || !b || !l) return;
     b.addEventListener('click', () => {
