@@ -10,7 +10,7 @@ export function facts(lang: Lang): string {
   return [
     fr ? 'Binta Kande : Chief of Staff, MSc IA, freelance. Marketing et contenu, automatisations et agents IA, produits digitaux.' : 'Binta Kande: Chief of Staff, MSc in AI, freelancer. Marketing and content, automation and AI agents, digital products.',
     fr
-      ? `Diagnostic IA du business : ${p.diagnostic.amount} €. Prompt maître sur mesure : ${p.prompt.amount} €. Le client paie sur Stripe, remplit un formulaire, puis reçoit son résultat par e-mail.`
+      ? `Diagnostic IA du business : ${p.diagnostic.amount} €. Master prompt : ${p.prompt.amount} €. Le client paie sur Stripe, remplit un formulaire, puis reçoit son résultat par e-mail.`
       : `AI business diagnosis: €${p.diagnostic.amount}. Tailored master prompt: €${p.prompt.amount}. The client pays on Stripe, fills in a form, then receives the result by email.`,
     fr
       ? `Le premier échange de ${booking.durationMin} minutes est gratuit (bouton « Réserver un audit »).`
@@ -56,7 +56,7 @@ export function previewAnswer(message: string, lang: Lang): string {
 
   if (has('diagnostic', 'diagnosis', 'prompt', '19', '39', 'guide'))
     return fr
-      ? `Le diagnostic IA coûte ${p.diagnostic.amount} € et le prompt maître ${p.prompt.amount} €. Vous payez, vous répondez à un formulaire, et vous recevez votre résultat par e-mail.`
+      ? `Le diagnostic IA coûte ${p.diagnostic.amount} € et le master prompt ${p.prompt.amount} €. Vous payez, vous répondez à un formulaire, et vous recevez votre résultat par e-mail.`
       : `The AI diagnosis costs €${p.diagnostic.amount} and the master prompt €${p.prompt.amount}. You pay, fill in a form, and receive your result by email.`;
   if (has('réseaux', 'reseaux', 'contenu', 'instagram', 'tiktok', 'linkedin', 'social', 'content'))
     return fr
@@ -76,7 +76,7 @@ export function previewAnswer(message: string, lang: Lang): string {
       : `An AI agent costs €${p.agent.amount} to €${p.agent.to}, a complete system €${p.system.amount} to €${p.system.to}+. The exact quote follows a conversation.`;
   if (has('prix', 'tarif', 'combien', 'price', 'cost', 'how much'))
     return fr
-      ? `Mes tarifs : diagnostic ${p.diagnostic.amount} €, prompt maître ${p.prompt.amount} €, agent IA de ${p.agent.amount} à ${p.agent.to} €, contenu dès ${p.marketing.amount} € par mois. Le premier échange est gratuit. Tout est détaillé sur la page Tarifs.`
+      ? `Mes tarifs : diagnostic ${p.diagnostic.amount} €, master prompt ${p.prompt.amount} €, agent IA de ${p.agent.amount} à ${p.agent.to} €, contenu dès ${p.marketing.amount} € par mois. Le premier échange est gratuit. Tout est détaillé sur la page Tarifs.`
       : `My pricing: diagnosis €${p.diagnostic.amount}, master prompt €${p.prompt.amount}, AI agent €${p.agent.amount} to €${p.agent.to}, content from €${p.marketing.amount} per month. The first call is free. Everything is on the Pricing page.`;
   if (has('rendez', 'réserv', 'reserv', 'call', 'book', 'audit', 'échange', 'echange'))
     return fr

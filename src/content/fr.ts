@@ -32,7 +32,7 @@ export const fr = {
       agents: 'Agents IA',
       systems: 'Systèmes et outils internes',
       diagnostic: 'Diagnostic IA',
-      prompt: 'Prompt maître',
+      prompt: 'Master prompt',
     },
     more: 'Voir le détail',
     back: 'Retour',
@@ -155,7 +155,7 @@ export const fr = {
         {
           slug: 'products',
           name: 'Services',
-          line: 'Un diagnostic IA de votre business et un prompt maître sur mesure, à acheter en ligne.',
+          line: 'Un diagnostic IA de votre business et un master prompt sur mesure, à acheter en ligne.',
           price: 'diagnostic',
         },
       ],
@@ -501,10 +501,10 @@ export const fr = {
       {
         key: 'prompt',
         slug: 'products/prompt',
-        name: 'Prompt maître sur mesure',
+        name: 'Master prompt',
         line: 'Un prompt long et précis, écrit pour vous : votre activité, vos clients, votre manière de parler.',
         gets: [
-          { t: 'Un prompt maître', d: 'Adapté à votre business, pas un modèle générique.' },
+          { t: 'Un master prompt', d: 'Adapté à votre business, pas un modèle générique.' },
           { t: 'Votre ton et vos règles', d: 'Votre manière de parler, ce que l’IA doit faire et ne jamais faire.' },
           { t: 'Un format de réponse', d: 'Des consignes claires pour obtenir des réponses utilisables tout de suite.' },
           { t: 'Prêt à coller', d: 'Dans l’outil d’IA que vous utilisez déjà, avec un court mode d’emploi.' },
@@ -514,7 +514,7 @@ export const fr = {
         example: {
           title: 'Un extrait de prompt',
           who: 'Camille, coach sportive indépendante',
-          problem: 'Extrait d’un prompt maître, écrit pour son activité.',
+          problem: 'Extrait d’un master prompt, écrit pour son activité.',
           result: [
             { t: 'Rôle', d: 'Tu es l’assistante de Camille, coach sportive. Tu écris à sa place sur Instagram et tu réponds aux messages.' },
             { t: 'Public et ton', d: 'Des femmes qui reprennent le sport. Ton chaleureux, direct, jamais culpabilisant.' },
@@ -522,7 +522,7 @@ export const fr = {
           ],
           note: 'Exemple inventé pour illustrer. Votre prompt est écrit à partir de vos réponses.',
         },
-        cta: 'Acheter le prompt maître',
+        cta: 'Acheter le master prompt',
       },
     ],
     forWhoLabel: 'Pour qui ?',
@@ -573,7 +573,7 @@ export const fr = {
       },
       {
         key: 'prompt',
-        name: 'Prompt maître',
+        name: 'Master prompt',
         line: 'Un prompt long et précis, écrit pour vous et votre activité.',
         out: 'Prêt à coller dans votre outil d’IA.',
         href: 'products/prompt',
@@ -863,7 +863,7 @@ export const fr = {
       'marketing/content': { name: 'Contenu pour les réseaux', line: 'Stratégie, création, publication et bilan chaque semaine, à partir de 900 € par mois.' },
       'marketing/webinars': { name: 'Webinaires', line: 'Une formule de base avec tout inclus, et du sur mesure sur devis.' },
       'products/diagnostic': { name: 'Diagnostic IA de votre business', line: 'Un formulaire, un résultat personnalisé par e-mail, 19 €.' },
-      'products/prompt': { name: 'Prompt maître sur mesure', line: 'Un prompt écrit pour votre activité, prêt à coller, 39 €.' },
+      'products/prompt': { name: 'Master prompt', line: 'Un prompt écrit pour votre activité, prêt à coller, 39 €.' },
     },
     resource: {
       kicker: 'Ressource offerte',

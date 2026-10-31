@@ -630,9 +630,9 @@
   {
     "slug": "modele-prompt-maitre",
     "fr": {
-      "title": "Modèle : écrire votre prompt maître",
+      "title": "Modèle : écrire votre master prompt",
       "subtitle": "Un prompt long et précis donne des réponses utilisables du premier coup.",
-      "intro": "Un prompt maître, c’est la fiche de poste de votre assistant IA. Remplissez chaque ligne avec vos mots, puis collez le tout au début de la conversation.",
+      "intro": "Un master prompt, c’est la fiche de poste de votre assistant IA. Remplissez chaque ligne avec vos mots, puis collez le tout au début de la conversation.",
       "blocks": [
         {
           "type": "table",
@@ -696,7 +696,7 @@
           "text": "Sans contexte, un assistant IA répond de façon générale. Avec un rôle, un public, un ton et des règles, il répond comme quelqu’un qui connaît votre métier."
         }
       ],
-      "cta": "Envie d’un prompt maître écrit pour vous ? Découvrez le produit à 39 €."
+      "cta": "Envie d’un master prompt écrit pour vous ? Découvrez le produit à 39 €."
     },
     "en": {
       "title": "Template: writing your master prompt",
@@ -856,10 +856,10 @@
         {
           "type": "text",
           "title": "Pour aller plus loin",
-          "text": "Un prompt générique donne une réponse générique. Un prompt maître, écrit avec votre ton, votre cible et vos règles, donne des réponses qui sonnent comme vous."
+          "text": "Un prompt générique donne une réponse générique. Un master prompt, écrit avec votre ton, votre cible et vos règles, donne des réponses qui sonnent comme vous."
         }
       ],
-      "cta": "Envie d’un prompt maître écrit pour vous ? Découvrez le produit à 39 €."
+      "cta": "Envie d’un master prompt écrit pour vous ? Découvrez le produit à 39 €."
     },
     "en": {
       "title": "12 ready-to-use prompts for entrepreneurs",
