@@ -264,20 +264,19 @@ a:hover > .arrow::after {
 .logo {
   white-space: nowrap;
   font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: -0.03em;
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: -0.035em;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
 }
-.logo i {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--apricot);
+.logo img {
+  width: 44px;
+  height: 44px;
   display: block;
+  margin-block: -6px;
 }
 .nav {
   display: flex;
@@ -4556,4 +4555,14 @@ html.trailer-on body {
   .work-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.foot-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.foot-brand img {
+  width: 36px;
+  height: 36px;
 }

@@ -12,7 +12,7 @@ const year = new Date().getFullYear();
 
 <footer class="site-footer">
   <div class="wrap foot">
-    <p>© {year} {site.name}. {c.footer.rights}</p>
+    <p class="foot-brand"><img src="/logo-symbole.svg" width="36" height="36" alt="" /><span>© {year} {site.name}. {c.footer.rights}</span></p>
     <div class="foot-links">
       <a href={href(lang, 'faq')}>{c.nav.faq}</a>
       <a href={href(lang, 'contact')}>{c.cta.message}</a>

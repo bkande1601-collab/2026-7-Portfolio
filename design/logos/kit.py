@@ -56,3 +56,24 @@ icone('icone-cuivre.svg', ROUILLE, ('#ffffff', LILAS, DEEP, '#ffffff'))
 icone('icone-beige.svg', BEIGE, COLORS['couleur'])
 icone('favicon.svg', DEEP, COLORS['inverse'], 1.02)
 print(len(os.listdir(OUT)), 'svg')
+
+# ---- dossier « symboles et icônes » : sans fond / avec fond (SVG, PNG 1024)
+SI = os.path.join(HERE, 'symboles-et-icones')
+os.makedirs(os.path.join(SI, 'sans-fond'), exist_ok=True)
+os.makedirs(os.path.join(SI, 'avec-fond'), exist_ok=True)
+def put(folder, name, body):
+    open(os.path.join(SI, folder, name), 'w').write(
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Binta Kande">{body}</svg>\n')
+for k, c in COLORS.items():
+    put('sans-fond', f'symbole-{k}.svg', plume(*c[:4]))
+def carre(name, sq, c, scale=.9, radius=52):
+    put('avec-fond', name, f'<rect width="240" height="240" rx="{radius}" fill="{sq}"/><g transform="translate(120 120) scale({scale}) translate(-120 -120)">{plume(*c[:4])}</g>')
+carre('icone-arrondie-violet-fonce.svg', DEEP, COLORS['inverse'])
+carre('icone-arrondie-cuivre.svg', ROUILLE, ('#ffffff', LILAS, DEEP, '#ffffff'))
+carre('icone-arrondie-beige.svg', BEIGE, COLORS['couleur'])
+carre('icone-carree-violet-fonce.svg', DEEP, COLORS['inverse'], .9, 0)
+carre('icone-carree-cuivre.svg', ROUILLE, ('#ffffff', LILAS, DEEP, '#ffffff'), .9, 0)
+carre('icone-carree-beige.svg', BEIGE, COLORS['couleur'], .9, 0)
+put('avec-fond', 'icone-ronde-violet-fonce.svg', f'<circle cx="120" cy="120" r="120" fill="{DEEP}"/><g transform="translate(120 120) scale(.82) translate(-120 -120)">{plume(*COLORS["inverse"][:4])}</g>')
+put('avec-fond', 'icone-ronde-cuivre.svg', f'<circle cx="120" cy="120" r="120" fill="{ROUILLE}"/><g transform="translate(120 120) scale(.82) translate(-120 -120)">{plume("#ffffff", LILAS, DEEP, "#ffffff")}</g>')
+print('symboles et icônes ok')
