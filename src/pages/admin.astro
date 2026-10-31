@@ -22,6 +22,14 @@ let orders: Row[] = [];
 let stats = { paid: 0, revenue: 0, refunded: 0, pending: 0, expired: 0, last30: 0, last30Revenue: 0 };
 let byProduct: { product: string; n: number; revenue: number }[] = [];
 let dbError = false;
+let dbErrorDetail = '';
+
+type Workflow = { id: string; name: string; active: boolean; updatedAt?: string };
+type Execution = { id: string; workflowId: string; status?: string; finished?: boolean; startedAt?: string; stoppedAt?: string };
+let n8n: { workflows: Workflow[]; executions: Execution[] } | null = null;
+let n8nError = '';
+const n8nBase = env('N8N_URL').replace(/\/$/, '');
+const n8nConfigured = Boolean(n8nBase && env('N8N_API_KEY'));
 
 if (authed && hasDb()) {
   try {
@@ -48,14 +56,38 @@ if (authed && hasDb()) {
        FROM orders WHERE paid_at IS NOT NULL AND currency = 'eur' GROUP BY product ORDER BY revenue DESC`,
     );
     byProduct = p.rows.map((x) => ({ product: x.product, n: +x.n, revenue: +x.revenue }));
-  } catch {
+  } catch (e) {
     dbError = true;
+    const err = e as { code?: string; message?: string };
+    dbErrorDetail = [err.code, err.message].filter(Boolean).join(' : ').slice(0, 200);
+    console.error('[admin] lecture de la base impossible :', e);
+  }
+}
+
+if (authed && n8nConfigured) {
+  try {
+    const get = async (path: string) => {
+      const res = await fetch(`${n8nBase}/api/v1${path}`, {
+        headers: { 'X-N8N-API-KEY': env('N8N_API_KEY'), accept: 'application/json' },
+        signal: AbortSignal.timeout(6000),
+      });
+      if (!res.ok) throw new Error(`n8n a répondu ${res.status}`);
+      return (await res.json()) as { data: unknown[] };
+    };
+    const [w, x] = await Promise.all([get('/workflows?limit=100'), get('/executions?limit=25')]);
+    n8n = { workflows: w.data as Workflow[], executions: x.data as Execution[] };
+  } catch (e) {
+    n8nError = ((e as Error).message || 'erreur inconnue').slice(0, 200);
+    console.error('[admin] n8n injoignable :', e);
   }
 }
 
 const eur = (c: number) => money(c, 'eur');
 const fmt = (d: Date | null) =>
   d ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Paris' }).format(new Date(d)) : '';
+const wfName = (id: string) => n8n?.workflows.find((w) => w.id === id)?.name ?? id;
+const execLabel: Record<string, string> = { success: 'réussie', error: 'en erreur', crashed: 'plantée', running: 'en cours', waiting: 'en attente', canceled: 'annulée', new: 'en file' };
+const execStatus = (x: Execution) => x.status ?? (x.finished ? 'success' : 'running');
 const statusLabel: Record<string, string> = {
   pending: 'en attente', paid: 'payé', failed: 'échoué', expired: 'abandonné', refunded: 'remboursé', disputed: 'litige',
 };
@@ -133,7 +165,9 @@ const umami = (env('PUBLIC_UMAMI_URL') || (import.meta.env.PUBLIC_UMAMI_URL ?? '
           </header>
 
           {!hasDb() && <p class="muted">Base de données non configurée (<code>DATABASE_URL</code>).</p>}
-          {dbError && <p class="err">Impossible de lire la base de données.</p>}
+          {dbError && (
+            <p class="err">Impossible de lire la base de données.{dbErrorDetail && <> <span class="muted">({dbErrorDetail})</span></>}</p>
+          )}
 
           {hasDb() && !dbError && (
             <>
@@ -178,6 +212,43 @@ const umami = (env('PUBLIC_UMAMI_URL') || (import.meta.env.PUBLIC_UMAMI_URL ?? '
                             </details>
                           ) : (o.paid_at ? <span class="muted">pas encore</span> : '')}
                         </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+
+          <h2>Automatisations (n8n)</h2>
+          {!n8nConfigured && <p class="muted">Non configuré : ajoutez <code>N8N_URL</code> et <code>N8N_API_KEY</code> (n8n, Settings puis n8n API) dans Coolify, puis redéployez.</p>}
+          {n8nError && <p class="err">Impossible de joindre n8n ({n8nError}).</p>}
+          {n8n && (
+            <>
+              <div class="kpis">
+                <div class="kpi"><b>{n8n.workflows.filter((w) => w.active).length}/{n8n.workflows.length}</b><span>Workflows actifs</span></div>
+                <div class="kpi"><b>{n8n.executions.filter((x) => ['error', 'crashed'].includes(execStatus(x))).length}</b><span>Erreurs sur les {n8n.executions.length} dernières exécutions</span></div>
+              </div>
+              <div class="tablewrap" style="margin-top:12px">
+                <table>
+                  <thead><tr><th>Workflow</th><th>État</th></tr></thead>
+                  <tbody>
+                    {n8n.workflows.length === 0 && <tr><td colspan="2" class="muted">Aucun workflow.</td></tr>}
+                    {n8n.workflows.map((w) => <tr><td class="wrap">{w.name}</td><td><span class={`tag ${w.active ? 'paid' : ''}`}>{w.active ? 'actif' : 'inactif'}</span></td></tr>)}
+                  </tbody>
+                </table>
+              </div>
+              <h2>Dernières exécutions</h2>
+              <div class="tablewrap">
+                <table>
+                  <thead><tr><th>Date</th><th>Workflow</th><th>Résultat</th></tr></thead>
+                  <tbody>
+                    {n8n.executions.length === 0 && <tr><td colspan="3" class="muted">Aucune exécution.</td></tr>}
+                    {n8n.executions.map((x) => (
+                      <tr>
+                        <td>{fmt(x.startedAt ? new Date(x.startedAt) : null)}</td>
+                        <td class="wrap">{wfName(x.workflowId)}</td>
+                        <td><span class={`tag ${execStatus(x) === 'success' ? 'paid' : ['error', 'crashed'].includes(execStatus(x)) ? 'failed' : ''}`}>{execLabel[execStatus(x)] ?? execStatus(x)}</span></td>
                       </tr>
                     ))}
                   </tbody>
