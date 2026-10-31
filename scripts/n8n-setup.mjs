@@ -13,7 +13,8 @@ import { randomBytes } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import readline from 'node:readline';
 
-const WORKFLOW = new URL('../docs/n8n/diagnostic.workflow.json', import.meta.url);
+const FILES = ['diagnostic.workflow.json', 'prompt.workflow.json'];
+const dir = new URL('../docs/n8n/', import.meta.url);
 
 function ask(question, { secret = false } = {}) {
   return new Promise((resolve) => {
@@ -81,16 +82,17 @@ try {
   console.log('Identifiants créés.');
 
   const byName = { 'Webhook Secret': cWebhook, 'Gemini API key': cGemini, 'Resend API key': cResend };
-  const wf = JSON.parse(readFileSync(WORKFLOW, 'utf8'));
-  for (const node of wf.nodes) {
-    const c = node.credentials?.httpHeaderAuth;
-    if (c) node.credentials.httpHeaderAuth = { id: byName[c.name].id, name: c.name };
-    if (node.name === 'Préparer la requête') node.parameters.jsCode = node.parameters.jsCode.replace('CHANGEZ-MOI@exemple.com', owner);
+  for (const file of FILES) {
+    const wf = JSON.parse(readFileSync(new URL(file, dir), 'utf8'));
+    for (const node of wf.nodes) {
+      const c = node.credentials?.httpHeaderAuth;
+      if (c) node.credentials.httpHeaderAuth = { id: byName[c.name].id, name: c.name };
+      if (node.parameters?.jsCode) node.parameters.jsCode = node.parameters.jsCode.replace('CHANGEZ-MOI@exemple.com', owner);
+    }
+    const created = await api('POST', '/workflows', { name: wf.name, nodes: wf.nodes, connections: wf.connections, settings: wf.settings });
+    await api('POST', `/workflows/${created.id}/activate`);
+    console.log(`Workflow « ${wf.name} » importé et activé (id ${created.id}).`);
   }
-
-  const created = await api('POST', '/workflows', { name: wf.name, nodes: wf.nodes, connections: wf.connections, settings: wf.settings });
-  await api('POST', `/workflows/${created.id}/activate`);
-  console.log(`Workflow « ${wf.name} » importé et activé (id ${created.id}).`);
 
   const url = `${base}/webhook/diagnostic`;
   const copied = spawnSync('pbcopy', { input: webhookSecret }).status === 0;

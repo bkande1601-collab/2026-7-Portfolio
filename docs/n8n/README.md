@@ -1,6 +1,13 @@
-# Agent IA « Diagnostic » (n8n)
+# Agents IA (n8n)
 
-- `diagnostic.workflow.json` : workflow à importer dans n8n (Webhook, Gemini Flash-Lite, e-mail Resend).
-- `diagnostic-prompt.md` : le prompt de l'agent, déjà intégré au workflow (nœud « Préparer la requête »). Modifiez-le dans n8n, puis copiez-le ici pour garder une trace.
+| Fichier | Rôle |
+|---|---|
+| `diagnostic-prompt.md` | Prompt de l'agent « Diagnostic » |
+| `master-prompt-prompt.md` | Prompt de l'agent « Master prompt » |
+| `build.py` | Génère les deux workflows à partir des prompts et du code des nœuds |
+| `diagnostic.workflow.json`, `prompt.workflow.json` | Workflows générés (à ne pas éditer à la main) |
 
-Le site appelle le webhook après le questionnaire (variables `N8N_WEBHOOK_URL` et `N8N_WEBHOOK_SECRET`). Le diagnostic est envoyé à l'adresse `OWNER_EMAIL` du nœud « Préparer la requête », pour relecture avant envoi au client.
+Flux : le site appelle `https://VOTRE-N8N/webhook/diagnostic` ou `/webhook/prompt` après le questionnaire (variables `N8N_WEBHOOK_URL` et `N8N_WEBHOOK_SECRET`). Le workflow valide les données, ignore les doublons, appelle Gemini, contrôle la qualité et envoie le résultat par e-mail à `OWNER_EMAIL` pour relecture. En cas d'échec (données invalides, erreur ou blocage du modèle), une alerte avec les réponses du client est envoyée.
+
+Modifier un prompt : éditer le `.md`, lancer `python3 docs/n8n/build.py`, puis `node scripts/n8n-update.mjs`.
+Première installation : `node scripts/n8n-setup.mjs`.
