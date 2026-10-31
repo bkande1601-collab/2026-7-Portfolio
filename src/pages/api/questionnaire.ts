@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { db, ensureSchema, hasDb } from '../../lib/db';
 import { hasStripe, isProduct } from '../../lib/stripe';
 import { syncOrder, notifyAnswers } from '../../lib/orders';
+import { sendToAgent } from '../../lib/agent';
 import { questionnaires } from '../../config/questionnaires';
 import { clean, json, readJson, toLang } from '../../lib/http';
 
@@ -36,5 +37,6 @@ export const POST: APIRoute = async ({ request }) => {
     [order.id, JSON.stringify(answers)],
   );
   await notifyAnswers(order, answers);
+  void sendToAgent(order, answers);
   return json({ ok: true, lang });
 };
