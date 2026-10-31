@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS answers (
   data jsonb NOT NULL,
   submitted_at timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_status text;
+ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_at timestamptz;
 CREATE TABLE IF NOT EXISTS stripe_events (
   id text PRIMARY KEY,
   type text NOT NULL,

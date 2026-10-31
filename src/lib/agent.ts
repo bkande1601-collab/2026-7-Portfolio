@@ -1,30 +1,58 @@
-/** Envoie une commande avec ses réponses au workflow n8n (agent IA). Silencieux en cas d'échec. */
+/** Envoie une commande avec ses réponses au workflow n8n (agent IA), avec relances et alerte en cas d'échec. */
 import { env } from './env';
+import { db } from './db';
+import { esc, ownerEmail, para, row, sendMail, shell, table } from './email';
 import type { Order } from './orders';
+
+type Answer = { id: string; label: string; value: string };
 
 export const hasAgent = () => Boolean(env('N8N_WEBHOOK_URL') && env('N8N_WEBHOOK_SECRET'));
 
-export async function sendToAgent(order: Order, answers: { id: string; label: string; value: string }[]) {
-  if (!hasAgent()) return;
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+async function post(order: Order, answers: Answer[]): Promise<string | null> {
   // un workflow par produit : .../webhook/diagnostic, .../webhook/prompt
-  if (order.product !== 'diagnostic' && order.product !== 'prompt') return;
   const url = env('N8N_WEBHOOK_URL').replace(/\/[^/]+\/?$/, `/${order.product}`);
   try {
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Webhook-Secret': env('N8N_WEBHOOK_SECRET') },
-      body: JSON.stringify({
-        orderId: order.id,
-        product: order.product,
-        lang: order.lang,
-        email: order.email,
-        name: order.name,
-        answers,
-      }),
-      signal: AbortSignal.timeout(10_000),
+      body: JSON.stringify({ orderId: order.id, product: order.product, lang: order.lang, email: order.email, name: order.name, answers }),
+      signal: AbortSignal.timeout(15_000),
     });
-    if (!res.ok) console.error('agent: webhook answered', res.status);
+    return res.ok ? null : `http_${res.status}`;
   } catch {
-    console.error('agent: webhook unreachable');
+    return 'unreachable';
   }
+}
+
+async function setStatus(orderId: number, status: string) {
+  await db().query('UPDATE answers SET agent_status = $2, agent_at = now() WHERE order_id = $1', [orderId, status]).catch(() => {});
+}
+
+/** 3 essais espacés ; l'état est enregistré (visible dans /admin) et vous êtes alertée si l'agent reste injoignable. */
+export async function sendToAgent(order: Order, answers: Answer[]) {
+  if (order.product !== 'diagnostic' && order.product !== 'prompt') return;
+  let failure: string | null = hasAgent() ? 'pending' : 'not_configured';
+  for (let attempt = 0; hasAgent() && attempt < 3; attempt++) {
+    if (attempt) await wait(attempt * 5_000);
+    failure = await post(order, answers);
+    if (!failure) break;
+    console.error(`agent: attempt ${attempt + 1} failed (${failure})`);
+  }
+  if (!failure) return void (await setStatus(order.id, 'sent'));
+  await setStatus(order.id, `failed:${failure}`);
+  await sendMail({
+    to: ownerEmail(),
+    subject: `⚠ Agent IA injoignable : préparez le résultat à la main (${order.email ?? ''})`,
+    html: shell({
+      preheader: 'Le résultat automatique n’a pas pu être généré.',
+      title: 'Agent IA injoignable',
+      body:
+        para(`Le client a payé et rempli le questionnaire, mais l’agent n8n n’a pas répondu (${esc(failure)}). Préparez son résultat à la main.`) +
+        table(row('Client', esc(`${order.name ?? ''} ${order.email ?? ''}`.trim())) + answers.map((a) => row(a.label, esc(a.value).replace(/\n/g, '<br>'))).join('')),
+      footer: 'Alerte automatique.',
+    }),
+    replyTo: order.email ?? undefined,
+  }).catch(() => false);
 }
