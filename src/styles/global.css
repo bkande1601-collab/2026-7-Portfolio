@@ -270,13 +270,12 @@ a:hover > .arrow::after {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
 }
 .logo img {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   display: block;
-  margin-block: -6px;
 }
 .nav {
   display: flex;
