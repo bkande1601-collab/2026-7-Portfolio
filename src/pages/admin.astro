@@ -17,7 +17,7 @@ if (Astro.url.searchParams.has('logout')) {
 const configured = adminConfigured();
 const authed = configured && verifyToken(Astro.cookies.get('admin')?.value);
 
-type Row = Order & { answers: { label: string; value: string }[] | null };
+type Row = Order & { answers: { label: string; value: string }[] | null; agent_status: string | null };
 let orders: Row[] = [];
 let stats = { paid: 0, revenue: 0, refunded: 0, pending: 0, expired: 0, last30: 0, last30Revenue: 0 };
 let byProduct: { product: string; n: number; revenue: number }[] = [];
@@ -35,7 +35,7 @@ if (authed && hasDb()) {
   try {
     await ensureSchema();
     const o = await db().query<Row>(
-      `SELECT o.*, a.data AS answers FROM orders o LEFT JOIN answers a ON a.order_id = o.id ORDER BY o.created_at DESC LIMIT 200`,
+      `SELECT o.*, a.data AS answers, a.agent_status FROM orders o LEFT JOIN answers a ON a.order_id = o.id ORDER BY o.created_at DESC LIMIT 200`,
     );
     orders = o.rows;
     const s = await db().query(
@@ -210,6 +210,8 @@ const umami = (env('PUBLIC_UMAMI_URL') || (import.meta.env.PUBLIC_UMAMI_URL ?? '
                               <summary>Voir ({o.answers.length})</summary>
                               <dl>{o.answers.map((a) => (<><dt>{a.label}</dt><dd>{a.value}</dd></>))}</dl>
                             </details>
+                            <div class="muted">Agent : {o.agent_status === 'sent' ? 'envoyé' : (o.agent_status ?? 'inconnu')}</div>
+                            <button type="button" class="relance" data-order={o.id}>Relancer l’agent</button>
                           ) : (o.paid_at ? <span class="muted">pas encore</span> : '')}
                         </td>
                       </tr>
@@ -261,6 +263,14 @@ const umami = (env('PUBLIC_UMAMI_URL') || (import.meta.env.PUBLIC_UMAMI_URL ?? '
     </main>
 
     <script is:inline>
+      document.querySelectorAll('.relance').forEach((b) => b.addEventListener('click', async () => {
+        b.disabled = true;
+        b.textContent = 'Envoi…';
+        const res = await fetch('/admin/relance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order_id: Number(b.dataset.order) }) });
+        const j = await res.json().catch(() => ({}));
+        b.textContent = res.ok && j.status === 'sent' ? 'Envoyé à l’agent' : 'Échec (' + (j.status || j.error || res.status) + ')';
+        b.disabled = false;
+      }));
       const form = document.getElementById('login');
       if (form) {
         form.addEventListener('submit', async (e) => {
