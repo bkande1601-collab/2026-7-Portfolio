@@ -21,7 +21,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   );
   const row = r.rows[0];
   if (!row) return json({ error: 'not_found' }, 404);
-  await sendToAgent(row, row.data);
+  await sendToAgent(row, row.data, { retry: true });
   const s = await db().query<{ agent_status: string | null }>('SELECT agent_status FROM answers WHERE order_id = $1', [id]);
   return json({ ok: true, status: s.rows[0]?.agent_status ?? null });
 };

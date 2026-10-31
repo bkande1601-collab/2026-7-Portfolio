@@ -9,7 +9,7 @@
 import { readFileSync } from 'node:fs';
 import readline from 'node:readline';
 
-const FILES = ['diagnostic.workflow.json', 'prompt.workflow.json'];
+const FILES = ['diagnostic.workflow.json', 'prompt.workflow.json', 'watchdog.workflow.json'];
 const dir = new URL('../docs/n8n/', import.meta.url);
 
 function ask(question, { secret = false } = {}) {

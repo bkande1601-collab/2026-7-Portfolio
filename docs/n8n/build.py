@@ -91,7 +91,7 @@ for (const ch of JSON.stringify(answers)) h = ((h << 5) + h + ch.charCodeAt(0)) 
 const key = `${body.orderId}:${h}`;
 const store = $getWorkflowStaticData('global');
 store.seen = Array.isArray(store.seen) ? store.seen : [];
-if (store.seen.includes(key)) return [];
+if (!body.retry && store.seen.includes(key)) return [];
 if (!problems.length) store.seen = [...store.seen, key].slice(-500);
 
 return [{ json: { ok: problems.length === 0, problems, config: CONFIG, body: { orderId: body.orderId, product: body.product, lang: body.lang === 'en' ? 'en' : 'fr', email: String(body.email ?? '').slice(0, 254), name: String(body.name ?? '').slice(0, 120), answers } } }];
@@ -227,6 +227,17 @@ return [{ json: { payload: {
 } } }];
 """
 
+STATUS = r"""// Dit au site si le résultat est parti (kind: result) ou s'il s'agit d'une alerte d'échec (kind: alert)
+const SITE_URL = 'https://bintakande.com';
+const orderId = $('Valider et dédoublonner').first().json.body.orderId;
+let payload = null;
+for (const name of ["Préparer l'e-mail", "Préparer l'alerte"]) {
+  try { const n = $(name); if (n.isExecuted) { payload = n.first().json.payload; break; } } catch (e) {}
+}
+const kind = payload && !String(payload.subject ?? '').includes('Agent en échec') ? 'result' : 'alert';
+return [{ json: { url: `${SITE_URL}/api/agent-done`, orderId, kind } }];
+"""
+
 def node(name, type_, ver, pos, params, **extra):
     n = {"parameters": params, "id": str(uuid.uuid4()), "name": name, "type": type_, "typeVersion": ver, "position": pos}
     n.update(extra)
@@ -267,6 +278,12 @@ def build(cfg):
             "sendBody": True, "specifyBody": "json", "jsonBody": "={{ JSON.stringify($json.payload) }}", "options": {}},
             retryOnFail=True, maxTries=3, waitBetweenTries=5000,
             credentials=cred("Resend API key")),
+        node("Statut", "n8n-nodes-base.code", 2, [1700, 0], {"jsCode": STATUS}),
+        node("Confirmer au site", "n8n-nodes-base.httpRequest", 4.2, [1960, 0], {
+            "method": "POST", "url": "={{ $json.url }}",
+            "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
+            "sendBody": True, "specifyBody": "json", "jsonBody": "={{ JSON.stringify({ orderId: $json.orderId, kind: $json.kind }) }}", "options": {}},
+            retryOnFail=True, maxTries=5, waitBetweenTries=10000, credentials=cred("Webhook Secret")),
     ]
     main = lambda *targets: {"main": [[{"node": t, "type": "main", "index": 0} for t in out] for out in targets]}
     conn = {
@@ -277,8 +294,23 @@ def build(cfg):
         "Gemini Flash-Lite": main(["Préparer l'e-mail"], ["Préparer l'alerte"]),
         "Préparer l'e-mail": main(["Envoyer via Resend"]),
         "Préparer l'alerte": main(["Envoyer via Resend"]),
+        "Envoyer via Resend": main(["Statut"]),
+        "Statut": main(["Confirmer au site"]),
     }
     return {"name": cfg['name'], "nodes": nodes, "connections": conn, "settings": {"executionOrder": "v1"}}
+
+def build_watchdog():
+    nodes = [
+        node("Toutes les 10 minutes", "n8n-nodes-base.scheduleTrigger", 1.2, [0, 0],
+             {"rule": {"interval": [{"field": "minutes", "minutesInterval": 10}]}}),
+        node("Surveiller les livraisons", "n8n-nodes-base.httpRequest", 4.2, [260, 0], {
+            "method": "POST", "url": "https://bintakande.com/api/watchdog",
+            "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
+            "sendBody": True, "specifyBody": "json", "jsonBody": "={}", "options": {"timeout": 120000}},
+            retryOnFail=True, maxTries=3, waitBetweenTries=30000, credentials={"httpHeaderAuth": {"id": "REMPLACER", "name": "Webhook Secret"}}),
+    ]
+    conn = {"Toutes les 10 minutes": {"main": [[{"node": "Surveiller les livraisons", "type": "main", "index": 0}]]}}
+    return {"name": "Surveillance des livraisons", "nodes": nodes, "connections": conn, "settings": {"executionOrder": "v1"}}
 
 CONFIGS = [
     dict(file='diagnostic.workflow.json', name='Diagnostic IA du business', product='diagnostic', prompt_file='diagnostic-prompt.md',
@@ -296,3 +328,5 @@ if __name__ == '__main__':
         wf = build(c)
         json.dump(wf, open(os.path.join(HERE, c['file']), 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
         print('écrit', c['file'], len(wf['nodes']), 'nœuds')
+    json.dump(build_watchdog(), open(os.path.join(HERE, 'watchdog.workflow.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+    print('écrit watchdog.workflow.json')
