@@ -17,7 +17,7 @@ async function post(order: Order, answers: Answer[], retry: boolean): Promise<st
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Webhook-Secret': env('N8N_WEBHOOK_SECRET') },
-      body: JSON.stringify({ orderId: order.id, product: order.product, lang: order.lang, email: order.email, name: order.name, answers, retry }),
+      body: JSON.stringify({ orderId: order.id, product: order.product, lang: order.lang, email: order.email, name: order.name, answers, retry, owner: ownerEmail() }),
       signal: AbortSignal.timeout(15_000),
     });
     return res.ok ? null : `http_${res.status}`;

@@ -74,6 +74,8 @@ const MIN_ANSWERS = __MIN_ANSWERS__;
 const MIN_CHARS = __MIN_CHARS__;
 
 const body = $input.first().json.body ?? {};
+// L'adresse qui reçoit les résultats vient du site (variable OWNER_EMAIL de Coolify), pour n'avoir qu'une seule source
+if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(body.owner ?? ''))) CONFIG.OWNER_EMAIL = String(body.owner).trim();
 const answers = (Array.isArray(body.answers) ? body.answers : [])
   .filter((a) => a && typeof a.value === 'string' && a.value.trim())
   .map((a) => ({ id: String(a.id ?? '').slice(0, 40), label: String(a.label ?? '').slice(0, 200), value: a.value.slice(0, 3000) }));
