@@ -7,8 +7,22 @@ let ready: Promise<void> | undefined;
 
 export const hasDb = () => Boolean(env('DATABASE_URL'));
 
+/**
+ * Certificat de l'autorité de la base (DATABASE_CA, au format PEM ou en base64) : la connexion est alors
+ * chiffrée ET vérifiée. `sslmode` est retiré de l'URL, sinon il prime sur l'option ssl.
+ */
+function poolConfig(): pg.PoolConfig {
+  const raw = env('DATABASE_URL');
+  const caValue = env('DATABASE_CA');
+  if (!caValue) return { connectionString: raw, max: 5 };
+  const ca = caValue.includes('BEGIN CERTIFICATE') ? caValue.replace(/\\n/g, '\n') : Buffer.from(caValue, 'base64').toString('utf8');
+  const url = new URL(raw);
+  url.searchParams.delete('sslmode');
+  return { connectionString: url.toString(), ssl: { ca, rejectUnauthorized: true }, max: 5 };
+}
+
 export function db() {
-  pool ??= new pg.Pool({ connectionString: env('DATABASE_URL'), max: 5 });
+  pool ??= new pg.Pool(poolConfig());
   return pool;
 }
 
