@@ -1,10 +1,12 @@
 ---
 /**
- * Petit mot de bienvenue, dit par une voix d'IA en anglais, une seule fois par visite.
- * Les navigateurs bloquent souvent le son automatique : dans ce cas, la voix démarre
- * au premier clic ou à la première touche, et un bouton « Écouter » est toujours visible.
- * Les fichiers audio sont dans public/audio/welcome-1.m4a à welcome-6.m4a (une phrase chacun).
- * Pour changer la voix : remplacez ces fichiers et gardez les sous-titres ci-dessous à jour.
+ * Mot de bienvenue dit par une voix d'IA en anglais.
+ * - sur l'accueil, il démarre juste après la bande-annonce de 7 secondes ;
+ * - ailleurs, il démarre à l'arrivée, une seule fois par visite ;
+ * - un petit bouton « haut-parleur » reste toujours visible pour le relancer ;
+ * - le son part bas, le volume se règle, et la personne peut le couper (choix mémorisé).
+ * Les navigateurs bloquent souvent le son automatique : la voix démarre alors au premier clic.
+ * Fichiers audio : public/audio/welcome-1.m4a à welcome-6.m4a (une phrase chacun).
  */
 import { t, href, type Lang } from '../content';
 
@@ -23,8 +25,12 @@ const lines = [
   { src: '/audio/welcome-5.m4a', en: 'Are you looking for marketing? Or maybe automation? Or do you just want to find out more?', fr: 'Vous cherchez du marketing ? Ou plutôt de l’automatisation ? Ou simplement vous renseigner ?' },
   { src: '/audio/welcome-6.m4a', en: 'I’ll let you browse the pages at your own pace.', fr: 'Je vous laisse parcourir les pages tranquillement.' },
 ];
-const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr : l.en })), listen: w.listen, pause: w.pause, resume: w.resume, mute: w.mute, unmute: w.unmute, off: w.off };
+const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr : l.en })), listen: w.listen, pause: w.pause, resume: w.resume, off: w.off };
 ---
+
+<button class="welcome-launch" id="welcome-launch" type="button" aria-label={w.launch} title={w.launch}>
+  <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" /><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+</button>
 
 <aside class="welcome" id="welcome" role="region" aria-label={w.title} hidden>
   <div class="welcome-head">
@@ -53,158 +59,193 @@ const data = { lines: lines.map((l) => ({ src: l.src, text: lang === 'fr' ? l.fr
 
 <script>
   const KEY = 'welcome-played';
-  const box = document.getElementById('welcome');
-  if (box) {
-    let seen = false;
-    let off = false;
-    try {
-      seen = sessionStorage.getItem(KEY) === '1';
-      off = localStorage.getItem('welcome-sound') === 'off';
-    } catch {
-      /* stockage indisponible : on affiche quand même */
-    }
-    if (!seen && !off) {
-      const data = JSON.parse(document.getElementById('welcome-data')!.textContent || '{}');
-      const cap = document.getElementById('welcome-cap')!;
-      const playBtn = document.getElementById('welcome-play') as HTMLButtonElement;
-      const chips = document.getElementById('welcome-chips')!;
-      const audios: HTMLAudioElement[] = data.lines.map((l: { src: string }) => {
+  const box = document.getElementById('welcome') as HTMLElement | null;
+  const launch = document.getElementById('welcome-launch') as HTMLButtonElement | null;
+  if (box && launch) {
+    const data = JSON.parse(document.getElementById('welcome-data')!.textContent || '{}');
+    const cap = document.getElementById('welcome-cap')!;
+    const playBtn = document.getElementById('welcome-play') as HTMLButtonElement;
+    const chips = document.getElementById('welcome-chips')!;
+    const volInput = document.getElementById('welcome-vol') as HTMLInputElement;
+    const muteBtn = document.getElementById('welcome-mute') as HTMLButtonElement;
+    const w = window as unknown as { __trailer?: string };
+
+    const store = {
+      get: (s: Storage, k: string) => {
+        try {
+          return s.getItem(k);
+        } catch {
+          return null;
+        }
+      },
+      set: (s: Storage, k: string, v: string) => {
+        try {
+          s.setItem(k, v);
+        } catch {
+          /* ignore */
+        }
+      },
+      del: (s: Storage, k: string) => {
+        try {
+          s.removeItem(k);
+        } catch {
+          /* ignore */
+        }
+      },
+    };
+
+    let audios: HTMLAudioElement[] = [];
+    let idx = 0;
+    let started = false;
+    let playing = false;
+    let silenced = false;
+    let timer = 0;
+    let vol = 0.35; // le son part bas
+    const saved = parseFloat(store.get(localStorage, 'welcome-volume') || '');
+    if (!Number.isNaN(saved)) vol = Math.min(1, Math.max(0, saved));
+    volInput.value = String(Math.round(vol * 100));
+
+    const setPlaying = (on: boolean) => {
+      playing = on;
+      box.classList.toggle('playing', on);
+      playBtn.textContent = on ? data.pause : started ? data.resume : data.listen;
+    };
+    const ensureAudio = () => {
+      if (audios.length) return;
+      audios = data.lines.map((l: { src: string }) => {
         const a = new Audio(l.src);
         a.preload = 'auto';
+        a.volume = vol;
         return a;
       });
-      let idx = 0;
-      let started = false;
-      let playing = false;
-      let silenced = false; // coupé par la personne : plus rien ne doit repartir
-      let timer = 0;
-
-      // le son part bas (35 %), la personne règle ou coupe
-      let vol = 0.35;
-      try {
-        const saved = parseFloat(localStorage.getItem('welcome-volume') || '');
-        if (!Number.isNaN(saved)) vol = Math.min(1, Math.max(0, saved));
-      } catch {
-        /* ignore */
-      }
-      const volInput = document.getElementById('welcome-vol') as HTMLInputElement;
-      const muteBtn = document.getElementById('welcome-mute') as HTMLButtonElement;
-      volInput.value = String(Math.round(vol * 100));
-      audios.forEach((a) => (a.volume = vol));
-      volInput.addEventListener('input', () => {
-        vol = Number(volInput.value) / 100;
-        audios.forEach((a) => (a.volume = vol));
-        try {
-          localStorage.setItem('welcome-volume', String(vol));
-        } catch {
-          /* ignore */
-        }
-      });
-      muteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        // couper le son : on arrête la voix et on ne la relance plus sur les prochaines pages
-        silenced = true;
-        window.clearTimeout(timer);
-        audios.forEach((a) => a.pause());
-        setPlaying(false);
-        started = true;
-        try {
-          localStorage.setItem('welcome-sound', 'off');
-          sessionStorage.setItem(KEY, '1');
-        } catch {
-          /* ignore */
-        }
-        box.classList.add('muted');
-        muteBtn.setAttribute('aria-pressed', 'true');
-        cap.textContent = data.off;
-        playBtn.hidden = true;
-        chips.hidden = true;
-      });
-
-      const mark = () => {
-        try {
-          sessionStorage.setItem(KEY, '1');
-        } catch {
-          /* ignore */
-        }
+    };
+    const finish = () => {
+      setPlaying(false);
+      chips.hidden = false;
+      playBtn.hidden = true;
+    };
+    const playSeg = (i: number): Promise<void> => {
+      if (silenced) return Promise.reject(new Error('silenced'));
+      idx = i;
+      cap.textContent = data.lines[i].text;
+      const a = audios[i];
+      a.currentTime = 0;
+      a.onended = () => {
+        if (silenced) return;
+        if (i < audios.length - 1) timer = window.setTimeout(() => playSeg(i + 1).catch(() => {}), 220);
+        else finish();
       };
-      const setPlaying = (on: boolean) => {
-        playing = on;
-        box.classList.toggle('playing', on);
-        playBtn.textContent = on ? data.pause : started ? data.resume : data.listen;
-      };
-      const showLine = (i: number) => {
-        cap.textContent = data.lines[i].text;
-      };
-      const finish = () => {
-        setPlaying(false);
-        chips.hidden = false;
-        playBtn.hidden = true;
-      };
-      const playSeg = (i: number): Promise<void> => {
-        if (silenced) return Promise.reject(new Error('silenced'));
-        idx = i;
-        showLine(i);
-        const a = audios[i];
-        a.currentTime = 0;
-        a.onended = () => {
-          if (silenced) return;
-          if (i < audios.length - 1) timer = window.setTimeout(() => playSeg(i + 1).catch(() => {}), 220);
-          else finish();
-        };
-        return a.play();
-      };
-      const begin = () => {
-        if (started) return;
-        started = true;
-        mark();
-        playSeg(0)
-          .then(() => setPlaying(true))
-          .catch(() => {
-            started = false;
-            setPlaying(false);
-          });
-      };
-
+      return a.play();
+    };
+    const show = () => {
       box.hidden = false;
-
-      // 1. on essaie de démarrer tout de suite
+      launch.hidden = true;
+    };
+    const hide = () => {
+      box.hidden = true;
+      launch.hidden = false;
+    };
+    const stopAll = () => {
+      silenced = true;
+      window.clearTimeout(timer);
+      audios.forEach((a) => a.pause());
+      setPlaying(false);
+    };
+    const reset = () => {
+      silenced = false;
+      started = false;
+      idx = 0;
+      chips.hidden = true;
+      playBtn.hidden = false;
+      muteBtn.setAttribute('aria-pressed', 'false');
+      box.classList.remove('muted');
+      cap.textContent = data.lines[0].text;
+      setPlaying(false);
+    };
+    // lancement demandé par un clic : le navigateur autorise le son
+    const begin = () => {
+      ensureAudio();
+      if (started) return;
+      started = true;
+      store.set(sessionStorage, KEY, '1');
+      playSeg(0)
+        .then(() => setPlaying(true))
+        .catch(() => {
+          started = false;
+        });
+    };
+    // lancement automatique : on essaie, sinon on attend le premier clic
+    const auto = () => {
+      ensureAudio();
+      show();
       playSeg(0)
         .then(() => {
           started = true;
-          mark();
+          store.set(sessionStorage, KEY, '1');
           setPlaying(true);
         })
         .catch(() => {
-          // 2. le navigateur bloque : on démarre au premier clic ou à la première touche
           const once = () => {
             ['pointerup', 'keydown', 'touchend'].forEach((e) => window.removeEventListener(e, once));
-            begin();
+            if (!silenced) begin();
           };
           ['pointerup', 'keydown', 'touchend'].forEach((e) => window.addEventListener(e, once, { once: true, passive: true }));
         });
+    };
 
-      playBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!started) return begin();
-        const a = audios[idx];
-        if (playing) {
-          a.pause();
-          setPlaying(false);
-        } else {
-          a.play().then(() => setPlaying(true)).catch(() => {});
-        }
-      });
-      document.getElementById('welcome-x')!.addEventListener('click', () => {
-        silenced = true;
-        window.clearTimeout(timer);
-        audios.forEach((a) => a.pause());
-        mark();
-        box.hidden = true;
-      });
-      chips.addEventListener('click', () => {
-        mark();
-      });
+    volInput.addEventListener('input', () => {
+      vol = Number(volInput.value) / 100;
+      audios.forEach((a) => (a.volume = vol));
+      store.set(localStorage, 'welcome-volume', String(vol));
+    });
+    muteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      stopAll();
+      started = true;
+      store.set(localStorage, 'welcome-sound', 'off');
+      store.set(sessionStorage, KEY, '1');
+      box.classList.add('muted');
+      muteBtn.setAttribute('aria-pressed', 'true');
+      cap.textContent = data.off;
+      playBtn.hidden = true;
+      chips.hidden = true;
+    });
+    playBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      ensureAudio();
+      if (!started) return begin();
+      const a = audios[idx];
+      if (playing) {
+        a.pause();
+        setPlaying(false);
+      } else {
+        a.play().then(() => setPlaying(true)).catch(() => {});
+      }
+    });
+    document.getElementById('welcome-x')!.addEventListener('click', () => {
+      stopAll();
+      store.set(sessionStorage, KEY, '1');
+      hide();
+    });
+    chips.addEventListener('click', () => store.set(sessionStorage, KEY, '1'));
+    // le bouton haut-parleur : on rouvre le mot de bienvenue et on le relance
+    launch.addEventListener('click', () => {
+      stopAll();
+      store.del(localStorage, 'welcome-sound');
+      reset();
+      show();
+      begin();
+    });
+
+    const off = store.get(localStorage, 'welcome-sound') === 'off';
+    const seen = store.get(sessionStorage, KEY) === '1';
+    if (off || seen) {
+      hide();
+    } else {
+      launch.hidden = false;
+      const go = () => auto();
+      if (w.__trailer === 'pending') window.addEventListener('trailer:done', go, { once: true });
+      else go();
     }
   }
 </script>

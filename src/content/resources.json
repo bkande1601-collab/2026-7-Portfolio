@@ -767,5 +767,682 @@
       ],
       "cta": "Want a master prompt written for you? Discover the 39 € product."
     }
+  },
+  {
+    "slug": "pack-prompts",
+    "fr": {
+      "title": "12 prompts prêts à l’emploi pour entrepreneurs",
+      "subtitle": "Copiez, remplacez les crochets, gagnez du temps.",
+      "intro": "Chaque prompt est prêt à coller dans votre outil d’IA. Remplacez ce qui est entre [crochets] par vos informations. Plus vous donnez de contexte, meilleure est la réponse.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Contenu et réseaux sociaux",
+          "headers": [
+            "Besoin",
+            "Prompt à coller"
+          ],
+          "rows": [
+            [
+              "10 idées de posts",
+              "Tu es mon assistant contenu. Donne-moi 10 idées de posts pour [plateforme], pour [ma cible], sur le thème [thème]. Ton : [ton]."
+            ],
+            [
+              "Un post LinkedIn",
+              "Écris un post LinkedIn de 120 mots sur [sujet], pour [cible]. Commence par une phrase d’accroche, termine par une question."
+            ],
+            [
+              "Un script de vidéo courte",
+              "Écris le script d’une vidéo de 30 secondes sur [sujet] : accroche, 3 idées, appel à l’action [action]."
+            ],
+            [
+              "Un calendrier sur 4 semaines",
+              "Propose un calendrier de contenu sur 4 semaines pour [activité], 3 publications par semaine, 3 thèmes : [thèmes]."
+            ]
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Trouver des clients",
+          "headers": [
+            "Besoin",
+            "Prompt à coller"
+          ],
+          "rows": [
+            [
+              "Message de prospection",
+              "Écris un message de prospection de 80 mots pour [type de client], qui propose [offre], avec une seule question à la fin."
+            ],
+            [
+              "Une relance",
+              "Écris une relance polie et courte pour [prospect] qui n’a pas répondu à mon devis de [date]. Ton : chaleureux, sans pression."
+            ],
+            [
+              "Une page d’offre",
+              "Résume mon offre [offre] en 5 phrases : à qui elle s’adresse, le problème, ce que je fais, ce que le client reçoit, la suite."
+            ],
+            [
+              "Les objections",
+              "Liste 8 objections qu’un client pourrait avoir sur [offre] et propose une réponse honnête à chacune."
+            ]
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Organisation et administratif",
+          "headers": [
+            "Besoin",
+            "Prompt à coller"
+          ],
+          "rows": [
+            [
+              "Résumer un e-mail",
+              "Résume cet e-mail en 3 points et propose une réponse courte : [e-mail]."
+            ],
+            [
+              "Compte rendu de réunion",
+              "À partir de ces notes, rédige un compte rendu avec décisions, tâches, responsables et dates : [notes]."
+            ],
+            [
+              "Planifier ma semaine",
+              "Voici mes tâches : [liste]. Classe-les par priorité et propose un planning réaliste sur 5 jours."
+            ],
+            [
+              "Répondre à une question client",
+              "Voici une question client : [question]. Réponds de façon claire et chaleureuse en 4 phrases, sans promettre ce que je ne peux pas tenir."
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "title": "Pour aller plus loin",
+          "text": "Un prompt générique donne une réponse générique. Un prompt maître, écrit avec votre ton, votre cible et vos règles, donne des réponses qui sonnent comme vous."
+        }
+      ],
+      "cta": "Envie d’un prompt maître écrit pour vous ? Découvrez le produit à 39 €."
+    },
+    "en": {
+      "title": "12 ready-to-use prompts for entrepreneurs",
+      "subtitle": "Copy, replace the brackets, save time.",
+      "intro": "Each prompt is ready to paste into your AI tool. Replace what is in [brackets] with your own details. The more context you give, the better the answer.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Content and social media",
+          "headers": [
+            "Need",
+            "Prompt to paste"
+          ],
+          "rows": [
+            [
+              "10 post ideas",
+              "You are my content assistant. Give me 10 post ideas for [platform], for [my audience], on the topic [topic]. Tone: [tone]."
+            ],
+            [
+              "A LinkedIn post",
+              "Write a 120-word LinkedIn post about [topic], for [audience]. Start with a hook, end with a question."
+            ],
+            [
+              "A short video script",
+              "Write the script for a 30-second video about [topic]: hook, 3 ideas, call to action [action]."
+            ],
+            [
+              "A 4-week calendar",
+              "Suggest a 4-week content calendar for [business], 3 posts a week, 3 topics: [topics]."
+            ]
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Finding clients",
+          "headers": [
+            "Need",
+            "Prompt to paste"
+          ],
+          "rows": [
+            [
+              "A prospecting message",
+              "Write an 80-word prospecting message for [type of client], offering [offer], with a single question at the end."
+            ],
+            [
+              "A follow-up",
+              "Write a short, polite follow-up for [prospect] who has not replied to my quote of [date]. Tone: warm, no pressure."
+            ],
+            [
+              "An offer page",
+              "Summarise my offer [offer] in 5 sentences: who it is for, the problem, what I do, what the client receives, what comes next."
+            ],
+            [
+              "Objections",
+              "List 8 objections a client might have about [offer] and suggest an honest answer to each."
+            ]
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Organisation and admin",
+          "headers": [
+            "Need",
+            "Prompt to paste"
+          ],
+          "rows": [
+            [
+              "Summarise an email",
+              "Summarise this email in 3 points and suggest a short reply: [email]."
+            ],
+            [
+              "Meeting notes",
+              "From these notes, write minutes with decisions, tasks, owners and dates: [notes]."
+            ],
+            [
+              "Plan my week",
+              "Here are my tasks: [list]. Rank them by priority and suggest a realistic plan over 5 days."
+            ],
+            [
+              "Answer a client question",
+              "Here is a client question: [question]. Answer clearly and warmly in 4 sentences, without promising what I cannot deliver."
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "title": "To go further",
+          "text": "A generic prompt gives a generic answer. A master prompt, written with your tone, your audience and your rules, gives answers that sound like you."
+        }
+      ],
+      "cta": "Want a master prompt written for you? Discover the 39 € product."
+    }
+  },
+  {
+    "slug": "brief-branding",
+    "fr": {
+      "title": "Votre branding en une page",
+      "subtitle": "Un message clair avant d’automatiser quoi que ce soit.",
+      "intro": "Un message flou, publié partout, reste flou. Remplissez cette page en 30 minutes : elle devient la base de votre site, de vos contenus et de vos prompts.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Les 8 questions",
+          "headers": [
+            "Question",
+            "Ma réponse"
+          ],
+          "rows": [
+            [
+              "À qui je parle ? (une personne précise, pas « tout le monde »)",
+              ""
+            ],
+            [
+              "Quel problème je résous pour elle ?",
+              ""
+            ],
+            [
+              "Qu’est-ce que je fais concrètement pour elle ?",
+              ""
+            ],
+            [
+              "Qu’est-ce qui me distingue des autres ?",
+              ""
+            ],
+            [
+              "3 mots qui me décrivent (et 3 qui ne me décrivent pas)",
+              ""
+            ],
+            [
+              "Mon ton : comment je parle ? (chaleureux, direct, expert…)",
+              ""
+            ],
+            [
+              "Une preuve que je peux montrer (résultat, expérience, témoignage)",
+              ""
+            ],
+            [
+              "L’action que je veux que la personne fasse ensuite",
+              ""
+            ]
+          ]
+        },
+        {
+          "type": "steps",
+          "title": "Votre phrase de positionnement",
+          "items": [
+            {
+              "label": "1",
+              "text": "J’aide [qui] à [résultat] grâce à [ce que je fais]."
+            },
+            {
+              "label": "2",
+              "text": "Contrairement à [alternative], je [ma différence]."
+            },
+            {
+              "label": "3",
+              "text": "Relisez à voix haute : si un inconnu comprend, c’est bon."
+            }
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Les contrôles",
+          "items": [
+            "Mon message tient en une phrase",
+            "Je peux le dire sans jargon",
+            "Je l’utilise partout : site, réseaux, e-mails",
+            "Je ne promets que ce que je peux tenir"
+          ]
+        }
+      ],
+      "cta": "Envie qu’on clarifie votre message ensemble ? Réservez un échange gratuit."
+    },
+    "en": {
+      "title": "Your branding on one page",
+      "subtitle": "A clear message before automating anything.",
+      "intro": "A blurry message, published everywhere, stays blurry. Fill in this page in 30 minutes: it becomes the base of your website, your content and your prompts.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "The 8 questions",
+          "headers": [
+            "Question",
+            "My answer"
+          ],
+          "rows": [
+            [
+              "Who do I talk to? (a specific person, not “everyone”)",
+              ""
+            ],
+            [
+              "What problem do I solve for them?",
+              ""
+            ],
+            [
+              "What do I concretely do for them?",
+              ""
+            ],
+            [
+              "What sets me apart from others?",
+              ""
+            ],
+            [
+              "3 words that describe me (and 3 that do not)",
+              ""
+            ],
+            [
+              "My tone: how do I speak? (warm, direct, expert…)",
+              ""
+            ],
+            [
+              "A proof I can show (result, experience, testimonial)",
+              ""
+            ],
+            [
+              "The action I want the person to take next",
+              ""
+            ]
+          ]
+        },
+        {
+          "type": "steps",
+          "title": "Your positioning sentence",
+          "items": [
+            {
+              "label": "1",
+              "text": "I help [who] to [result] through [what I do]."
+            },
+            {
+              "label": "2",
+              "text": "Unlike [alternative], I [my difference]."
+            },
+            {
+              "label": "3",
+              "text": "Read it aloud: if a stranger understands, it works."
+            }
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Checks",
+          "items": [
+            "My message fits in one sentence",
+            "I can say it without jargon",
+            "I use it everywhere: site, social media, emails",
+            "I only promise what I can deliver"
+          ]
+        }
+      ],
+      "cta": "Want us to clarify your message together? Book a free call."
+    }
+  },
+  {
+    "slug": "securite-site",
+    "fr": {
+      "title": "Checklist : 12 points de sécurité de votre site",
+      "subtitle": "Ce qu’on vérifie en premier, sans être technicien.",
+      "intro": "Cochez ce que vous pouvez confirmer. Ce qui reste vide est à vérifier en priorité. Aucune liste ne garantit qu’un site est invulnérable : le but est de réduire les risques les plus courants.",
+      "blocks": [
+        {
+          "type": "checklist",
+          "title": "Les bases",
+          "items": [
+            "Mon site s’ouvre en https (cadenas) sur toutes les pages",
+            "Le certificat n’est pas expiré",
+            "Mon site et ses extensions sont à jour",
+            "Je n’ai supprimé aucune extension inutile en laissant des restes",
+            "J’ai supprimé les comptes et accès dont je n’ai plus besoin"
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Les accès",
+          "items": [
+            "Mon mot de passe d’administration est long et unique",
+            "L’accès administrateur demande une double vérification",
+            "Chaque personne a son propre accès, avec le minimum de droits"
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Les données et la sauvegarde",
+          "items": [
+            "Mes formulaires envoient les données de façon sécurisée",
+            "J’ai une sauvegarde récente, stockée ailleurs que sur le site",
+            "J’ai déjà testé de restaurer une sauvegarde"
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Les pages obligatoires",
+          "items": [
+            "Mentions légales et politique de confidentialité en ligne",
+            "Un bandeau de cookies qui permet de refuser"
+          ]
+        },
+        {
+          "type": "text",
+          "title": "Que faire des cases vides ?",
+          "text": "Commencez par les accès et les sauvegardes : ce sont les points où une erreur coûte le plus cher. Pour un rapport complet, classé par priorité, je propose un diagnostic de sécurité."
+        }
+      ],
+      "cta": "Envie d’un diagnostic de sécurité de votre site ? Réservez un échange gratuit."
+    },
+    "en": {
+      "title": "Checklist: 12 security points for your website",
+      "subtitle": "What gets checked first, without being a technician.",
+      "intro": "Tick what you can confirm. Whatever stays empty should be checked first. No list can guarantee that a site is invulnerable: the goal is to reduce the most common risks.",
+      "blocks": [
+        {
+          "type": "checklist",
+          "title": "The basics",
+          "items": [
+            "My site opens in https (padlock) on every page",
+            "The certificate has not expired",
+            "My site and its plugins are up to date",
+            "I removed unused plugins without leaving leftovers",
+            "I deleted accounts and access I no longer need"
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Access",
+          "items": [
+            "My admin password is long and unique",
+            "Admin access asks for a second verification",
+            "Each person has their own access, with minimum rights"
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Data and backups",
+          "items": [
+            "My forms send data securely",
+            "I have a recent backup, stored somewhere other than the site",
+            "I have already tested restoring a backup"
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Required pages",
+          "items": [
+            "Legal notice and privacy policy are online",
+            "A cookie banner that lets people refuse"
+          ]
+        },
+        {
+          "type": "text",
+          "title": "What about the empty boxes?",
+          "text": "Start with access and backups: those are the points where a mistake costs the most. For a full report, ranked by priority, I offer a security diagnosis."
+        }
+      ],
+      "cta": "Want a security diagnosis of your website? Book a free call."
+    }
+  },
+  {
+    "slug": "scripts-relance",
+    "fr": {
+      "title": "6 modèles d’e-mails de prospection et de relance",
+      "subtitle": "Courts, polis, avec une seule action à faire.",
+      "intro": "Remplacez ce qui est entre [crochets]. Gardez toujours une seule question ou une seule action par message. Relisez à voix haute avant d’envoyer.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Les 6 modèles",
+          "headers": [
+            "Moment",
+            "Modèle"
+          ],
+          "rows": [
+            [
+              "1. Premier message",
+              "Bonjour [prénom], je vous écris car [raison précise liée à lui ou elle]. J’aide [type de client] à [résultat]. Seriez-vous ouvert à un échange de 15 minutes cette semaine ?"
+            ],
+            [
+              "2. Relance (3 jours)",
+              "Bonjour [prénom], je me permets de revenir vers vous sur mon message de [jour]. Je peux aussi vous envoyer [ressource utile] si vous préférez."
+            ],
+            [
+              "3. Après un rendez-vous",
+              "Merci pour notre échange, [prénom]. Comme convenu, voici [ce qui a été promis]. La prochaine étape serait [action]. Qu’en pensez-vous ?"
+            ],
+            [
+              "4. Devis resté sans réponse",
+              "Bonjour [prénom], avez-vous pu regarder mon devis du [date] ? Je peux l’ajuster si un point vous bloque."
+            ],
+            [
+              "5. Dernière relance",
+              "Bonjour [prénom], je ne veux pas vous déranger. Je clos ce dossier de mon côté, mais ma porte reste ouverte si le sujet redevient d’actualité."
+            ],
+            [
+              "6. Facture en retard",
+              "Bonjour [prénom], je n’ai pas vu passer le règlement de la facture [numéro] du [date]. Pourriez-vous me confirmer sa date de paiement ?"
+            ]
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Avant d’envoyer",
+          "items": [
+            "Je cite quelque chose de précis sur la personne",
+            "Une seule question ou action",
+            "Moins de 100 mots",
+            "Je sais quand je relance, et combien de fois"
+          ]
+        }
+      ],
+      "cta": "Envie que ces relances partent toutes seules ? Parlons-en."
+    },
+    "en": {
+      "title": "6 email templates for prospecting and follow-ups",
+      "subtitle": "Short, polite, with a single action to take.",
+      "intro": "Replace what is in [brackets]. Always keep a single question or action per message. Read it aloud before sending.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "The 6 templates",
+          "headers": [
+            "Moment",
+            "Template"
+          ],
+          "rows": [
+            [
+              "1. First message",
+              "Hello [first name], I am writing because [specific reason linked to them]. I help [type of client] to [result]. Would you be open to a 15-minute call this week?"
+            ],
+            [
+              "2. Follow-up (3 days)",
+              "Hello [first name], I am following up on my message of [day]. I can also send you [useful resource] if you prefer."
+            ],
+            [
+              "3. After a meeting",
+              "Thank you for our conversation, [first name]. As agreed, here is [what was promised]. The next step would be [action]. What do you think?"
+            ],
+            [
+              "4. Quote with no answer",
+              "Hello [first name], have you had a chance to look at my quote of [date]? I can adjust it if a point is blocking you."
+            ],
+            [
+              "5. Last follow-up",
+              "Hello [first name], I do not want to bother you. I am closing this file on my side, but my door stays open if the topic comes back."
+            ],
+            [
+              "6. Late invoice",
+              "Hello [first name], I have not seen the payment of invoice [number] of [date]. Could you confirm its payment date?"
+            ]
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Before sending",
+          "items": [
+            "I mention something specific about the person",
+            "A single question or action",
+            "Under 100 words",
+            "I know when I follow up, and how many times"
+          ]
+        }
+      ],
+      "cta": "Want these follow-ups to go out on their own? Let’s talk."
+    }
+  },
+  {
+    "slug": "cahier-agent-ia",
+    "fr": {
+      "title": "Mini cahier des charges de votre premier agent IA",
+      "subtitle": "Une page pour décrire ce que l’agent doit faire.",
+      "intro": "Remplissez cette page avant de parler à un prestataire, ou avec moi. Plus la description est précise, plus l’agent sera utile.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Votre agent en 8 lignes",
+          "headers": [
+            "Ligne",
+            "À écrire"
+          ],
+          "rows": [
+            [
+              "La tâche",
+              "Qu’est-ce que l’agent doit faire, en une phrase ?"
+            ],
+            [
+              "Le déclencheur",
+              "Qu’est-ce qui le fait démarrer ? (un e-mail, un formulaire, une date)"
+            ],
+            [
+              "Les informations",
+              "Sur quoi doit-il s’appuyer ? (documents, tarifs, procédures)"
+            ],
+            [
+              "Les outils",
+              "Où doit-il agir ? (e-mail, agenda, CRM, tableur)"
+            ],
+            [
+              "Les règles",
+              "Ce qu’il doit toujours faire, ce qu’il ne doit jamais faire"
+            ],
+            [
+              "Les cas à vérifier",
+              "Quand doit-il vous demander avant d’agir ?"
+            ],
+            [
+              "Le ton",
+              "Comment doit-il parler ? Un exemple de bonne réponse"
+            ],
+            [
+              "La réussite",
+              "À quoi voyez-vous que ça marche ? (temps gagné, oublis en moins)"
+            ]
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Avant de commencer",
+          "items": [
+            "La tâche est répétitive et suit les mêmes étapes",
+            "Je sais où se trouvent les informations utiles",
+            "J’ai décidé ce qui reste à valider par un humain",
+            "Je sais comment je mesurerai le résultat"
+          ]
+        }
+      ],
+      "cta": "Envie qu’on construise votre agent ensemble ? Réservez un échange gratuit."
+    },
+    "en": {
+      "title": "Mini brief for your first AI agent",
+      "subtitle": "One page to describe what the agent must do.",
+      "intro": "Fill in this page before talking to a provider, or with me. The more precise the description, the more useful the agent will be.",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Your agent in 8 lines",
+          "headers": [
+            "Line",
+            "What to write"
+          ],
+          "rows": [
+            [
+              "The task",
+              "What must the agent do, in one sentence?"
+            ],
+            [
+              "The trigger",
+              "What starts it? (an email, a form, a date)"
+            ],
+            [
+              "The information",
+              "What must it rely on? (documents, prices, procedures)"
+            ],
+            [
+              "The tools",
+              "Where must it act? (email, calendar, CRM, spreadsheet)"
+            ],
+            [
+              "The rules",
+              "What it must always do, what it must never do"
+            ],
+            [
+              "The cases to check",
+              "When must it ask you before acting?"
+            ],
+            [
+              "The tone",
+              "How must it speak? An example of a good answer"
+            ],
+            [
+              "Success",
+              "How do you see that it works? (time saved, fewer oversights)"
+            ]
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Before starting",
+          "items": [
+            "The task is repetitive and follows the same steps",
+            "I know where the useful information is",
+            "I decided what stays to be approved by a human",
+            "I know how I will measure the result"
+          ]
+        }
+      ],
+      "cta": "Want us to build your agent together? Book a free call."
+    }
   }
 ]

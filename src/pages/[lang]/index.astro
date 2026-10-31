@@ -7,8 +7,9 @@ import Marquee from '../../components/Marquee.astro';
 import LabSection from '../../components/LabSection.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { t, em, href, langs, type Lang } from '../../content';
-import { site } from '../../config/site';
+import { site, videoPath } from '../../config/site';
 import PostCard from '../../components/PostCard.astro';
+import MotionVideo from '../../components/MotionVideo.astro';
 import { posts } from '../../content/blog';
 
 export function getStaticPaths() {
@@ -97,42 +98,43 @@ const h = c.home;
     </div>
   </section>
 
-  <!-- 6. Preuves -->
-  <section>
+  <!-- 6. Ce que j'ai déjà fait : vidéo + réalisations + photos -->
+  <section class="band-marine">
     <div class="wrap">
       <div class="section-head reveal">
         <span class="kicker">{h.proof.kicker}</span>
         <h2 set:html={em(h.proof.title)} />
       </div>
-      <div class="proof-feature reveal">
-        <div class="proof-photos">
-          <img src="/photos/hackathon-mirakl-eugenia.webp" alt={h.proof.hackathon.alt} width="1179" height="628" loading="lazy" />
-          <img class="proof-pitch" src="/photos/pitch.webp" alt={h.proof.hackathon.pitchAlt} width="680" height="878" loading="lazy" />
-        </div>
-        <div>
-          <span class="formula-tag">{h.proof.hackathon.tag}</span>
-          <h3>{h.proof.hackathon.title}</h3>
-          <p class="lead">{h.proof.hackathon.text}</p>
-          {
-            site.hackathonLink && (
-              <p style="margin-top:22px">
-                <a class="textlink" href={site.hackathonLink} rel="noopener noreferrer" target="_blank">
-                  <span class="arrow">{h.proof.hackathon.link}&nbsp;</span>
-                </a>
-              </p>
-            )
-          }
-        </div>
-      </div>
-      <div class="also reveal" style="margin-top:clamp(32px,5vw,56px)">
+      {
+        site.videos.proof && (
+          <div class="reveal" style="margin-bottom:clamp(32px,5vw,56px)">
+            <MotionVideo
+              src={videoPath('preuves', lang).src}
+              poster={videoPath('preuves', lang).poster}
+              label={h.proof.video}
+              soundOn={h.hero.soundOn}
+              soundOff={h.hero.soundOff}
+              pauseLabel={c.welcome.pause}
+              playLabel={c.welcome.resume}
+            />
+          </div>
+        )
+      }
+      <div class="work-grid">
         {
-          h.proof.cards.map((x) => (
-            <div>
-              <b><a class="rung-link" href={href(lang, x.slug)}>{x.t}</a></b>
-              <span>{x.d}</span>
-            </div>
+          h.proof.works.map((x, i) => (
+            <>
+              {i === 2 && <div class="work-photo tone-violet reveal"><img src="/photos/binta-accueil-violet.webp" alt={h.proof.photoAlt} loading="lazy" width="1108" height="1313" /></div>}
+              {i === 4 && <div class="work-photo tone-rouille reveal"><img src="/photos/binta-sourire-detouree.webp" alt={h.proof.photoAlt} loading="lazy" width="1168" height="1013" /></div>}
+              <div class="work reveal">
+                <span class="work-n">0{i + 1}</span>
+                <b>{x.slug ? <a class="rung-link" href={x.slug.startsWith('journey#') ? `${href(lang, 'journey')}#hackathon` : href(lang, x.slug)}>{x.t}</a> : x.t}</b>
+                <span>{x.d}</span>
+              </div>
+            </>
           ))
         }
+        <div class="work-photo tone-lilas reveal"><img src="/photos/binta-porte-detouree.webp" alt={h.proof.photoAlt} loading="lazy" width="918" height="1213" /></div>
       </div>
     </div>
   </section>

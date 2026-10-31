@@ -55,6 +55,31 @@ const j = c.journey;
     </div>
   </section>
 
+  <section id="hackathon" class="band-lilas" style="padding-bottom:clamp(48px,7vw,96px)">
+    <div class="wrap">
+      <div class="proof-feature reveal">
+        <div class="proof-photos">
+          <img src="/photos/hackathon-mirakl-eugenia.webp" alt={j.hackathon.alt} width="1179" height="628" loading="lazy" />
+          <img class="proof-pitch" src="/photos/pitch.webp" alt={j.hackathon.pitchAlt} width="855" height="1000" loading="lazy" />
+        </div>
+        <div>
+          <span class="formula-tag">{j.hackathon.tag}</span>
+          <h3>{j.hackathon.title}</h3>
+          <p class="lead">{j.hackathon.text}</p>
+          {
+            site.hackathonLink && (
+              <p style="margin-top:22px">
+                <a class="textlink" href={site.hackathonLink} rel="noopener noreferrer" target="_blank">
+                  <span class="arrow">{j.hackathon.link}&nbsp;</span>
+                </a>
+              </p>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
   <Marquee label={j.stackTitle} />
   <CtaBand lang={lang} title={c.home.finalTitle} text={c.home.finalText} />
 </Base>

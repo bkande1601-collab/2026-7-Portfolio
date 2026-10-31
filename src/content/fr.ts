@@ -22,11 +22,13 @@ export const fr = {
     products: 'Services',
     offers: 'Tarifs',
     blog: 'Blog',
+    resources: 'Ressources',
     journey: 'Parcours',
     faq: 'FAQ',
     sub: {
       content: 'Contenu pour les réseaux',
       webinars: 'Webinaires',
+      sites: 'Création de site',
       agents: 'Agents IA',
       systems: 'Systèmes et outils internes',
       diagnostic: 'Diagnostic IA',
@@ -65,6 +67,8 @@ export const fr = {
       'Automatisation de process',
       'Marketing digital',
       'Coaching marketing',
+      'Création de site',
+      'Sécurité du site',
       'Social media management',
       'Publicités Meta',
       'Webinaires',
@@ -112,21 +116,18 @@ export const fr = {
     },
 
     proof: {
-      kicker: 'Ce que j’ai fait',
+      kicker: 'Ce que j’ai déjà fait',
       title: 'Des *preuves*, pas des promesses.',
-      hackathon: {
-        tag: 'Hackathon',
-        title: 'J’ai gagné le hackathon Mirakl x Eugenia School.',
-        text: 'Un concours d’IA et de data. Mon équipe a présenté son projet devant un jury, et on a gagné.',
-        link: 'Voir la publication LinkedIn',
-        alt: 'Photo de groupe après la restitution du jury du hackathon Mirakl x Eugenia School',
-        pitchAlt: 'Binta Kande présente un projet au micro',
-      },
-      cards: [
-        { t: 'Une plateforme interne complète', d: 'Onboarding automatisé, GraphRAG, chatbot, OKR et dashboard, construite pour WLFG.', slug: 'automations' },
-        { t: 'Social media manager', d: 'Stratégie et contenus sur Instagram, TikTok et LinkedIn.', slug: 'marketing' },
-        { t: 'WeTalk Podcast', d: 'Un podcast sur l’entrepreneuriat, de l’idée à la diffusion.', slug: 'journey' },
+      video: 'Ce que j’ai déjà construit',
+      works: [
+        { t: 'Une plateforme interne complète', d: 'Onboarding automatisé, GraphRAG, chatbot, OKR et dashboard, construite pour WLFG.', slug: 'automations/systems' },
+        { t: 'Un SaaS d’automatisation', d: 'En construction : un produit pour automatiser sans coder.', slug: '' },
+        { t: 'Accompagnement d’une startup', d: 'À son lancement, de l’idée aux premiers pas.', slug: 'journey' },
+        { t: 'Accompagnement d’une podcasteuse', d: 'De l’idée à la diffusion.', slug: 'journey' },
+        { t: 'Création de sites', d: 'Boutiques et sites vitrines pensés pour convertir.', slug: 'marketing/sites' },
+        { t: 'Hackathons gagnés', d: 'Dont le hackathon Mirakl x Eugenia School.', slug: 'journey#hackathon' },
       ],
+      photoAlt: 'Binta Kande',
     },
 
     tips: {
@@ -273,6 +274,55 @@ export const fr = {
     finalText: '30 minutes, un process, une première piste.',
   },
 
+  sites: {
+    hero: {
+      kicker: 'Sites web',
+      title: 'Un site de base solide, et *sécurisé*.',
+      sub: 'Tout le monde peut faire un site. Moi, je livre un site de base bien construit, et je vérifie sa sécurité.',
+    },
+    why: {
+      kicker: 'Pourquoi moi',
+      title: 'Un site, ce n’est pas que du *design*.',
+      text: 'Un site doit se charger vite, se lire sur téléphone, donner envie de vous écrire, et protéger vos données comme celles de vos visiteurs. C’est ce que je soigne, avec mon expérience du marketing et des outils.',
+    },
+    base: {
+      kicker: 'Le site de base',
+      title: 'Ce qui est *inclus*.',
+      items: [
+        'Un design propre, adapté au téléphone',
+        'Les pages essentielles : accueil, offre, à propos, contact',
+        'Un formulaire ou une prise de rendez-vous',
+        'Les bases du référencement (SEO)',
+        'Une vitesse de chargement soignée',
+        'Les mentions légales et la politique de confidentialité',
+      ],
+      note: 'Pas de prix affiché : chaque site dépend de votre besoin. Le devis suit un premier échange gratuit.',
+    },
+    redesign: {
+      kicker: 'Refonte',
+      title: 'Vous avez déjà un site ?',
+      text: 'Je regarde ce qui marche et ce qui vous freine. Je le refais sans repartir de zéro quand ce n’est pas nécessaire.',
+    },
+    security: {
+      kicker: 'Diagnostic de sécurité',
+      title: 'Votre site est-il *protégé* ?',
+      text: 'Je vérifie les points qui comptent, et je vous remets un rapport clair, classé par priorité.',
+      checks: [
+        'Connexion sécurisée (https) et certificat',
+        'Mises à jour du site et des extensions',
+        'Formulaires et données des visiteurs',
+        'Accès et mots de passe',
+        'Sauvegardes',
+        'En-têtes de sécurité du site',
+        'Pages légales et consentement aux cookies',
+      ],
+      deliver: 'Vous recevez un rapport : les points urgents d’abord, puis ce qu’il faut corriger.',
+      honest: 'Aucun site n’est invulnérable. Le but est de réduire les risques les plus courants.',
+    },
+    finalTitle: 'On regarde *votre site* ?',
+    finalText: '30 minutes pour voir ce dont vous avez besoin, gratuitement.',
+  },
+
   marketing: {
     hero: {
       kicker: 'Marketing & contenu',
@@ -296,6 +346,11 @@ export const fr = {
           name: 'Webinaires',
           line: 'Publicités, landing page, WhatsApp, e-mails et slides : tout est mis en place pour votre webinaire.',
           slug: 'marketing/webinars',
+        },
+        {
+          name: 'Création de site',
+          line: 'Un site de base solide, une refonte, et un diagnostic de sécurité.',
+          slug: 'marketing/sites',
         },
       ],
     },
@@ -554,11 +609,17 @@ export const fr = {
         href: 'marketing/content',
       },
       {
-        key: null,
+        key: 'webinar',
         name: 'Webinaires',
         line: 'Une formule de base avec tout inclus, et du sur mesure pour aller plus loin.',
-        custom: 'Sur devis',
         href: 'marketing/webinars',
+      },
+      {
+        key: null,
+        name: 'Création et refonte de site',
+        line: 'Un site de base solide et un diagnostic de sécurité.',
+        custom: 'Sur devis',
+        href: 'marketing/sites',
       },
       {
         key: 'cos',
@@ -608,6 +669,7 @@ export const fr = {
       name: 'Nom',
       email: 'Adresse e-mail',
       company: 'Entreprise',
+      site: 'Site web',
       need: 'Votre besoin',
       budget: 'Budget envisagé',
       message: 'En quelques mots',
@@ -620,6 +682,7 @@ export const fr = {
       { v: 'tool', t: 'Un outil interne ou une plateforme' },
       { v: 'content', t: 'Du contenu pour mes réseaux sociaux' },
       { v: 'webinar', t: 'Un webinaire' },
+      { v: 'site', t: 'Un site web (création, refonte ou diagnostic de sécurité)' },
       { v: 'cos', t: 'Chief of Staff externalisée' },
       { v: 'other', t: 'Je ne sais pas encore' },
     ],
@@ -737,6 +800,14 @@ export const fr = {
       },
     ],
     languages: 'Français, langue maternelle. Anglais, bilingue.',
+    hackathon: {
+      tag: 'Hackathon',
+      title: 'J’ai gagné le hackathon Mirakl x Eugenia School.',
+      text: 'Un concours d’IA et de data. Mon équipe a présenté son projet devant un jury, et on a gagné.',
+      link: 'Voir la publication LinkedIn',
+      alt: 'Photo de groupe après la restitution du jury du hackathon Mirakl x Eugenia School',
+      pitchAlt: 'Binta Kande présente un projet au micro',
+    },
     stackTitle: 'La boîte à outils',
   },
 
@@ -806,19 +877,24 @@ export const fr = {
       open: 'Ouvrir la ressource',
       invalid: 'Cette adresse e-mail semble incorrecte.',
       err: 'Impossible d’envoyer pour l’instant. Réessayez dans un instant.',
-      titles: {
-        'taches-a-automatiser': 'Checklist de l’entrepreneur : où vous perdez du temps, et par où commencer',
-        'calendrier-contenu': 'Modèle : votre calendrier de contenu sur 4 semaines',
-        'retroplanning-webinaire': 'Rétroplanning d’un webinaire : de J-14 à J+7',
-        'choisir-un-llm': 'Grille : choisir le bon LLM pour votre cas',
-        'modele-prompt-maitre': 'Modèle : écrire votre prompt maître',
-      },
     },
     allPosts: 'Tous les articles',
+    resources: {
+      title: 'Des ressources *gratuites*, à télécharger.',
+      sub: 'Checklists, modèles et grilles prêts à remplir. Vous les recevez par e-mail.',
+    },
     ctaText: '30 minutes pour voir ce qui s’applique à vous.',
   },
 
+  trailer: {
+    label: 'Bande-annonce',
+    skip: 'Passer',
+    soundOn: 'Son activé',
+    soundOff: 'Activer le son',
+  },
+
   welcome: {
+    launch: 'Écouter le mot de bienvenue',
     title: 'Un petit mot de bienvenue',
     listen: 'Écouter',
     pause: 'Pause',

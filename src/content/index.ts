@@ -24,7 +24,7 @@ export const tools = [
 ];
 
 /** Pages (slug identique en FR et EN). */
-export const pages = ['', 'automations', 'automations/agents', 'automations/systems', 'marketing', 'marketing/content', 'marketing/webinars', 'products', 'products/diagnostic', 'products/prompt', 'offers', 'blog', 'blog/premieres-automatisations', 'blog/contenu-reseaux-regularite', 'blog/webinaire-checklist', 'blog/choisir-un-llm', 'blog/prompt-maitre', 'book', 'contact', 'journey', 'faq'] as const;
+export const pages = ['', 'automations', 'automations/agents', 'automations/systems', 'marketing', 'marketing/content', 'marketing/webinars', 'marketing/sites', 'resources', 'products', 'products/diagnostic', 'products/prompt', 'offers', 'blog', 'blog/premieres-automatisations', 'blog/contenu-reseaux-regularite', 'blog/webinaire-checklist', 'blog/choisir-un-llm', 'blog/prompt-maitre', 'blog/securite-site', 'blog/branding-une-page', 'blog/prospection-relances', 'book', 'contact', 'journey', 'faq'] as const;
 
 export function href(lang: Lang, page: string = '') {
   return page ? `/${lang}/${page}` : `/${lang}`;

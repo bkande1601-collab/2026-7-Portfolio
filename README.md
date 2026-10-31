@@ -160,3 +160,11 @@ src/
 - **Vidéo « C'est quoi un agent IA ? » :** `public/video/agent-ia-fr.mp4` et `agent-ia-en.mp4` (31 secondes, sans voix, avec musique). Elle ouvre la page Agents IA. Elle démarre en silence, avec un bouton pause et un bouton son (volume bas par défaut). Les chemins sont dans `agentVideo`, fichier `src/config/site.ts`.
 - **Vidéo de la plateforme interne :** `public/video/plateforme.mp4`, utilisée sur les pages Automatisations et Systèmes.
 - **Photo du blog :** la couverture de l'article sur les LLM est une photo libre de droits (licence Unsplash) de Milad Fakurian, créditée sous la photo.
+
+## Bande-annonce, vidéos et voix
+
+- **Bande-annonce de 7 secondes** : jouée une fois par visite à l'arrivée sur l'accueil (`src/components/Trailer.astro`). Fichiers `public/video/trailer-*.mp4` (paysage) et `trailer-portrait-*.mp4` (mobile). `trailer: false` dans `src/config/site.ts` la retire.
+- **Voix de bienvenue** : démarre juste après la bande-annonce. Le bouton haut-parleur reste visible pour couper ou relancer le son (choix mémorisé).
+- **Vidéos de 30 secondes**, une par langue, dans `public/video/` : `agent-ia`, `contenu`, `webinaire`, `preuves` (+ une image d'attente `.webp` chacune). `videos` dans `site.ts` permet de les retirer page par page.
+- **Prix du webinaire** : `prices.webinar` dans `site.ts`.
+- **Création de site** : page `/marketing/sites`, sans prix affiché.

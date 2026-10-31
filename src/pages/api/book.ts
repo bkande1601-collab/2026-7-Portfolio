@@ -10,7 +10,7 @@ import { sourceText } from '../../lib/source';
 
 export const prerender = false;
 
-const NEEDS = ['automation', 'agent', 'tool', 'content', 'webinar', 'cos', 'other'];
+const NEEDS = ['automation', 'agent', 'tool', 'content', 'webinar', 'site', 'cos', 'other'];
 const BUDGETS = ['200-800', '800-2000', 'gt2000', 'unknown', ''];
 
 const validPhone = (v: string) => /^[+()\d][\d\s().+-]{5,24}$/.test(v) && v.replace(/\D/g, '').length >= 6;
@@ -28,6 +28,7 @@ export const POST: APIRoute = async ({ request }) => {
   const name = `${firstName} ${lastName}`.trim();
   const phone = clean(body.phone, 30);
   const source = clean(body.source, 60).replace(/[^a-z0-9/_-]/gi, '');
+  const siteUrl = clean(body.siteUrl, 200);
   const email = clean(body.email, 254).toLowerCase();
   const need = clean(body.need, 30);
   const budget = clean(body.budget, 20);
@@ -59,6 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
     name,
     phone,
     source,
+    siteUrl,
     email,
     company: clean(body.company, 160),
     need,
@@ -78,6 +80,7 @@ export const POST: APIRoute = async ({ request }) => {
     `Téléphone : ${phone}`,
     source && `Venu depuis la page : ${sourceText(source)}`,
     data.company && `Entreprise : ${data.company}`,
+    siteUrl && `Site : ${siteUrl}`,
     `Besoin : ${needLabel}`,
     `Budget : ${budgetLabel}`,
     `Langue : ${lang.toUpperCase()}`,

@@ -19,9 +19,10 @@ export function facts(lang: Lang): string {
       ? `Agent IA : de ${p.agent.amount} à ${p.agent.to} €. Système complet : de ${eur(p.system.amount)} à ${eur(p.system.to)} €+.`
       : `AI agent: €${p.agent.amount} to €${p.agent.to}. Complete system: €${eur(p.system.amount)} to €${eur(p.system.to)}+.`,
     fr
-      ? `Contenu pour les réseaux sociaux (Instagram, TikTok, LinkedIn) : dès ${p.marketing.amount} € par mois, avec un bilan chaque semaine. Webinaires : une formule de base avec tout inclus, et du sur mesure sur devis.`
-      : `Social media content (Instagram, TikTok, LinkedIn): from €${p.marketing.amount} per month, with a weekly report. Webinars: a base formula with everything included, and custom work on quote.`,
+      ? `Contenu pour les réseaux sociaux (Instagram, TikTok, LinkedIn) : dès ${p.marketing.amount} € par mois, avec un bilan chaque semaine. Webinaires : formule de base avec tout inclus dès ${eur(p.webinar.amount)} €, et du sur mesure sur devis.`
+      : `Social media content (Instagram, TikTok, LinkedIn): from €${p.marketing.amount} per month, with a weekly report. Webinars: base formula with everything included from €${eur(p.webinar.amount)}, and custom work on quote.`,
     fr ? 'Chief of Staff externalisée : dès 2 400 € par mois.' : 'Outsourced Chief of Staff: from €2,400 per month.',
+    fr ? 'Création et refonte de site : un site de base solide et un diagnostic de sécurité, sur devis, sans prix affiché.' : 'Website design and redesign: a solid base website and a security diagnosis, on quote, no displayed price.',
     fr
       ? 'Promesse : tout est mis en place pour que ça fonctionne, mais aucun nombre de participants ni de ventes n’est garanti.'
       : 'Promise: everything is set up to work, but no number of attendees or sales is guaranteed.',
@@ -61,6 +62,10 @@ export function previewAnswer(message: string, lang: Lang): string {
     return fr
       ? `Je crée et publie du contenu pour Instagram, TikTok et LinkedIn, avec un bilan chaque semaine, dès ${p.marketing.amount} € par mois.`
       : `I create and publish content for Instagram, TikTok and LinkedIn, with a weekly report, from €${p.marketing.amount} per month.`;
+  if (has('site', 'website', 'sécurité', 'securite', 'security', 'refonte', 'redesign'))
+    return fr
+      ? 'Je crée et refais des sites : un site de base solide, et un diagnostic de sécurité. Pas de prix affiché, car cela dépend de votre besoin : le devis suit un échange gratuit.'
+      : 'I design and redesign websites: a solid base website, and a security diagnosis. No price displayed because it depends on your need: the quote follows a free call.';
   if (has('webinaire', 'webinar'))
     return fr
       ? 'Pour les webinaires, il y a une formule de base avec tout inclus, et du sur mesure (par exemple les publicités Meta). Le prix est sur devis, et je ne garantis pas un nombre de participants.'

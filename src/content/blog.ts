@@ -299,4 +299,115 @@ export const posts: Post[] = [
       ],
     },
   },
+
+  /* ------------------------------------------------------------------ 6 */
+  {
+    slug: 'securite-site',
+    date: '2026-10-31',
+    minutes: 4,
+    cover: { src: '/photos/binta-qui-je-suis.webp', tone: 'rouille', cutout: true },
+    resource: 'securite-site',
+    fr: {
+      tag: 'Site web',
+      title: 'Votre site est-il sécurisé ? 7 points à vérifier',
+      excerpt: 'Pas besoin d’être technicien pour repérer les risques les plus courants.',
+      callTitle: 'Envie d’un diagnostic de sécurité de votre site ?',
+      callText: 'Réservez un échange gratuit de 30 minutes. Je regarde votre site avec vous et je vous dis par où commencer.',
+      sections: [
+        { p: ['Beaucoup d’entrepreneurs pensent à la sécurité de leur site seulement après un problème. Or les risques les plus fréquents sont simples à repérer. Voici 7 points que je vérifie en premier.'] },
+        { h: 'Les 7 points', list: ['La connexion sécurisée : le cadenas (https) doit apparaître sur toutes les pages, et le certificat ne doit pas être expiré.', 'Les mises à jour : un site ou une extension oubliée est la porte d’entrée la plus courante.', 'Les accès : un mot de passe long et unique, une double vérification, et un accès par personne.', 'Les formulaires : les données des visiteurs doivent partir de façon sécurisée.', 'Les sauvegardes : une copie récente, stockée ailleurs, et déjà testée.', 'Les extensions inutiles : ce qui n’est pas utilisé doit être supprimé.', 'Les pages légales : mentions légales, politique de confidentialité et bandeau de cookies qui permet de refuser.'] },
+        { service: 'marketing/sites' },
+        { h: 'Une précision honnête', p: ['Aucun site n’est invulnérable. Le but d’un diagnostic est de réduire les risques les plus courants et de savoir quoi corriger en premier. La checklist gratuite en bas de page vous donne 12 points à cocher.'] },
+        { h: 'Et si je n’ai rien coché ?', p: ['Commencez par les accès et les sauvegardes : ce sont les points où une erreur coûte le plus cher. Ensuite, mettez à jour, puis nettoyez.'] },
+      ],
+    },
+    en: {
+      tag: 'Website',
+      title: 'Is your website secure? 7 points to check',
+      excerpt: 'You do not need to be a technician to spot the most common risks.',
+      callTitle: 'Want a security diagnosis of your website?',
+      callText: 'Book a free 30-minute call. I look at your site with you and tell you where to start.',
+      sections: [
+        { p: ['Many entrepreneurs only think about their website’s security after a problem. Yet the most frequent risks are easy to spot. Here are 7 points I check first.'] },
+        { h: 'The 7 points', list: ['The secure connection: the padlock (https) must appear on every page, and the certificate must not have expired.', 'Updates: a forgotten site or plugin is the most common way in.', 'Access: a long, unique password, a second verification, and one access per person.', 'Forms: visitors’ data must be sent securely.', 'Backups: a recent copy, stored elsewhere, and already tested.', 'Unused plugins: whatever is not used should be removed.', 'Legal pages: legal notice, privacy policy and a cookie banner that lets people refuse.'] },
+        { service: 'marketing/sites' },
+        { h: 'An honest note', p: ['No website is invulnerable. The goal of a diagnosis is to reduce the most common risks and to know what to fix first. The free checklist at the bottom of the page gives you 12 points to tick.'] },
+        { h: 'What if I ticked nothing?', p: ['Start with access and backups: those are the points where a mistake costs the most. Then update, then clean up.'] },
+      ],
+    },
+  },
+
+  /* ------------------------------------------------------------------ 7 */
+  {
+    slug: 'branding-une-page',
+    date: '2026-10-31',
+    minutes: 4,
+    cover: { src: '/photos/binta-sourire-detouree.webp', tone: 'lilas', cutout: true },
+    resource: 'brief-branding',
+    fr: {
+      tag: 'Branding',
+      title: 'Votre branding en une page',
+      excerpt: 'Avant d’automatiser quoi que ce soit, clarifiez votre message.',
+      callTitle: 'Envie qu’on clarifie votre message ensemble ?',
+      callText: 'Réservez un échange gratuit de 30 minutes. On met votre positionnement à plat, puis on voit comment le faire vivre.',
+      sections: [
+        { p: ['Beaucoup d’entrepreneurs me disent qu’ils ne savent pas quoi publier. En général, ce n’est pas un problème de contenu : c’est un message pas encore clair. Le branding, ce n’est pas un logo, c’est une réponse nette à quelques questions.'] },
+        { h: 'Les 5 questions qui comptent', list: ['À qui je parle ? Une personne précise, pas « tout le monde ».', 'Quel problème je résous pour elle ?', 'Qu’est-ce que je fais concrètement ?', 'Qu’est-ce qui me distingue des autres ?', 'Comment je parle ? Chaleureux, direct, expert ?'] },
+        { h: 'Une phrase de positionnement', p: ['« J’aide [qui] à [résultat] grâce à [ce que je fais]. » Relisez-la à voix haute : si un inconnu comprend, c’est bon. Sinon, simplifiez.'] },
+        { service: 'marketing/content' },
+        { h: 'Pourquoi le faire avant le reste', p: ['Un message flou, publié partout, reste flou. Un message clair rend vos contenus plus faciles à écrire, votre site plus lisible, et vos prompts d’IA plus justes. La ressource gratuite en bas de page vous guide en 30 minutes.'] },
+      ],
+    },
+    en: {
+      tag: 'Branding',
+      title: 'Your branding on one page',
+      excerpt: 'Before automating anything, clarify your message.',
+      callTitle: 'Want us to clarify your message together?',
+      callText: 'Book a free 30-minute call. We lay out your positioning, then see how to bring it to life.',
+      sections: [
+        { p: ['Many entrepreneurs tell me they do not know what to publish. Usually it is not a content problem: it is a message that is not yet clear. Branding is not a logo, it is a sharp answer to a few questions.'] },
+        { h: 'The 5 questions that matter', list: ['Who do I talk to? A specific person, not “everyone”.', 'What problem do I solve for them?', 'What do I concretely do?', 'What sets me apart from others?', 'How do I speak? Warm, direct, expert?'] },
+        { h: 'A positioning sentence', p: ['“I help [who] to [result] through [what I do].” Read it aloud: if a stranger understands, it works. If not, simplify.'] },
+        { service: 'marketing/content' },
+        { h: 'Why do it before the rest', p: ['A blurry message, published everywhere, stays blurry. A clear message makes your content easier to write, your website easier to read, and your AI prompts more accurate. The free resource at the bottom of the page guides you in 30 minutes.'] },
+      ],
+    },
+  },
+
+  /* ------------------------------------------------------------------ 8 */
+  {
+    slug: 'prospection-relances',
+    date: '2026-10-31',
+    minutes: 4,
+    cover: { src: '/photos/binta-porte-detouree.webp', tone: 'marine', cutout: true },
+    resource: 'scripts-relance',
+    fr: {
+      tag: 'Trouver des clients',
+      title: 'Prospection et relances : 6 e-mails qui ne dérangent pas',
+      excerpt: 'Courts, polis, avec une seule action. Et qui partent même quand vous êtes débordé.',
+      callTitle: 'Envie que vos relances partent toutes seules ?',
+      callText: 'Réservez un échange gratuit de 30 minutes. On regarde comment automatiser votre suivi de prospects.',
+      sections: [
+        { p: ['Trouver des clients est l’un des plus gros manques de temps des entrepreneurs. Et le plus souvent, l’argent se perd dans le suivi : on envoie un message, on oublie de relancer, et la discussion s’éteint.'] },
+        { h: 'Les 4 règles que j’applique', list: ['Une seule question ou action par message.', 'Moins de 100 mots.', 'Une phrase précise sur la personne, pas un message copié-collé.', 'Un calendrier de relances, décidé à l’avance.'] },
+        { h: 'Les 6 moments d’un suivi', p: ['Le premier message, la relance à 3 jours, le message après un rendez-vous, le devis resté sans réponse, la dernière relance, et la facture en retard. La ressource gratuite contient un modèle pour chacun.'] },
+        { service: 'automations/agents' },
+        { h: 'Ce qui peut être automatisé', p: ['Le suivi : qui a répondu, qui doit être relancé, et quand. Un agent peut préparer les messages et vous les soumettre. Vous gardez la main sur ce qui part, mais vous n’oubliez plus personne.'] },
+      ],
+    },
+    en: {
+      tag: 'Finding clients',
+      title: 'Prospecting and follow-ups: 6 emails that do not bother',
+      excerpt: 'Short, polite, with a single action. And they go out even when you are overwhelmed.',
+      callTitle: 'Want your follow-ups to go out on their own?',
+      callText: 'Book a free 30-minute call. We look at how to automate your prospect follow-up.',
+      sections: [
+        { p: ['Finding clients is one of entrepreneurs’ biggest time shortages. And most often, money is lost in the follow-up: you send a message, forget to follow up, and the conversation dies.'] },
+        { h: 'The 4 rules I apply', list: ['A single question or action per message.', 'Under 100 words.', 'One specific sentence about the person, not a copy-pasted message.', 'A follow-up calendar, decided in advance.'] },
+        { h: 'The 6 moments of a follow-up', p: ['The first message, the follow-up at 3 days, the message after a meeting, the quote with no answer, the last follow-up, and the late invoice. The free resource contains a template for each.'] },
+        { service: 'automations/agents' },
+        { h: 'What can be automated', p: ['The follow-up: who replied, who needs a reminder, and when. An agent can prepare the messages and submit them to you. You stay in control of what goes out, but you no longer forget anyone.'] },
+      ],
+    },
+  },
 ];

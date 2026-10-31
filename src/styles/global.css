@@ -3694,7 +3694,7 @@ a:hover > .arrow::after {
 /* article */
 .article-photo {
   width: 100%;
-  max-width: 920px;
+  max-width: 560px;
   margin: 0 auto 36px;
   border-radius: 22px;
   aspect-ratio: 16 / 9;
@@ -4292,8 +4292,8 @@ a:hover > .arrow::after {
   color: var(--text);
 }
 .photo-credit {
-  margin: 10px auto 0;
-  max-width: 920px;
+  margin: -22px auto 30px;
+  max-width: 560px;
   font-size: 0.82rem;
   color: var(--muted);
 }
@@ -4355,4 +4355,205 @@ a:hover > .arrow::after {
 .video-hero .cta-main {
   background: var(--lilas);
   color: var(--violet-deep);
+}
+
+/* ---------- page Ressources : cartes ---------- */
+.rgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2.4vw, 28px);
+}
+@media (max-width: 960px) {
+  .rgrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 620px) {
+  .rgrid {
+    grid-template-columns: 1fr;
+  }
+}
+.resbox.card {
+  margin: 0;
+  max-width: none;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  padding: 26px;
+  border-radius: 24px;
+  align-items: start;
+  align-content: space-between;
+}
+.resbox.card:nth-child(3n + 2) {
+  background: var(--rouille);
+}
+.resbox.card:nth-child(3n + 3) {
+  background: var(--marine);
+}
+.resbox.card h3 {
+  color: #fff;
+  font-size: 1.3rem;
+  margin-top: 8px;
+}
+.resbox-sub {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+}
+
+.checks.big {
+  gap: 14px;
+}
+.checks.big li {
+  font-size: 1.12rem;
+  padding-left: 40px;
+}
+.checks.big li::before {
+  width: 26px;
+  height: 26px;
+}
+.checks.big li::after {
+  left: 8px;
+  top: 8px;
+  width: 10px;
+  height: 5px;
+}
+.band-marine .checks li::before {
+  background: var(--lilas);
+}
+.band-marine .checks li::after {
+  border-color: var(--violet-deep);
+}
+
+/* ---------- bande-annonce plein écran ---------- */
+.trailer {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: #14122b;
+  display: grid;
+  place-items: center;
+  transition: opacity 0.45s;
+}
+.trailer[hidden] {
+  display: none;
+}
+.trailer.out {
+  opacity: 0;
+  pointer-events: none;
+}
+.trailer video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.trailer-skip,
+.trailer-sound {
+  position: absolute;
+  top: clamp(14px, 3vw, 28px);
+  background: rgba(20, 18, 43, 0.6);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font: 700 0.95rem var(--font-body);
+  cursor: pointer;
+}
+.trailer-skip {
+  right: clamp(14px, 3vw, 28px);
+}
+.trailer-sound {
+  left: clamp(14px, 3vw, 28px);
+}
+.trailer-skip:hover,
+.trailer-sound:hover {
+  background: #fff;
+  color: var(--violet-deep);
+}
+html.trailer-on body {
+  overflow: hidden;
+}
+
+/* bouton haut-parleur : toujours visible pour relancer la voix */
+.welcome-launch {
+  position: fixed;
+  left: clamp(12px, 2vw, 24px);
+  bottom: clamp(12px, 2vw, 24px);
+  z-index: 84;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(198, 184, 228, 0.6);
+  background: var(--marine);
+  color: var(--lilas);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.welcome-launch:hover {
+  background: var(--lilas);
+  color: var(--violet-deep);
+}
+.welcome-launch[hidden] {
+  display: none;
+}
+@media (max-width: 560px) {
+  .welcome-launch {
+    bottom: 76px;
+  }
+}
+
+/* ---------- accueil : ce que j'ai déjà fait ---------- */
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 2vw, 22px);
+}
+.work {
+  padding: 26px;
+  border-radius: 22px;
+  background: rgba(246, 240, 228, 0.08);
+  border: 1px solid rgba(246, 240, 228, 0.2);
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  color: rgba(246, 240, 228, 0.85);
+}
+.work b {
+  font-family: var(--font-head);
+  font-stretch: 112%;
+  font-size: 1.25rem;
+  color: #fff;
+  line-height: 1.15;
+}
+.work-n {
+  font-family: var(--font-head);
+  font-weight: 800;
+  color: var(--lilas);
+}
+.work .rung-link:hover {
+  color: var(--lilas);
+}
+.work-photo {
+  border-radius: 22px;
+  overflow: hidden;
+  display: grid;
+  align-items: end;
+  min-height: 240px;
+}
+.work-photo img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  object-position: center bottom;
+  padding-top: 12px;
+}
+@media (max-width: 900px) {
+  .work-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .work-grid {
+    grid-template-columns: 1fr;
+  }
 }

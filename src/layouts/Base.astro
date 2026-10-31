@@ -8,6 +8,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ChatWidget from '../components/ChatWidget.astro';
 import WelcomeVoice from '../components/WelcomeVoice.astro';
+import Trailer from '../components/Trailer.astro';
 
 interface Props {
   lang: Lang;
@@ -45,6 +46,7 @@ const origin = Astro.site ? Astro.site.origin : '';
     </script>
   </head>
   <body>
+    <Trailer lang={lang} page={page} />
     <a class="skip" href="#main">{c.nav.skip}</a>
     <Header lang={lang} page={page} otherHref={href(other, page)} />
     <main id="main">

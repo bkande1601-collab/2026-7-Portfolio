@@ -1,0 +1,91 @@
+---
+/**
+ * Bande-annonce de 7 secondes, plein écran, à la première arrivée sur l'accueil.
+ * Elle démarre en silence (les navigateurs bloquent le son automatique), se passe en un clic,
+ * et la voix d'accueil démarre juste après (événement « trailer:done »).
+ */
+import { t, type Lang } from '../content';
+import { site } from '../config/site';
+
+interface Props {
+  lang: Lang;
+  page: string;
+}
+const { lang, page } = Astro.props;
+const c = t(lang);
+const on = site.trailer && page === '';
+---
+
+{on && (
+  <>
+    <script is:inline>
+      try {
+        if (!sessionStorage.getItem('trailer-played') && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          window.__trailer = 'pending';
+          document.documentElement.classList.add('trailer-on');
+        }
+      } catch (e) {}
+    </script>
+    <div class="trailer" id="trailer" role="dialog" aria-label={c.trailer.label} hidden>
+      <video id="trailer-video" playsinline muted preload="auto"></video>
+      <button class="trailer-skip" id="trailer-skip" type="button">{c.trailer.skip}</button>
+      <button class="trailer-sound" id="trailer-sound" type="button" aria-pressed="false" data-on={c.trailer.soundOn} data-off={c.trailer.soundOff}>
+        <span aria-hidden="true">♪</span> <span id="trailer-sound-l">{c.trailer.soundOff}</span>
+      </button>
+    </div>
+    <script type="application/json" id="trailer-data" set:html={JSON.stringify({ lang })} />
+    <script>
+      const box = document.getElementById('trailer');
+      const w = window as unknown as { __trailer?: string };
+      if (box && w.__trailer === 'pending') {
+        const data = JSON.parse(document.getElementById('trailer-data')!.textContent || '{}');
+        const v = document.getElementById('trailer-video') as HTMLVideoElement;
+        const sound = document.getElementById('trailer-sound') as HTMLButtonElement;
+        const lbl = document.getElementById('trailer-sound-l')!;
+        const portrait = window.matchMedia('(max-aspect-ratio: 1/1)').matches;
+        v.src = portrait ? `/video/trailer-portrait-${data.lang}.mp4` : `/video/trailer-${data.lang}.mp4`;
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          try {
+            sessionStorage.setItem('trailer-played', '1');
+          } catch {
+            /* ignore */
+          }
+          box.classList.add('out');
+          document.documentElement.classList.remove('trailer-on');
+          window.setTimeout(() => {
+            box.hidden = true;
+            w.__trailer = 'done';
+            window.dispatchEvent(new Event('trailer:done'));
+          }, 450);
+        };
+        v.addEventListener('ended', finish);
+        v.addEventListener('error', finish);
+        document.getElementById('trailer-skip')!.addEventListener('click', finish);
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') finish();
+        });
+        sound.addEventListener('click', () => {
+          v.muted = !v.muted;
+          v.volume = 0.35;
+          sound.setAttribute('aria-pressed', String(!v.muted));
+          lbl.textContent = v.muted ? sound.dataset.off! : sound.dataset.on!;
+        });
+        // on affiche dès que la vidéo peut démarrer ; sinon on abandonne vite
+        const giveUp = window.setTimeout(finish, 4500);
+        v.addEventListener(
+          'canplay',
+          () => {
+            window.clearTimeout(giveUp);
+            box.hidden = false;
+            v.play().catch(finish);
+          },
+          { once: true },
+        );
+        v.load();
+      }
+    </script>
+  </>
+)}

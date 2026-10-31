@@ -80,7 +80,7 @@ const price = (k: PriceKey) => formatPrice(k, lang);
                   {p ? (
                     <>
                       <small style="display:block;font-size:.5em;letter-spacing:.1em;text-transform:uppercase;font-weight:400">{o.from}</small>
-                      {p.amount}<small> {o.perMonth}</small>
+                      {p.amount}{p.per === 'month' && <small> {o.perMonth}</small>}
                     </>
                   ) : (
                     <span style="font-size:.8em">{(s as { custom?: string }).custom}</span>

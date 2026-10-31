@@ -3,8 +3,9 @@ import Base from '../../../layouts/Base.astro';
 import CtaMenu from '../../../components/CtaMenu.astro';
 import CtaBand from '../../../components/CtaBand.astro';
 import Crumb from '../../../components/Crumb.astro';
+import MotionVideo from '../../../components/MotionVideo.astro';
 import { t, em, href, langs, type Lang } from '../../../content';
-import { formatPrice } from '../../../config/site';
+import { formatPrice, site, videoPath } from '../../../config/site';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -16,18 +17,31 @@ const monthly = formatPrice('marketing', lang);
 ---
 
 <Base lang={lang} page="marketing/content" title={c.nav.sub.content} description={m.hero.sub}>
-  <section class="page-hero has-photo">
-    <div class="wrap hero-split">
-      <div class="hero-text">
+  <!-- Dès l'arrivée : la vidéo de la page -->
+  <section class="video-hero">
+    <div class="wrap">
       <Crumb lang={lang} parent="marketing" label={c.nav.marketing} />
-      <span class="kicker" style="display:flex">{c.nav.sub.content}</span>
-      <h1 set:html={em(m.hero.title)} />
-      <p class="lead">{m.hero.sub}</p>
-      <div class="btn-row" style="margin-top:32px">
+      {
+        site.videos.content && (
+          <MotionVideo
+            src={videoPath('contenu', lang).src}
+            poster={videoPath('contenu', lang).poster}
+            label={c.nav.sub.content}
+            soundOn={c.home.hero.soundOn}
+            soundOff={c.home.hero.soundOff}
+            pauseLabel={c.welcome.pause}
+            playLabel={c.welcome.resume}
+          />
+        )
+      }
+      <div class="video-hero-text">
+        <div>
+          <span class="kicker">{c.nav.sub.content}</span>
+          <h1 set:html={em(m.hero.title)} />
+          <p class="lead">{m.hero.sub}</p>
+        </div>
         <CtaMenu lang={lang} />
       </div>
-      </div>
-      <img class="hero-photo" src="/photos/binta-porte-detouree.webp" alt="Binta Kande en lunettes de soleil devant une porte en bois" width="918" height="1213" />
     </div>
   </section>
 

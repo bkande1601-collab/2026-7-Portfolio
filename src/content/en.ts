@@ -24,11 +24,13 @@ export const en: Content = {
     products: 'Services',
     offers: 'Pricing',
     blog: 'Blog',
+    resources: 'Resources',
     journey: 'Journey',
     faq: 'FAQ',
     sub: {
       content: 'Social media content',
       webinars: 'Webinars',
+      sites: 'Website design',
       agents: 'AI agents',
       systems: 'Systems and internal tools',
       diagnostic: 'AI diagnosis',
@@ -67,6 +69,8 @@ export const en: Content = {
       'Process automation',
       'Digital marketing',
       'Marketing coaching',
+      'Website design',
+      'Website security',
       'Social media management',
       'Meta ads',
       'Webinars',
@@ -114,21 +118,18 @@ export const en: Content = {
     },
 
     proof: {
-      kicker: 'What I have done',
+      kicker: 'What I have already done',
       title: '*Proof*, not promises.',
-      hackathon: {
-        tag: 'Hackathon',
-        title: 'I won the Mirakl x Eugenia School hackathon.',
-        text: 'An AI and data competition. My team presented its project to a jury, and we won.',
-        link: 'See the LinkedIn post',
-        alt: 'Group photo after the jury session of the Mirakl x Eugenia School hackathon',
-        pitchAlt: 'Binta Kande presenting a project with a microphone',
-      },
-      cards: [
-        { t: 'A complete internal platform', d: 'Automated onboarding, GraphRAG, chatbot, OKRs and dashboard, built for WLFG.', slug: 'automations' },
-        { t: 'Social media manager', d: 'Strategy and content on Instagram, TikTok and LinkedIn.', slug: 'marketing' },
-        { t: 'WeTalk Podcast', d: 'An entrepreneurship podcast, from the idea to distribution.', slug: 'journey' },
+      video: 'What I have already built',
+      works: [
+        { t: 'A complete internal platform', d: 'Automated onboarding, GraphRAG, chatbot, OKRs and dashboard, built for WLFG.', slug: 'automations/systems' },
+        { t: 'An automation SaaS', d: 'Under construction: a product to automate without coding.', slug: '' },
+        { t: 'Support for a startup', d: 'At its launch, from the idea to the first steps.', slug: 'journey' },
+        { t: 'Support for a podcaster', d: 'From the idea to distribution.', slug: 'journey' },
+        { t: 'Website design', d: 'Stores and showcase sites built to convert.', slug: 'marketing/sites' },
+        { t: 'Hackathons won', d: 'Including the Mirakl x Eugenia School hackathon.', slug: 'journey#hackathon' },
       ],
+      photoAlt: 'Binta Kande',
     },
 
     tips: {
@@ -275,6 +276,55 @@ export const en: Content = {
     finalText: '30 minutes, one process, a first lead.',
   },
 
+  sites: {
+    hero: {
+      kicker: 'Websites',
+      title: 'A solid base website, and a *secure* one.',
+      sub: 'Anyone can make a website. I deliver a well-built base website, and I check its security.',
+    },
+    why: {
+      kicker: 'Why me',
+      title: 'A website is not just *design*.',
+      text: 'A website must load fast, read well on a phone, make people want to write to you, and protect your data and your visitors’ data. That is what I take care of, with my experience in marketing and tools.',
+    },
+    base: {
+      kicker: 'The base website',
+      title: 'What is *included*.',
+      items: [
+        'A clean design, adapted to phones',
+        'The essential pages: home, offer, about, contact',
+        'A form or an appointment booking',
+        'The basics of search engine optimisation (SEO)',
+        'A carefully tuned loading speed',
+        'Legal notice and privacy policy',
+      ],
+      note: 'No price displayed: each website depends on your need. The quote follows a free first call.',
+    },
+    redesign: {
+      kicker: 'Redesign',
+      title: 'Do you already have a website?',
+      text: 'I look at what works and what holds you back. I rebuild it without starting from scratch when that is not necessary.',
+    },
+    security: {
+      kicker: 'Security diagnosis',
+      title: 'Is your website *protected*?',
+      text: 'I check the points that matter, and I give you a clear report, ranked by priority.',
+      checks: [
+        'Secure connection (https) and certificate',
+        'Updates of the site and its plugins',
+        'Forms and visitors’ data',
+        'Access and passwords',
+        'Backups',
+        'The site’s security headers',
+        'Legal pages and cookie consent',
+      ],
+      deliver: 'You receive a report: urgent points first, then what needs to be fixed.',
+      honest: 'No website is invulnerable. The goal is to reduce the most common risks.',
+    },
+    finalTitle: 'Shall we look at *your website*?',
+    finalText: '30 minutes to see what you need, for free.',
+  },
+
   marketing: {
     hero: {
       kicker: 'Marketing & content',
@@ -298,6 +348,11 @@ export const en: Content = {
           name: 'Webinars',
           line: 'Ads, landing page, WhatsApp, emails and slides: everything is set up for your webinar.',
           slug: 'marketing/webinars',
+        },
+        {
+          name: 'Website design',
+          line: 'A solid base website, a redesign, and a security diagnosis.',
+          slug: 'marketing/sites',
         },
       ],
     },
@@ -556,11 +611,17 @@ export const en: Content = {
         href: 'marketing/content',
       },
       {
-        key: null,
+        key: 'webinar',
         name: 'Webinars',
         line: 'A base formula with everything included, and custom work to go further.',
-        custom: 'On quote',
         href: 'marketing/webinars',
+      },
+      {
+        key: null,
+        name: 'Website design and redesign',
+        line: 'A solid base website and a security diagnosis.',
+        custom: 'On quote',
+        href: 'marketing/sites',
       },
       {
         key: 'cos',
@@ -610,6 +671,7 @@ export const en: Content = {
       name: 'Name',
       email: 'Email address',
       company: 'Company',
+      site: 'Website',
       need: 'Your need',
       budget: 'Budget in mind',
       message: 'In a few words',
@@ -622,6 +684,7 @@ export const en: Content = {
       { v: 'tool', t: 'An internal tool or platform' },
       { v: 'content', t: 'Content for my social media' },
       { v: 'webinar', t: 'A webinar' },
+      { v: 'site', t: 'A website (design, redesign or security diagnosis)' },
       { v: 'cos', t: 'Outsourced Chief of Staff' },
       { v: 'other', t: "I don't know yet" },
     ],
@@ -739,6 +802,14 @@ export const en: Content = {
       },
     ],
     languages: 'French, native. English, bilingual.',
+    hackathon: {
+      tag: 'Hackathon',
+      title: 'I won the Mirakl x Eugenia School hackathon.',
+      text: 'An AI and data competition. My team presented its project to a jury, and we won.',
+      link: 'See the LinkedIn post',
+      alt: 'Group photo after the jury session of the Mirakl x Eugenia School hackathon',
+      pitchAlt: 'Binta Kande presenting a project with a microphone',
+    },
     stackTitle: 'The toolbox',
   },
 
@@ -808,19 +879,24 @@ export const en: Content = {
       open: 'Open the resource',
       invalid: 'This email address looks incorrect.',
       err: 'Could not send right now. Please try again in a moment.',
-      titles: {
-        'taches-a-automatiser': 'The entrepreneur’s checklist: where you lose time, and where to start',
-        'calendrier-contenu': 'Template: your 4-week content calendar',
-        'retroplanning-webinaire': 'Webinar countdown plan: from D-14 to D+7',
-        'choisir-un-llm': 'Grid: choosing the right LLM for your case',
-        'modele-prompt-maitre': 'Template: writing your master prompt',
-      },
     },
     allPosts: 'All articles',
+    resources: {
+      title: '*Free* resources to download.',
+      sub: 'Checklists, templates and grids ready to fill in. You receive them by email.',
+    },
     ctaText: '30 minutes to see what applies to you.',
   },
 
+  trailer: {
+    label: 'Trailer',
+    skip: 'Skip',
+    soundOn: 'Sound on',
+    soundOff: 'Turn sound on',
+  },
+
   welcome: {
+    launch: 'Listen to the welcome message',
     title: 'A little welcome',
     listen: 'Listen',
     pause: 'Pause',

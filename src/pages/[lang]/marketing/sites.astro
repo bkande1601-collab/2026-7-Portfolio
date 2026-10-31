@@ -1,0 +1,94 @@
+---
+import Base from '../../../layouts/Base.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import CtaMenu from '../../../components/CtaMenu.astro';
+import Crumb from '../../../components/Crumb.astro';
+import ResourceBox from '../../../components/ResourceBox.astro';
+import { t, em, href, langs, type Lang } from '../../../content';
+
+export function getStaticPaths() {
+  return langs.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Lang;
+const c = t(lang);
+const s = c.sites;
+---
+
+<Base lang={lang} page="marketing/sites" title={c.nav.sub.sites} description={s.hero.sub}>
+  <section class="page-hero has-photo">
+    <div class="wrap hero-split">
+      <div class="hero-text">
+        <Crumb lang={lang} parent="marketing" label={c.nav.marketing} />
+        <span class="kicker" style="display:flex">{s.hero.kicker}</span>
+        <h1 set:html={em(s.hero.title)} />
+        <p class="lead">{s.hero.sub}</p>
+        <div class="btn-row" style="margin-top:32px"><CtaMenu lang={lang} /></div>
+      </div>
+      <img class="hero-photo" src="/photos/binta-qui-je-suis.webp" alt="" width="870" height="1113" />
+    </div>
+  </section>
+
+  <!-- Pourquoi moi -->
+  <section class="band-lilas" style="padding-bottom:clamp(48px,7vw,96px)">
+    <div class="wrap split">
+      <div class="reveal">
+        <span class="kicker">{s.why.kicker}</span>
+        <h2 set:html={em(s.why.title)} />
+        <p class="lead">{s.why.text}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Le site de base -->
+  <section>
+    <div class="wrap split" style="align-items:start">
+      <div class="reveal">
+        <span class="kicker">{s.base.kicker}</span>
+        <h2 set:html={em(s.base.title)} />
+        <p class="note">{s.base.note}</p>
+      </div>
+      <div class="reveal">
+        <ul class="checks big">
+          {s.base.items.map((x) => <li>{x}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Refonte -->
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="reveal soon-box">
+        <span class="kicker">{s.redesign.kicker}</span>
+        <h3>{s.redesign.title}</h3>
+        <p>{s.redesign.text}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagnostic de sécurité -->
+  <section class="band-marine">
+    <div class="wrap split" style="align-items:start">
+      <div class="reveal">
+        <span class="kicker">{s.security.kicker}</span>
+        <h2 set:html={em(s.security.title)} />
+        <p class="lead">{s.security.text}</p>
+        <p class="note" style="margin-top:28px">{s.security.deliver}</p>
+        <p class="note">{s.security.honest}</p>
+      </div>
+      <div class="reveal">
+        <ul class="checks big">
+          {s.security.checks.map((x) => <li>{x}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:clamp(40px,6vw,72px)">
+    <div class="wrap">
+      <ResourceBox lang={lang} slug="securite-site" />
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={s.finalTitle} text={s.finalText} />
+</Base>

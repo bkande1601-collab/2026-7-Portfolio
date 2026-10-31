@@ -3,8 +3,9 @@ import Base from '../../../layouts/Base.astro';
 import CtaMenu from '../../../components/CtaMenu.astro';
 import CtaBand from '../../../components/CtaBand.astro';
 import Crumb from '../../../components/Crumb.astro';
+import MotionVideo from '../../../components/MotionVideo.astro';
 import { t, em, href, langs, type Lang } from '../../../content';
-import { webinarPrices } from '../../../config/site';
+import { formatPrice, site, videoPath } from '../../../config/site';
 
 export function getStaticPaths() {
   return langs.map((lang) => ({ params: { lang } }));
@@ -13,25 +14,36 @@ const lang = Astro.params.lang as Lang;
 const c = t(lang);
 const w = c.marketing.webinars;
 
-const money = (n: number | null) =>
-  n === null
-    ? w.quote
-    : new Intl.NumberFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { maximumFractionDigits: 0, useGrouping: 'always' }).format(n) + ' €';
+const base = formatPrice('webinar', lang);
+const basePrice = `${lang === 'fr' ? 'dès' : 'from'} ${base.amount}`;
 ---
 
 <Base lang={lang} page="marketing/webinars" title={c.nav.sub.webinars} description={w.sub}>
-  <section class="page-hero has-photo">
-    <div class="wrap hero-split">
-      <div class="hero-text">
+  <!-- Dès l'arrivée : la vidéo de la page -->
+  <section class="video-hero">
+    <div class="wrap">
       <Crumb lang={lang} parent="marketing" label={c.nav.marketing} />
-      <span class="kicker" style="display:flex">{c.nav.sub.webinars}</span>
-      <h1 set:html={em(w.title)} />
-      <p class="lead">{w.sub}</p>
-      <div class="btn-row" style="margin-top:32px">
+      {
+        site.videos.webinar && (
+          <MotionVideo
+            src={videoPath('webinaire', lang).src}
+            poster={videoPath('webinaire', lang).poster}
+            label={c.nav.sub.webinars}
+            soundOn={c.home.hero.soundOn}
+            soundOff={c.home.hero.soundOff}
+            pauseLabel={c.welcome.pause}
+            playLabel={c.welcome.resume}
+          />
+        )
+      }
+      <div class="video-hero-text">
+        <div>
+          <span class="kicker">{c.nav.sub.webinars}</span>
+          <h1 set:html={em(w.title)} />
+          <p class="lead">{w.sub}</p>
+        </div>
         <CtaMenu lang={lang} />
       </div>
-      </div>
-      <img class="hero-photo" src="/photos/binta-porte-detouree.webp" alt="Binta Kande en lunettes de soleil devant une porte en bois" width="918" height="1213" />
     </div>
   </section>
 
@@ -61,7 +73,7 @@ const money = (n: number | null) =>
           <ul class="checks">
             {w.base.items.map((x) => <li>{x}</li>)}
           </ul>
-          <p class="formula-price">{money(webinarPrices.setup)}</p>
+          <p class="formula-price">{basePrice}</p>
         </div>
         <div class="formula plus">
           <span class="formula-tag">{w.custom.tag}</span>
@@ -70,7 +82,7 @@ const money = (n: number | null) =>
           <ul class="checks">
             {w.custom.items.map((x) => <li>{x}</li>)}
           </ul>
-          <p class="formula-price">{money(webinarPrices.plus)}</p>
+          <p class="formula-price">{w.quote}</p>
         </div>
       </div>
       <p class="note reveal">{w.quoteNote}</p>

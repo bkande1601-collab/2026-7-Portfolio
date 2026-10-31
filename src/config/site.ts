@@ -43,6 +43,22 @@ export const site = {
   agentVideo: { fr: '/video/agent-ia-fr.mp4', en: '/video/agent-ia-en.mp4' } as Record<'fr' | 'en', string>,
   agentVideoPoster: { fr: '/video/agent-ia-fr.webp', en: '/video/agent-ia-en.webp' } as Record<'fr' | 'en', string>,
 
+  /**
+   * LES AUTRES VIDÉOS (30 secondes chacune, une par langue, dans public/video/) :
+   *   contenu-fr.mp4 / contenu-en.mp4      page Contenu pour les réseaux
+   *   webinaire-fr.mp4 / webinaire-en.mp4  page Webinaires
+   *   preuves-fr.mp4 / preuves-en.mp4      accueil, section « Ce que j'ai déjà fait »
+   * Mettez false pour retirer une vidéo de sa page.
+   */
+  videos: { content: true, webinar: true, proof: true },
+
+  /**
+   * BANDE-ANNONCE DE 7 SECONDES à l'arrivée sur l'accueil (une fois par visite).
+   * Fichiers : trailer-fr.mp4, trailer-en.mp4 (paysage), trailer-portrait-fr.mp4,
+   * trailer-portrait-en.mp4 (mobile). Mettez false pour la retirer.
+   */
+  trailer: true,
+
   /** Publication LinkedIn du hackathon Mirakl x Eugenia School. */
   hackathonLink: 'https://lnkd.in/p/eW7JqGUB',
 
@@ -67,6 +83,8 @@ export const prices = {
   agent: { amount: 200, to: 800, from: false, per: 'once' },
   system: { amount: 2000, to: 5000, plus: true, from: false, per: 'once' },
   marketing: { amount: 900, from: true, per: 'month' },
+  // formule de base du webinaire (à ajuster à votre goût)
+  webinar: { amount: 1490, from: true, per: 'once' },
   cos: { amount: 2400, from: true, per: 'month' },
 } as const satisfies Record<string, Price>;
 
@@ -87,15 +105,6 @@ type Price = {
 export const stripeLinks: Record<'diagnostic' | 'prompt', string> = {
   diagnostic: '',
   prompt: '',
-};
-
-/**
- * WEBINAIRES (page Marketing). Mettez un montant en euros pour l'afficher
- * (ex. 1900). Laissez null pour afficher « Sur devis ».
- */
-export const webinarPrices: { setup: number | null; plus: number | null } = {
-  setup: null,
-  plus: null,
 };
 
 export type PriceKey = keyof typeof prices;
@@ -152,3 +161,9 @@ export function formatPrice(key: PriceKey, lang: 'fr' | 'en') {
     : `${low} €`;
   return { amount, n: low, from: p.from, range: hasRange, per: p.per };
 }
+
+/** Chemin d'une vidéo : /video/<nom>-<langue>.mp4 et son image d'attente .webp */
+export const videoPath = (name: string, lang: 'fr' | 'en') => ({
+  src: `/video/${name}-${lang}.mp4`,
+  poster: `/video/${name}-${lang}.webp`,
+});

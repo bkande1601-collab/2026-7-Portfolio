@@ -1,22 +1,30 @@
 ---
 /** Gros encadré « ressource offerte » : la personne laisse son e-mail et reçoit le PDF. */
 import { t, type Lang } from '../content';
+import resources from '../content/resources.json';
 
 interface Props {
   lang: Lang;
   slug: string;
+  /** vrai pour le premier encadré de la page : il charge le script et les textes */
+  first?: boolean;
+  /** présentation en carte (page Ressources) */
+  card?: boolean;
 }
-const { lang, slug } = Astro.props;
+const { lang, slug, first = true, card = false } = Astro.props;
 const k = t(lang).blog.resource;
-const title = (k.titles as Record<string, string>)[slug] ?? slug;
+const res = resources.find((r) => r.slug === slug);
+const title = res ? res[lang].title : slug;
+const subtitle = res && card ? res[lang].subtitle : '';
 const id = `res-${slug}`;
 ---
 
-<aside class="resbox reveal" id={id} data-slug={slug} data-lang={lang}>
+<aside class={`resbox reveal${card ? ' card' : ''}`} id={id} data-slug={slug} data-lang={lang}>
   <div class="resbox-text">
     <span class="kicker">{k.kicker}</span>
-    <h2>{title}</h2>
-    <p class="resbox-note">{k.consent}</p>
+    {card ? <h3>{title}</h3> : <h2>{title}</h2>}
+    {subtitle && <p class="resbox-sub">{subtitle}</p>}
+    {!card && <p class="resbox-note">{k.consent}</p>}
   </div>
   <form class="resbox-form" novalidate>
     <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -27,11 +35,10 @@ const id = `res-${slug}`;
   </form>
 </aside>
 
-<script type="application/json" id="res-i18n" set:html={JSON.stringify({ sending: k.sending, ok: k.ok, preview: k.preview, open: k.open, invalid: k.invalid, err: k.err, button: k.button })} />
+{first && <script type="application/json" id="res-i18n" set:html={JSON.stringify({ sending: k.sending, ok: k.ok, preview: k.preview, open: k.open, invalid: k.invalid, err: k.err, button: k.button })} />}
 
-<script>
-  const box = document.querySelector<HTMLElement>('.resbox');
-  if (box) {
+{first && <script>
+  document.querySelectorAll<HTMLElement>('.resbox').forEach((box) => {
     const t = JSON.parse(document.getElementById('res-i18n')!.textContent || '{}');
     const form = box.querySelector('form')!;
     const msg = box.querySelector<HTMLElement>('.form-msg')!;
@@ -79,5 +86,5 @@ const id = `res-${slug}`;
         btn.disabled = false;
       }
     });
-  }
-</script>
+  });
+</script>}

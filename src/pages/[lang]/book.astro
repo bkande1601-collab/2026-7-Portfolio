@@ -62,9 +62,15 @@ const i18n = {
             <input id="b-email" name="email" type="email" inputmode="email" autocomplete="email" required />
           </div>
         </div>
-        <div class="field">
-          <label for="b-company">{b.fields.company} <span>({b.fields.optional})</span></label>
-          <input id="b-company" name="company" type="text" autocomplete="organization" />
+        <div class="two">
+          <div class="field">
+            <label for="b-company">{b.fields.company} <span>({b.fields.optional})</span></label>
+            <input id="b-company" name="company" type="text" autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="b-site">{b.fields.site} <span>({b.fields.optional})</span></label>
+            <input id="b-site" name="siteUrl" type="text" inputmode="url" autocomplete="url" placeholder="www.exemple.com" />
+          </div>
         </div>
         <div class="two">
           <div class="field">
@@ -199,8 +205,6 @@ const i18n = {
     const need = t.sourceNeed[from];
     const sel = $('b-need') as HTMLSelectElement;
     if (need && [...sel.options].some((o) => o.value === need)) sel.value = need;
-    const msg = $('b-message') as HTMLTextAreaElement;
-    if (!msg.value) msg.value = t.fromMessage.replace('{page}', label);
     const note = $('from-note');
     note.textContent = `${t.fromLabel} : ${label}`;
     note.hidden = false;
@@ -404,6 +408,7 @@ const i18n = {
       [t.fields.phone, answers.phone],
       [t.fields.email, answers.email],
       ...(answers.company ? ([[t.fields.company, answers.company]] as [string, string][]) : []),
+      ...(answers.siteUrl ? ([[t.fields.site, answers.siteUrl]] as [string, string][]) : []),
       [t.fields.need, t.needs[answers.need] || answers.need],
       ...(answers.budget ? ([[t.fields.budget, t.budgets[answers.budget] || answers.budget]] as [string, string][]) : []),
       ...(answers.message ? ([[t.fields.message, answers.message]] as [string, string][]) : []),
