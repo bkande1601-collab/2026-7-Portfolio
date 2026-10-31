@@ -15,6 +15,9 @@ export const GET: APIRoute = async () => {
     resend: hasResend(),
     agent: hasAgent(),
     db: 'absent',
+    dbCa: ((v) => (v ? (v.includes('BEGIN CERTIFICATE') ? 'pem' : 'base64') : 'absent'))(env('DATABASE_CA')),
+    dbCaBlocks: (env('DATABASE_CA')?.match(/BEGIN CERTIFICATE/g) ?? []).length,
+    dbSslmode: (() => { try { return new URL(env('DATABASE_URL') ?? '').searchParams.get('sslmode') ?? 'none'; } catch { return 'invalid'; } })(),
   };
   if (hasDb()) {
     try {
