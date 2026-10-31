@@ -113,7 +113,8 @@ try {
   console.log('\nVariables envoyées à Coolify :', data.map((d) => d.key).join(', '));
   await api('PATCH', `/applications/${app.uuid}/envs/bulk`, { data });
   console.log('Variables enregistrées. Redéploiement en cours…');
-  await api('GET', `/deploy?uuid=${app.uuid}&force=true`);
+  // l'API de Coolify attend un POST (les anciennes versions un GET)
+  await api('POST', `/deploy?uuid=${app.uuid}&force=true`).catch(() => api('GET', `/deploy?uuid=${app.uuid}&force=true`));
   console.log('Déploiement lancé : suivez-le dans Coolify (Deployment Logs).');
   if (TEST_PRICE) console.log('\n⚠ Prix de test à 0,50 € actif. Après votre essai, relancez : node scripts/coolify-env.mjs');
 } catch (e) {
