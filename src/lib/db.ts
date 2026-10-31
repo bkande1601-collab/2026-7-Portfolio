@@ -52,6 +52,9 @@ ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_status text;
 ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_at timestamptz;
 ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_attempts integer NOT NULL DEFAULT 0;
 ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_alerts integer NOT NULL DEFAULT 0;
+ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_mail_to text;
+ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_mail_id text;
+ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_done_at timestamptz;
 CREATE TABLE IF NOT EXISTS stripe_events (
   id text PRIMARY KEY,
   type text NOT NULL,

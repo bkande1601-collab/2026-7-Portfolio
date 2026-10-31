@@ -31,8 +31,14 @@ async function setStatus(orderId: number, status: string) {
 }
 
 /** Confirmation de n8n une fois l'e-mail du résultat parti ('done'), ou échec côté workflow. */
-export async function setAgentOutcome(orderId: number, ok: boolean) {
-  await db().query('UPDATE answers SET agent_status = $2, agent_at = now() WHERE order_id = $1', [orderId, ok ? 'done' : 'failed:workflow']);
+export async function setAgentOutcome(orderId: number, ok: boolean, mail?: { to?: string; id?: string }) {
+  await db().query(
+    `UPDATE answers SET agent_status = $2, agent_at = now(),
+       agent_done_at = CASE WHEN $2 = 'done' THEN now() ELSE agent_done_at END,
+       agent_mail_to = coalesce($3, agent_mail_to), agent_mail_id = coalesce($4, agent_mail_id)
+     WHERE order_id = $1`,
+    [orderId, ok ? 'done' : 'failed:workflow', mail?.to?.slice(0, 254) || null, mail?.id?.slice(0, 100) || null],
+  );
 }
 
 /** 3 essais espacés ; l'état est enregistré (visible dans /admin) et vous êtes alertée si l'agent reste injoignable. */

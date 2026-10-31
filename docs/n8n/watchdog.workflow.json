@@ -12,7 +12,7 @@
           ]
         }
       },
-      "id": "9f99bf3c-67eb-478b-800e-60cd49d5d991",
+      "id": "f8f3146e-e672-4b33-9006-511336143329",
       "name": "Toutes les 10 minutes",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
@@ -34,7 +34,7 @@
           "timeout": 120000
         }
       },
-      "id": "8b2bb174-2d60-4d73-874d-b65efe9476a0",
+      "id": "65ce2762-b633-4072-b705-bc6c37c3f3a4",
       "name": "Surveiller les livraisons",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,

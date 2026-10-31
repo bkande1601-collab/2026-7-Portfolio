@@ -235,7 +235,10 @@ for (const name of ["Préparer l'e-mail", "Préparer l'alerte"]) {
   try { const n = $(name); if (n.isExecuted) { payload = n.first().json.payload; break; } } catch (e) {}
 }
 const kind = payload && !String(payload.subject ?? '').includes('Agent en échec') ? 'result' : 'alert';
-return [{ json: { url: `${SITE_URL}/api/agent-done`, orderId, kind } }];
+const to = Array.isArray(payload?.to) ? String(payload.to[0] ?? '') : '';
+let mailId = '';
+try { mailId = String($('Envoyer via Resend').first().json.id ?? ''); } catch (e) {}
+return [{ json: { url: `${SITE_URL}/api/agent-done`, orderId, kind, to, mailId } }];
 """
 
 def node(name, type_, ver, pos, params, **extra):
@@ -282,7 +285,7 @@ def build(cfg):
         node("Confirmer au site", "n8n-nodes-base.httpRequest", 4.2, [1960, 0], {
             "method": "POST", "url": "={{ $json.url }}",
             "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
-            "sendBody": True, "specifyBody": "json", "jsonBody": "={{ JSON.stringify({ orderId: $json.orderId, kind: $json.kind }) }}", "options": {}},
+            "sendBody": True, "specifyBody": "json", "jsonBody": "={{ JSON.stringify({ orderId: $json.orderId, kind: $json.kind, to: $json.to, mailId: $json.mailId }) }}", "options": {}},
             retryOnFail=True, maxTries=5, waitBetweenTries=10000, credentials=cred("Webhook Secret")),
     ]
     main = lambda *targets: {"main": [[{"node": t, "type": "main", "index": 0} for t in out] for out in targets]}
