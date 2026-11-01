@@ -4,6 +4,7 @@ import { db, ensureSchema } from './db';
 import { stripe, siteOrigin, isProduct, type ProductKey } from './stripe';
 import { sendMail, ownerEmail, shell, button, para, table, row, esc, callout, steps, type Mail } from './email';
 import { site } from '../config/site';
+import { deliveryPromise } from './settings';
 import { t, type Lang } from '../content';
 
 export type Order = {
@@ -82,7 +83,7 @@ export async function markPaid(session: Stripe.Checkout.Session): Promise<Order>
   );
   const order = r.rows[0];
   if (!wasPaid) {
-    await sendMail(clientPaidMail(order)).catch(() => false);
+    await sendMail(clientPaidMail(order, await deliveryPromise(toLang(order.lang), order.product))).catch(() => false);
     await sendMail(ownerPaidMail(order)).catch(() => false);
   }
   return order;
@@ -124,7 +125,7 @@ export async function syncOrder(sessionId: string): Promise<Order | null> {
 }
 
 /* ---------- e-mails ---------- */
-export function clientPaidMail(o: Order): Mail {
+export function clientPaidMail(o: Order, promise = ''): Mail {
   const lang = toLang(o.lang);
   const fr = lang === 'fr';
   const name = productName(o.product, lang);
@@ -155,12 +156,12 @@ export function clientPaidMail(o: Order): Mail {
             ? [
                 { title: 'Vous répondez au questionnaire', text: 'Quand vous voulez, en plusieurs fois si besoin : vos réponses sont gardées sur votre appareil.' },
                 { title: 'J’analyse votre situation', text: 'Je lis chacune de vos réponses et je prépare votre document.' },
-                { title: 'Vous recevez votre résultat', text: 'Par e-mail, en PDF, avec un plan d’action à appliquer dès la lecture.' },
+                { title: 'Vous recevez votre résultat', text: `Par e-mail, en PDF${promise ? `, ${promise}` : ''}, avec un plan d’action à appliquer dès la lecture.` },
               ]
             : [
                 { title: 'You answer the questionnaire', text: 'Whenever you like, in several sittings if needed: your answers are saved on your device.' },
                 { title: 'I analyse your situation', text: 'I read every answer and prepare your document.' },
-                { title: 'You receive your result', text: 'By email, as a PDF, with an action plan you can apply right away.' },
+                { title: 'You receive your result', text: `By email, as a PDF${promise ? `, ${promise}` : ''}, with an action plan you can apply right away.` },
               ],
         ) +
         para(fr ? 'Une question ? Répondez simplement à cet e-mail.' : 'A question? Just reply to this email.') +
@@ -208,6 +209,7 @@ export async function notifyDispute(o: Order | null, state: string) {
 
 export async function notifyAnswers(o: Order, answers: { label: string; value: string }[]) {
   const lang = toLang(o.lang);
+  const promise = await deliveryPromise(lang, o.product);
   const fr = lang === 'fr';
   const rows = answers.map((a) => row(a.label, esc(a.value).replace(/\n/g, '<br>'))).join('');
   await sendMail({
@@ -234,8 +236,8 @@ export async function notifyAnswers(o: Order, answers: { label: string; value: s
           callout(
             fr ? 'Ce qui se passe maintenant' : 'What happens now',
             fr
-              ? 'Je lis vos réponses et je prépare votre document. Vous le recevrez en PDF, par e-mail à cette adresse, avec un plan d’action concret.'
-              : 'I am reading your answers and preparing your document. You will receive it as a PDF, by email at this address, with a concrete action plan.',
+              ? `Je lis vos réponses et je prépare votre document. <strong>Vous le recevrez ${promise}</strong>, en PDF, par e-mail à cette adresse, avec un plan d’action concret.`
+              : `I am reading your answers and preparing your document. <strong>You will receive it ${promise}</strong>, as a PDF, by email at this address, with a concrete action plan.`,
             'info',
           ) +
           `<p style="margin:24px 0 0;">${fr ? 'À très vite,' : 'Talk soon,'}<br><strong>${esc(site.name)}</strong></p>`,

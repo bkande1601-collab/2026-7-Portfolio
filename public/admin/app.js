@@ -265,7 +265,7 @@
   }
 
   /* ---------- automatisations ---------- */
-  const AUTO = [['off', 'Jamais (je l’envoie moi-même)', 'Le PDF ne part que si vous cliquez sur « Envoyer au client ».'], ['now', 'Tout de suite', 'Le client reçoit le PDF dès qu’il est prêt, sans relecture.'], ['4', 'Après 4 heures', 'Vous avez 4 heures pour relire et corriger. Sinon il part tout seul.'], ['12', 'Après 12 heures', 'Un peu plus de temps pour relire.'], ['24', 'Après 24 heures', 'Un jour entier pour relire.']];
+  const AUTO = [['off', 'Jamais (je l’envoie moi-même)', 'Le PDF ne part que si vous cliquez sur « Envoyer au client ».'], ['now', 'Tout de suite', 'Le client reçoit le PDF dès qu’il est prêt, sans relecture.'], ['1', 'Dans l’heure (recommandé)', 'Vous avez environ 45 minutes pour relire et corriger. Sinon il part tout seul. Le client est prévenu : « dans l’heure ».'], ['4', 'Après 4 heures', 'Vous avez 4 heures pour relire et corriger. Sinon il part tout seul.'], ['12', 'Après 12 heures', 'Un peu plus de temps pour relire.'], ['24', 'Après 24 heures', 'Un jour entier pour relire.']];
   function renderAutomations() {
     const n = boot.n8n;
     const exec = (n?.executions || []);
@@ -302,7 +302,7 @@
     if (o.has_answers) {
       const failed = (o.agent_status || '').startsWith('failed');
       L.push(o.agent_status === 'done' || o.has_result ? { s: 'done', t: o.product === 'diagnostic' ? 'Diagnostic généré et envoyé à votre adresse' : 'Résultat généré', d: `${o.doneT ? dtfmt.format(o.doneT) : ''}${o.agent_mail_to ? ` · ${o.agent_mail_to}` : ''}` } : { s: failed ? 'fail' : 'now', t: failed ? `Échec de l’agent (${(o.agent_status || '').slice(7)})` : 'Agent au travail', d: `${o.agent_attempts || 0} essai(s)${o.agentT ? ` · dernier ${ago(o.agentT)}` : ''}. Relance automatique toutes les 10 min.` });
-      if (o.product === 'diagnostic') L.push(o.sentT ? { s: 'done', t: 'PDF envoyé au client', d: `${dtfmt.format(o.sentT)}${o.client_sent_to ? ` · ${o.client_sent_to}` : ''}` } : { s: o.agent_status === 'done' ? 'now' : '', t: 'Envoi au client', d: o.agent_status === 'done' ? (boot.autoSend === 'off' ? 'À faire par vous (envoi automatique désactivé).' : boot.autoSend === 'now' ? 'Envoi automatique.' : `Envoi automatique ${boot.autoSend} h après le résultat si rien n’est fait.`) : 'Après le résultat' });
+      if (o.product === 'diagnostic') L.push(o.sentT ? { s: 'done', t: 'PDF envoyé au client', d: `${dtfmt.format(o.sentT)}${o.client_sent_to ? ` · ${o.client_sent_to}` : ''}` } : { s: o.agent_status === 'done' ? 'now' : '', t: 'Envoi au client', d: o.agent_status === 'done' ? (boot.autoSend === 'off' ? 'À faire par vous (envoi automatique désactivé).' : boot.autoSend === 'now' ? 'Envoi automatique.' : (boot.autoSend === '1' ? 'Envoi automatique environ 45 minutes après le résultat si rien n’est fait.' : `Envoi automatique ${boot.autoSend} h après le résultat si rien n’est fait.`)) : 'Après le résultat' });
     }
     return L;
   }

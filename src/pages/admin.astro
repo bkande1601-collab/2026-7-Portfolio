@@ -20,7 +20,7 @@ const authed = configured && verifyToken(Astro.cookies.get('admin')?.value);
 
 let orders: Record<string, unknown>[] = [];
 let dbError = '';
-let autoSend = '4';
+let autoSend = '1';
 
 type Workflow = { id: string; name: string; active: boolean; updatedAt?: string };
 type Execution = { id: string; workflowId: string; status?: string; finished?: boolean; startedAt?: string; stoppedAt?: string };

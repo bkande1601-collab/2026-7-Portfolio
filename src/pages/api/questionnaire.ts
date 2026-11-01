@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
   const raw = (body.answers && typeof body.answers === 'object' ? body.answers : {}) as Record<string, unknown>;
   const answers: { id: string; label: string; value: string }[] = [];
   for (const q of questionnaires[order.product]) {
-    const value = clean(raw[q.id], 3000);
+    const value = clean(raw[q.id], 6000);
     if (q.required && !value) return json({ error: 'invalid', field: q.id }, 400);
     if (value) answers.push({ id: q.id, label: q.label.fr, value });
   }

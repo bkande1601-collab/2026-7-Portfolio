@@ -5,7 +5,7 @@ import { renderDiagnosticPdf, clean, type DiagResult } from './pdf';
 import { button, callout, esc, ownerEmail, para, sendMail, sendMailId, shell, steps } from './email';
 import { merciUrl, type Order } from './orders';
 import { toLang } from './http';
-import { getAutoSend } from './settings';
+import { autoSendMinutes, deliveryPromise, getAutoSend, type AutoSend } from './settings';
 
 const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 const str = (v: unknown, max = 900) => clean(v).slice(0, max);
@@ -68,7 +68,7 @@ export async function sendReview(order: Order, result: DiagResult, note: string,
     ? 'Envoi automatique <strong>suspendu</strong> pour ce diagnostic (points à vérifier ci-dessus) : il ne partira que si vous cliquez sur « Envoyer le PDF au client ».'
     : mode === 'off' ? 'L’envoi automatique au client est désactivé : le PDF ne partira que si vous cliquez sur « Envoyer le PDF au client ».'
     : mode === 'now' ? 'Le PDF vient d’être envoyé automatiquement au client.'
-    : `Sans action de votre part, le PDF sera <strong>envoyé automatiquement au client dans ${mode} heures</strong>. Vous pouvez l’envoyer plus tôt, ou modifier ce réglage dans le tableau de bord.`;
+    : `Sans action de votre part, le PDF sera <strong>envoyé automatiquement au client ${mode === '1' ? 'dans environ 45 minutes (le client a reçu la promesse « dans l’heure »)' : `dans ${mode} heures`}</strong>. Vous pouvez l’envoyer plus tôt, ou modifier ce réglage dans le tableau de bord.`;
   const who = `${order.name ?? ''} ${order.email ?? ''}`.trim();
   const html = shell({
     preheader: `Le diagnostic de ${who} est prêt (${pdf.pages} pages).`,
@@ -175,23 +175,20 @@ export async function deliverToClient(order: Order, result: DiagResult, auto: bo
 /** Envoi automatique : mode « tout de suite » ou une fois le délai de relecture écoulé. Jamais si le diagnostic a des avertissements. */
 export async function runAutoSend(): Promise<number> {
   const mode = await getAutoSend();
-  if (mode === 'off' || mode === 'now') return mode === 'now' ? runNow() : 0;
-  return runDue(Number(mode));
+  if (mode === 'off') return 0;
+  return runDue(autoSendMinutes(mode as AutoSend));
 }
 
 type Due = Order & { result: DiagResult };
-async function runDue(hours: number): Promise<number> {
+async function runDue(minutes: number): Promise<number> {
   const r = await db().query<Due>(
     `SELECT o.*, a.result FROM answers a JOIN orders o ON o.id = a.order_id
       WHERE a.result IS NOT NULL AND a.client_sent_at IS NULL AND a.agent_status = 'done'
         AND coalesce(jsonb_array_length(a.result_warnings), 0) = 0 AND o.status = 'paid' AND o.email IS NOT NULL
-        AND a.agent_done_at <= now() - ($1 || ' hours')::interval AND a.agent_done_at > now() - interval '14 days'`,
-    [String(hours)],
+        AND a.agent_done_at <= now() - ($1 || ' minutes')::interval AND a.agent_done_at > now() - interval '14 days'`,
+    [String(minutes)],
   );
   let n = 0;
   for (const o of r.rows) if (await deliverToClient(o, o.result, true)) n++;
   return n;
-}
-async function runNow(): Promise<number> {
-  return runDue(0);
 }

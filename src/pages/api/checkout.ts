@@ -23,6 +23,15 @@ export const POST: APIRoute = async ({ request }) => {
       customer_creation: 'always',
       phone_number_collection: { enabled: true },
       locale: lang,
+      // aux couleurs du site : ivoire, bouton violet, logo en couleur
+      branding_settings: {
+        display_name: 'Binta Kande',
+        background_color: '#f6f0e4',
+        button_color: '#694cac',
+        border_style: 'pill',
+        font_family: 'inter',
+        logo: { type: 'url', url: `${origin}/brand/logo-checkout.png` },
+      },
       metadata: { product, lang },
       payment_intent_data: { metadata: { product, lang } },
       success_url: `${origin}/${lang}/merci?session_id={CHECKOUT_SESSION_ID}`,

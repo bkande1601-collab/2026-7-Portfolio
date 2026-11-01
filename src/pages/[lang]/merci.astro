@@ -5,6 +5,7 @@ import { hasDb, db } from '../../lib/db';
 import { hasStripe, isProduct } from '../../lib/stripe';
 import { syncOrder, productName } from '../../lib/orders';
 import { questionnaires } from '../../config/questionnaires';
+import { deliveryPromise } from '../../lib/settings';
 
 export const prerender = false;
 
@@ -39,16 +40,17 @@ if (hasDb() && hasStripe() && /^cs_[A-Za-z0-9_]+$/.test(sessionId)) {
 }
 
 const questions = product ? questionnaires[product] : [];
+const promise = hasDb() ? await deliveryPromise(lang, product ?? 'diagnostic').catch(() => '') : '';
 const L = {
   kicker: fr ? 'Merci pour votre commande' : 'Thank you for your order',
   title: fr ? 'Quelques questions pour préparer votre résultat' : 'A few questions to prepare your result',
   lead: fr ? 'Prenez 5 minutes. Plus vos réponses sont précises, plus votre résultat l’est.' : 'Take 5 minutes. The more precise your answers, the more precise your result.',
   banner: fr ? 'Plus vous donnez d’informations, meilleur sera votre audit.' : 'The more information you give, the better your audit.',
   bannerText: fr ? 'Chaque détail compte : des chiffres, des exemples, des noms d’outils. Une réponse de 3 mots donne un conseil générique ; une réponse de 3 phrases donne un conseil sur mesure. Un exemple est affiché dans chaque champ pour vous guider. Vos réponses sont enregistrées sur votre appareil au fur et à mesure : vous pouvez faire une pause.' : 'Every detail counts: numbers, examples, tool names. A 3-word answer gives generic advice; a 3-sentence answer gives tailored advice. An example is shown in each field to guide you. Your answers are saved on your device as you go: you can take a break.',
-  short: fr ? 'Réponse très courte : ajoutez des détails (chiffres, exemples) pour un résultat plus précis.' : 'Very short answer: add details (numbers, examples) for a more precise result.',
+  short: fr ? 'On vous recommande d’écrire plus : ajoutez des détails (chiffres, exemples) pour un résultat plus précis. Vous pouvez quand même envoyer.' : 'We recommend writing more: add details (numbers, examples) for a more precise result. You can still send as is.',
   good: fr ? 'Très bien, c’est précis.' : 'Great, that is precise.',
   chars: fr ? 'caractères' : 'characters',
-  warnSubmit: fr ? 'Plusieurs réponses sont très courtes. Complétez-les pour un meilleur résultat, ou cliquez à nouveau pour envoyer tel quel.' : 'Several answers are very short. Complete them for a better result, or click again to send as is.',
+  warnSubmit: fr ? 'Plusieurs réponses sont courtes : on vous recommande d’en écrire plus pour un diagnostic plus précis. Vous pouvez quand même envoyer.' : 'Several answers are short: we recommend writing more for a more precise diagnostic. You can still send as is.',
   progress: fr ? 'questions renseignées' : 'questions answered',
   send: fr ? 'Envoyer mes réponses' : 'Send my answers',
   sending: fr ? 'Envoi…' : 'Sending…',
@@ -56,7 +58,7 @@ const L = {
   err: fr ? 'Une erreur est survenue. Réessayez dans un instant.' : 'Something went wrong. Please try again in a moment.',
   invalid: fr ? 'Merci de remplir les champs obligatoires.' : 'Please fill in the required fields.',
   okTitle: fr ? 'C’est reçu, merci.' : 'Received, thank you.',
-  okText: fr ? 'Je lis vos réponses et je prépare votre résultat. Vous le recevrez par e-mail.' : 'I am reading your answers and preparing your result. You will receive it by email.',
+  okText: fr ? `Je lis vos réponses et je prépare votre résultat. Vous le recevrez par e-mail ${promise}.` : `I am reading your answers and preparing your result. You will receive it by email ${promise}.`,
   pendingTitle: fr ? 'Votre paiement est en cours de confirmation' : 'Your payment is being confirmed',
   pendingText: fr ? 'Cela peut prendre quelques instants. Rechargez la page dans une minute.' : 'This can take a moment. Reload the page in a minute.',
   errorTitle: fr ? 'Votre paiement est bien reçu' : 'Your payment has been received',
@@ -103,14 +105,15 @@ const L = {
                 </label>
                 {q.hint && <p class="q-hint">{q.hint[lang]}</p>}
                 {q.type === 'textarea' ? (
-                  <textarea id={`q-${q.id}`} name={q.id} rows="4" data-required={q.required ? '1' : ''} data-min={q.min ?? ''} maxlength="3000" placeholder={q.example?.[lang] ?? ''}>{prefill[q.id] ?? ''}</textarea>
+                  <textarea id={`q-${q.id}`} name={q.id} rows="4" data-required={q.required ? '1' : ''} data-min={q.min ?? ''} maxlength="6000" placeholder={q.example?.[lang] ?? ''}>{prefill[q.id] ?? ''}</textarea>
                 ) : (
-                  <input id={`q-${q.id}`} name={q.id} type="text" data-required={q.required ? '1' : ''} data-min={q.min ?? ''} maxlength="3000" placeholder={q.example?.[lang] ?? ''} value={prefill[q.id] ?? ''} />
+                  <input id={`q-${q.id}`} name={q.id} type="text" data-required={q.required ? '1' : ''} data-min={q.min ?? ''} maxlength="6000" placeholder={q.example?.[lang] ?? ''} value={prefill[q.id] ?? ''} />
                 )}
                 <p class="q-note" data-for={q.id} aria-live="polite"></p>
               </div>
             </>
           ))}
+          <p class="q-advice" id="q-adv" aria-live="polite"></p>
           <p class="form-msg" id="q-msg" role="alert" aria-live="polite"></p>
           <div class="btn-row">
             <button class="btn btn-primary" type="submit" id="q-submit">{L.send}</button>
@@ -147,6 +150,8 @@ const L = {
   .q-hint { margin: 0 0 6px; opacity: .75; font-size: .9em; }
   .q-note { margin: 6px 0 0; font-size: .85rem; min-height: 1.1em; }
   .q-note.short { color: #9a6700; font-weight: 600; }
+  .q-advice { margin: 18px 0 0; font-size: .92rem; font-weight: 600; color: #9a6700; }
+  .q-advice:empty { display: none; }
   .q-note.good { color: #1f7a4d; }
   textarea::placeholder, input::placeholder { color: var(--taupe); font-style: italic; opacity: .85; }
   textarea:focus::placeholder { opacity: .45; }
@@ -161,7 +166,6 @@ const L = {
     const t = JSON.parse(document.getElementById('q-i18n')!.textContent || '{}');
     const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea'));
     const draftKey = `q-draft:${form.dataset.session}`;
-    let warned = false;
 
     // brouillon enregistré sur l'appareil (jamais envoyé tant que le formulaire n'est pas validé)
     try {
@@ -190,14 +194,16 @@ const L = {
 
     fields.forEach((el) => el.addEventListener('input', () => {
       refresh(el);
-      warned = false;
+      adv.textContent = shortCount() >= 3 ? (form.dataset.warn || '') : '';
       try {
         const data: Record<string, string> = {};
         fields.forEach((f) => { if (f.value) data[f.name] = f.value; });
         localStorage.setItem(draftKey, JSON.stringify(data));
       } catch {}
     }));
+    const adv = document.getElementById('q-adv')!;
     refresh();
+    adv.textContent = shortCount() >= 3 ? (form.dataset.warn || '') : '';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -213,14 +219,6 @@ const L = {
         msg.classList.add('err');
         (missing as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
         (missing as HTMLElement).focus();
-        return;
-      }
-      if (!warned && shortCount() >= 3) {
-        warned = true;
-        msg.textContent = form.dataset.warn || '';
-        msg.classList.add('err');
-        const first = fields.find((el) => el.dataset.min && el.value.trim() && el.value.trim().length < Number(el.dataset.min));
-        first?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
       btn.disabled = true;

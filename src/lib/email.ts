@@ -45,11 +45,14 @@ export const ownerEmail = () => env('OWNER_EMAIL');
 const C = { bg: '#f6f0e4', card: '#fbf7ee', dark: '#3b2a63', text: '#2b1d16', muted: '#675549', violet: '#694cac', lilas: '#e4d9f1', cannelle: '#8a4b36', line: '#e2d6c3' };
 const FONT = "'Archivo',Helvetica,Arial,sans-serif";
 
-/** Logo (public/email/logo.png) ; sans SITE_URL, repli sur le nom en texte. */
+/**
+ * Logo (public/email/logo.png) en image de fond : les messageries n'affichent pas le bouton « télécharger »
+ * au survol d'une image de fond. Sans SITE_URL, repli sur le nom en texte.
+ */
 const logo = () => {
   const origin = env('SITE_URL').replace(/\/$/, '');
   return origin
-    ? `<img src="${origin}/email/logo.png" width="190" alt="${esc(site.brand)}" style="display:block;border:0;width:190px;height:auto;">`
+    ? `<div role="img" aria-label="${esc(site.brand)}" style="width:190px;height:52px;background-image:url('${origin}/email/logo.png');background-repeat:no-repeat;background-position:left center;background-size:contain;font-size:0;line-height:0;">&nbsp;</div>`
     : `<span style="font:700 20px/1 ${FONT};color:#f6f0e4;letter-spacing:-0.02em;">${esc(site.brand)}</span>`;
 };
 
