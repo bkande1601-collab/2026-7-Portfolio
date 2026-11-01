@@ -676,7 +676,7 @@ export const fr = {
     hero: {
       kicker: 'Tarifs',
       title: 'Une échelle claire. *Vous* choisissez la marche.',
-      sub: 'Du produit à 9,99 € au système complet. Chaque marche est utile seule, et rien n’est obligatoire.',
+      sub: 'Du produit à 19 € au système complet. Chaque marche est utile seule, et rien n’est obligatoire.',
     },
     free: {
       title: 'Le premier échange est *gratuit*.',
@@ -938,7 +938,7 @@ export const fr = {
     },
     items: [
       {
-        q: 'Comment fonctionnent les produits à 19 € et 9,99 € ?',
+        q: 'Comment fonctionnent les produits à 19 € et 29 € ?',
         a: 'Vous payez en ligne, vous remplissez un formulaire sur vous et votre business, et vous recevez votre résultat par e-mail. Le résultat est produit par des agents IA que j’ai conçus, à partir de vos réponses.',
       },
       {
@@ -1004,7 +1004,7 @@ export const fr = {
       'marketing/content': { name: 'Contenu pour les réseaux', line: 'Stratégie, création, publication et bilan chaque semaine, à partir de 900 € par mois.' },
       'marketing/webinars': { name: 'Webinaires', line: 'Une formule de base avec tout inclus, et du sur mesure sur devis.' },
       'products/diagnostic': { name: 'Diagnostic IA de votre business', line: 'Un formulaire, un résultat personnalisé par e-mail, 19 €.' },
-      'products/prompt': { name: 'Master prompt', line: '2 prompts écrits pour votre activité, au choix, prêts à coller, 9,99 €.' },
+      'products/prompt': { name: 'Master prompt', line: '2 prompts écrits pour votre activité, au choix, prêts à coller, 29 €.' },
     },
     resource: {
       kicker: 'Ressource offerte',

@@ -85,7 +85,7 @@ export const site = {
  */
 export const prices = {
   diagnostic: { amount: 19, from: false, per: 'once' },
-  prompt: { amount: 9.99, from: false, per: 'once' },
+  prompt: { amount: 29, from: false, per: 'once' },
   agent: { amount: 200, to: 800, from: false, per: 'once' },
   system: { amount: 2000, to: 5000, plus: true, from: false, per: 'once' },
   marketing: { amount: 900, from: true, per: 'month' },
