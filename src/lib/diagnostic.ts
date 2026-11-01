@@ -5,6 +5,7 @@ import { renderDiagnosticPdf, clean, type DiagResult } from './pdf';
 import { button, callout, esc, ownerEmail, para, sendMail, sendMailId, shell, steps } from './email';
 import { merciUrl, type Order } from './orders';
 import { toLang } from './http';
+import { getAutoSend } from './settings';
 
 const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 const str = (v: unknown, max = 900) => clean(v).slice(0, max);
@@ -62,6 +63,12 @@ const prioritiesBlock = (r: DiagResult) =>
 /** Mail à Binta : PDF en pièce jointe, avertissements, note interne, mode d'emploi pour envoyer au client. */
 export async function sendReview(order: Order, result: DiagResult, note: string, warnings: string[]): Promise<string | null> {
   const pdf = await pdfFor(order, result);
+  const mode = await getAutoSend();
+  const auto = warnings.length
+    ? 'Envoi automatique <strong>suspendu</strong> pour ce diagnostic (points à vérifier ci-dessus) : il ne partira que si vous cliquez sur « Envoyer le PDF au client ».'
+    : mode === 'off' ? 'L’envoi automatique au client est désactivé : le PDF ne partira que si vous cliquez sur « Envoyer le PDF au client ».'
+    : mode === 'now' ? 'Le PDF vient d’être envoyé automatiquement au client.'
+    : `Sans action de votre part, le PDF sera <strong>envoyé automatiquement au client dans ${mode} heures</strong>. Vous pouvez l’envoyer plus tôt, ou modifier ce réglage dans le tableau de bord.`;
   const who = `${order.name ?? ''} ${order.email ?? ''}`.trim();
   const html = shell({
     preheader: `Le diagnostic de ${who} est prêt (${pdf.pages} pages).`,
@@ -70,6 +77,7 @@ export async function sendReview(order: Order, result: DiagResult, note: string,
       para(`Le diagnostic de <strong>${esc(who)}</strong> est en pièce jointe (PDF, ${pdf.pages} pages). Relisez-le avant de l’envoyer.`) +
       (warnings.length ? callout('À vérifier avant envoi', `<ul style="margin:0;padding-left:18px;">${warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>`, 'warm') : '') +
       callout('Les 3 priorités identifiées', prioritiesBlock(result), 'info') +
+      callout('Envoi au client', auto, warnings.length ? 'warm' : 'ok') +
       callout('Note interne (ne pas transmettre)', esc(note || 'Aucune note.').replace(/\n/g, '<br>'), 'warm') +
       para('<strong>Pour l’envoyer au client</strong>') +
       steps([
@@ -137,4 +145,53 @@ export async function sendQuestionnaireLink(order: Order, to: string, test = fal
     footer: fr ? 'Une question ? Répondez à cet e-mail.' : 'A question? Reply to this email.',
   });
   return sendMail({ to, subject: `${test ? '[Test] ' : ''}${fr ? 'Votre questionnaire de diagnostic' : 'Your diagnostic questionnaire'}`, html, replyTo: ownerEmail() || undefined });
+}
+
+/** Envoie le PDF au client une seule fois (réservation atomique), puis prévient Binta. Renvoie true si envoyé. */
+export async function deliverToClient(order: Order, result: DiagResult, auto: boolean): Promise<boolean> {
+  if (!order.email) return false;
+  const claim = await db().query('UPDATE answers SET client_sent_at = now(), client_sent_to = $2 WHERE order_id = $1 AND client_sent_at IS NULL RETURNING 1', [order.id, order.email]);
+  if (!claim.rowCount) return false;
+  const ok = await sendToClient(order, result, order.email).catch(() => false);
+  if (!ok) {
+    await db().query('UPDATE answers SET client_sent_at = NULL, client_sent_to = NULL WHERE order_id = $1', [order.id]);
+    return false;
+  }
+  if (auto) {
+    await sendMail({
+      to: ownerEmail(),
+      subject: `Diagnostic envoyé au client : ${clean(order.name || order.email)}`,
+      html: shell({
+        preheader: 'Envoi automatique effectué.',
+        title: 'Diagnostic envoyé',
+        body: para(`Le PDF a été envoyé automatiquement à <strong>${esc(order.email)}</strong>.`) + button(admin(), 'Ouvrir le tableau de bord'),
+        footer: 'Alerte automatique.',
+      }),
+    }).catch(() => false);
+  }
+  return true;
+}
+
+/** Envoi automatique : mode « tout de suite » ou une fois le délai de relecture écoulé. Jamais si le diagnostic a des avertissements. */
+export async function runAutoSend(): Promise<number> {
+  const mode = await getAutoSend();
+  if (mode === 'off' || mode === 'now') return mode === 'now' ? runNow() : 0;
+  return runDue(Number(mode));
+}
+
+type Due = Order & { result: DiagResult };
+async function runDue(hours: number): Promise<number> {
+  const r = await db().query<Due>(
+    `SELECT o.*, a.result FROM answers a JOIN orders o ON o.id = a.order_id
+      WHERE a.result IS NOT NULL AND a.client_sent_at IS NULL AND a.agent_status = 'done'
+        AND coalesce(jsonb_array_length(a.result_warnings), 0) = 0 AND o.status = 'paid' AND o.email IS NOT NULL
+        AND a.agent_done_at <= now() - ($1 || ' hours')::interval AND a.agent_done_at > now() - interval '14 days'`,
+    [String(hours)],
+  );
+  let n = 0;
+  for (const o of r.rows) if (await deliverToClient(o, o.result, true)) n++;
+  return n;
+}
+async function runNow(): Promise<number> {
+  return runDue(0);
 }

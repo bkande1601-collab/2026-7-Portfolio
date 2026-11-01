@@ -60,6 +60,10 @@ ALTER TABLE answers ADD COLUMN IF NOT EXISTS result_note text;
 ALTER TABLE answers ADD COLUMN IF NOT EXISTS result_warnings jsonb;
 ALTER TABLE answers ADD COLUMN IF NOT EXISTS client_sent_at timestamptz;
 ALTER TABLE answers ADD COLUMN IF NOT EXISTS client_sent_to text;
+CREATE TABLE IF NOT EXISTS settings (
+  key text PRIMARY KEY,
+  value text NOT NULL
+);
 CREATE TABLE IF NOT EXISTS stripe_events (
   id text PRIMARY KEY,
   type text NOT NULL,

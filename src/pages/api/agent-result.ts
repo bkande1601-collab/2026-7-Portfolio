@@ -3,7 +3,8 @@ import { env } from '../../lib/env';
 import { ownerEmail } from '../../lib/email';
 import { db, ensureSchema, hasDb } from '../../lib/db';
 import { alertOwner, setAgentOutcome } from '../../lib/agent';
-import { normalizeResult, sendReview } from '../../lib/diagnostic';
+import { deliverToClient, normalizeResult, sendReview } from '../../lib/diagnostic';
+import { getAutoSend } from '../../lib/settings';
 import { clean, json, readJson } from '../../lib/http';
 import type { Order } from '../../lib/orders';
 
@@ -49,6 +50,7 @@ export const POST: APIRoute = async ({ request }) => {
     const mailId = await sendReview(order, result, note, warnings);
     if (!mailId) throw new Error('mail');
     await setAgentOutcome(id, true, { to: ownerEmail(), id: mailId });
+    if (!warnings.length && (await getAutoSend()) === 'now') await deliverToClient(order, result, false);
   } catch (e) {
     console.error('agent-result: envoi impossible', (e as Error).message);
     await setAgentOutcome(id, false);

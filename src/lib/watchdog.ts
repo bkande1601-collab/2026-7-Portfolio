@@ -7,6 +7,7 @@ import { db, ensureSchema, hasDb } from './db';
 import { hasAgent, sendToAgent } from './agent';
 import { esc, ownerEmail, para, row, sendMail, shell, table } from './email';
 import { productName } from './orders';
+import { runAutoSend } from './diagnostic';
 import type { Order } from './orders';
 
 const ALERT_HOURS = [4, 6, 12];
@@ -16,8 +17,8 @@ let lastRun = 0;
 
 type Row = Order & { data: { id: string; label: string; value: string }[]; agent_status: string | null; agent_at: Date | null; agent_attempts: number; agent_alerts: number; submitted_at: Date };
 
-export async function runWatchdog(): Promise<{ checked: number; retried: number; alerted: number }> {
-  const out = { checked: 0, retried: 0, alerted: 0 };
+export async function runWatchdog(): Promise<{ checked: number; retried: number; alerted: number; autoSent: number }> {
+  const out = { checked: 0, retried: 0, alerted: 0, autoSent: 0 };
   if (running || !hasDb() || !hasAgent()) return out;
   running = true;
   lastRun = Date.now();
@@ -61,6 +62,7 @@ export async function runWatchdog(): Promise<{ checked: number; retried: number;
         out.retried++;
       }
     }
+    out.autoSent = await runAutoSend().catch((e) => { console.error('autosend', (e as Error).message); return 0; });
   } finally {
     running = false;
   }

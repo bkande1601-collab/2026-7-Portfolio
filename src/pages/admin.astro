@@ -1,7 +1,8 @@
 ---
+import '@fontsource-variable/archivo/wdth.css';
 import { db, ensureSchema, hasDb } from '../lib/db';
 import { adminConfigured, verifyToken } from '../lib/admin';
-import { money, productName, type Order } from '../lib/orders';
+import { getAutoSend } from '../lib/settings';
 import { env } from '../lib/env';
 
 export const prerender = false;
@@ -17,21 +18,9 @@ if (Astro.url.searchParams.has('logout')) {
 const configured = adminConfigured();
 const authed = configured && verifyToken(Astro.cookies.get('admin')?.value);
 
-type Row = Order & {
-  answers: { label: string; value: string }[] | null;
-  agent_status: string | null; agent_at: Date | null; agent_attempts: number | null;
-  agent_mail_to: string | null; agent_done_at: Date | null; submitted_at: Date | null;
-  has_result: boolean; client_sent_at: Date | null; client_sent_to: string | null;
-};
-type Bucket = { key: string; label: string; n: number; revenue: number };
-let monthly: Bucket[] = [];
-let hourly: Bucket[] = [];
-let weekday: Bucket[] = [];
-let orders: Row[] = [];
-let stats = { paid: 0, revenue: 0, refunded: 0, pending: 0, expired: 0, last30: 0, last30Revenue: 0 };
-let byProduct: { product: string; n: number; revenue: number }[] = [];
-let dbError = false;
-let dbErrorDetail = '';
+let orders: Record<string, unknown>[] = [];
+let dbError = '';
+let autoSend = '4';
 
 type Workflow = { id: string; name: string; active: boolean; updatedAt?: string };
 type Execution = { id: string; workflowId: string; status?: string; finished?: boolean; startedAt?: string; stoppedAt?: string };
@@ -43,50 +32,17 @@ const n8nConfigured = Boolean(n8nBase && env('N8N_API_KEY'));
 if (authed && hasDb()) {
   try {
     await ensureSchema();
-    const o = await db().query<Row>(
-      `SELECT o.*, a.data AS answers, a.agent_status, a.agent_at, a.agent_attempts, a.agent_mail_to, a.agent_done_at, a.submitted_at, (a.result IS NOT NULL) AS has_result, a.client_sent_at, a.client_sent_to FROM orders o LEFT JOIN answers a ON a.order_id = o.id ORDER BY o.created_at DESC LIMIT 200`,
+    const o = await db().query(
+      `SELECT o.id, o.session_id, o.payment_intent, o.product, o.lang, o.email, o.name, o.amount, o.currency, o.status, o.refunded, o.created_at, o.paid_at,
+              (a.order_id IS NOT NULL) AS has_answers, a.submitted_at, a.agent_status, a.agent_at, a.agent_attempts, a.agent_done_at, a.agent_mail_to,
+              (a.result IS NOT NULL) AS has_result, a.client_sent_at, a.client_sent_to
+         FROM orders o LEFT JOIN answers a ON a.order_id = o.id ORDER BY o.created_at DESC LIMIT 1000`,
     );
     orders = o.rows;
-    const s = await db().query(
-      `SELECT
-         count(*) FILTER (WHERE paid_at IS NOT NULL) AS paid,
-         coalesce(sum(amount - refunded) FILTER (WHERE paid_at IS NOT NULL AND currency = 'eur'), 0) AS revenue,
-         coalesce(sum(refunded) FILTER (WHERE currency = 'eur'), 0) AS refunded,
-         count(*) FILTER (WHERE status = 'pending') AS pending,
-         count(*) FILTER (WHERE status = 'expired') AS expired,
-         count(*) FILTER (WHERE paid_at > now() - interval '30 days') AS last30,
-         coalesce(sum(amount - refunded) FILTER (WHERE paid_at > now() - interval '30 days' AND currency = 'eur'), 0) AS last30_revenue
-       FROM orders`,
-    );
-    const r = s.rows[0];
-    stats = { paid: +r.paid, revenue: +r.revenue, refunded: +r.refunded, pending: +r.pending, expired: +r.expired, last30: +r.last30, last30Revenue: +r.last30_revenue };
-    const p = await db().query(
-      `SELECT product, count(*) AS n, coalesce(sum(amount - refunded), 0) AS revenue
-       FROM orders WHERE paid_at IS NOT NULL AND currency = 'eur' GROUP BY product ORDER BY revenue DESC`,
-    );
-    byProduct = p.rows.map((x) => ({ product: x.product, n: +x.n, revenue: +x.revenue }));
-    const paidLocal = `(paid_at AT TIME ZONE 'Europe/Paris')`;
-    const agg = (expr: string, extra = '') =>
-      db().query(
-        `SELECT ${expr} AS k, count(*) AS n, coalesce(sum(amount - refunded), 0) AS revenue FROM orders
-         WHERE paid_at IS NOT NULL AND currency = 'eur' ${extra} GROUP BY 1 ORDER BY 1`,
-      );
-    const [m, h, w] = await Promise.all([
-      agg(`to_char(date_trunc('month', ${paidLocal}), 'YYYY-MM')`, `AND paid_at > now() - interval '12 months'`),
-      agg(`extract(hour FROM ${paidLocal})::int`),
-      agg(`extract(isodow FROM ${paidLocal})::int`),
-    ]);
-    const months = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
-    monthly = m.rows.map((x) => ({ key: x.k, label: `${months[+String(x.k).slice(5) - 1]} ${String(x.k).slice(2, 4)}`, n: +x.n, revenue: +x.revenue }));
-    const byH = new Map(h.rows.map((x) => [+x.k, x]));
-    hourly = Array.from({ length: 24 }, (_, i) => ({ key: String(i), label: `${i}h`, n: +(byH.get(i)?.n ?? 0), revenue: +(byH.get(i)?.revenue ?? 0) }));
-    const byW = new Map(w.rows.map((x) => [+x.k, x]));
-    const days = ['lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.', 'dim.'];
-    weekday = days.map((d, i) => ({ key: String(i + 1), label: d, n: +(byW.get(i + 1)?.n ?? 0), revenue: +(byW.get(i + 1)?.revenue ?? 0) }));
+    autoSend = await getAutoSend();
   } catch (e) {
-    dbError = true;
     const err = e as { code?: string; message?: string };
-    dbErrorDetail = [err.code, err.message].filter(Boolean).join(' : ').slice(0, 200);
+    dbError = [err.code, err.message].filter(Boolean).join(' : ').slice(0, 200);
     console.error('[admin] lecture de la base impossible :', e);
   }
 }
@@ -109,38 +65,19 @@ if (authed && n8nConfigured) {
   }
 }
 
-const eur = (c: number) => money(c, 'eur');
-const compact = (c: number) => (c >= 100000 ? `${Math.round(c / 100000) / 10} k€` : `${Math.round(c / 100)} €`);
-const best = (b: Bucket[], by: 'n' | 'revenue') => b.reduce<Bucket | null>((a, x) => (x[by] > (a ? a[by] : 0) ? x : a), null);
-const bestMonth = best(monthly, 'revenue');
-const bestHour = best(hourly, 'n');
-const bestDay = best(weekday, 'n');
-const fullDays: Record<string, string> = { 'lun.': 'lundi', 'mar.': 'mardi', 'mer.': 'mercredi', 'jeu.': 'jeudi', 'ven.': 'vendredi', 'sam.': 'samedi', 'dim.': 'dimanche' };
 
-/** Diagramme en barres en SVG (rendu côté serveur, aucune bibliothèque) ; la barre la plus haute est mise en avant. */
-function bars(items: Bucket[], by: 'n' | 'revenue', unit: 'eur' | 'n', every = 1) {
-  const W = 640, H = 220, padL = 8, padB = 28, padT = 22;
-  const max = Math.max(...items.map((i) => i[by]), 1);
-  const slot = (W - padL * 2) / items.length;
-  const bw = Math.min(46, slot * 0.68);
-  const top = items.reduce((a, i) => (i[by] > a ? i[by] : a), 0);
-  const fmtV = (v: number) => (unit === 'eur' ? compact(v) : String(v));
-  return items.map((it, i) => {
-    const h = (it[by] / max) * (H - padB - padT);
-    const x = padL + i * slot + (slot - bw) / 2;
-    const y = H - padB - h;
-    return { x, y, h, bw, hot: it[by] === top && top > 0, v: it[by], label: it.label, text: unit === 'eur' ? `${it.label} : ${eur(it.revenue)} (${it.n} commande${it.n > 1 ? 's' : ''})` : `${it.label} : ${it.n} commande${it.n > 1 ? 's' : ''}`, showLabel: i % every === 0, cx: x + bw / 2, fmt: fmtV(it[by]), W, H, padB };
-  });
-}
-const fmt = (d: Date | null) =>
-  d ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Paris' }).format(new Date(d)) : '';
-const wfName = (id: string) => n8n?.workflows.find((w) => w.id === id)?.name ?? id;
-const execLabel: Record<string, string> = { success: 'réussie', error: 'en erreur', crashed: 'plantée', running: 'en cours', waiting: 'en attente', canceled: 'annulée', new: 'en file' };
-const execStatus = (x: Execution) => x.status ?? (x.finished ? 'success' : 'running');
-const statusLabel: Record<string, string> = {
-  pending: 'en attente', paid: 'payé', failed: 'échoué', expired: 'abandonné', refunded: 'remboursé', disputed: 'litige',
-};
 const umami = (env('PUBLIC_UMAMI_URL') || (import.meta.env.PUBLIC_UMAMI_URL ?? '')).replace(/\/$/, '');
+const boot = {
+  orders,
+  autoSend,
+  n8n,
+  n8nError,
+  n8nConfigured,
+  umami,
+  hasDb: hasDb(),
+  dbError,
+  builtAt: Date.now(),
+};
 ---
 
 <!doctype html>
@@ -150,421 +87,92 @@ const umami = (env('PUBLIC_UMAMI_URL') || (import.meta.env.PUBLIC_UMAMI_URL ?? '
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <title>Tableau de bord</title>
-    <style>
-      :root { --bg:#f6f0e4; --card:#fffaf4; --ink:#1a1410; --muted:#7a6a5c; --line:#eadccc; --accent:#6b46c1; --accent-soft:#e4daf6; --ok:#1f7a4d; --ok-soft:#dcf1e5; --bad:#b3372c; --bad-soft:#f9e1de; --warn:#9a6700; --warn-soft:#fbefcf; --bar:#cdbdf0; }
-      @media (prefers-color-scheme: dark) { :root { --bg:#17120e; --card:#211a14; --ink:#f1e8de; --muted:#a8998a; --line:#3a2e24; --accent:#b79cf0; --accent-soft:#33284d; --ok:#5fd19a; --ok-soft:#173a29; --bad:#ff8f84; --bad-soft:#40201c; --warn:#f0c15a; --warn-soft:#3b2f12; --bar:#4a3b73; } }
-      * { box-sizing: border-box; }
-      body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, -apple-system, Helvetica, Arial, sans-serif; }
-      main { max-width:1120px; margin:0 auto; padding:0 16px 80px; }
-      .top { position:sticky; top:0; z-index:5; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); margin:0 -16px 24px; padding:12px 16px; }
-      .top .in { max-width:1120px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
-      h1 { margin:0; font-size:1.35rem; letter-spacing:-.02em; }
-      h2 { font-size:1.05rem; margin:34px 0 12px; letter-spacing:-.01em; }
-      h3 { font-size:.95rem; margin:0 0 2px; }
-      a { color:var(--accent); }
-      .btn { display:inline-block; padding:8px 15px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink); text-decoration:none; font:inherit; font-size:.88rem; cursor:pointer; }
-      .btn:hover { border-color:var(--accent); }
-      .btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
-      .btn:disabled { opacity:.55; cursor:not-allowed; }
-      .kpis { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:12px; }
-      .kpi { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px; }
-      .kpi b { display:block; font-size:1.7rem; letter-spacing:-.03em; line-height:1.15; }
-      .kpi span { color:var(--muted); font-size:.82rem; }
-      .grid2 { display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:14px; }
-      .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px 10px; }
-      .card p.sub { margin:0 0 6px; color:var(--muted); font-size:.85rem; }
-      .card p.sub strong { color:var(--ink); }
-      svg.chart { width:100%; height:auto; display:block; }
-      svg.chart text { fill:var(--muted); font:11px system-ui, sans-serif; }
-      svg.chart text.val { fill:var(--ink); font-weight:600; }
-      svg.chart rect.bar { fill:var(--bar); }
-      svg.chart rect.bar.hot { fill:var(--accent); }
-      svg.chart line { stroke:var(--line); }
-      .empty { color:var(--muted); font-size:.9rem; padding:24px 0; text-align:center; }
-      .tablewrap { overflow-x:auto; background:var(--card); border:1px solid var(--line); border-radius:16px; }
-      table { width:100%; border-collapse:collapse; font-size:.92rem; }
-      th, td { text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; white-space:nowrap; }
-      th { color:var(--muted); font-weight:600; font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; }
-      tr:last-child td { border-bottom:0; }
-      td.wrap { white-space:normal; }
-      .tag { display:inline-block; padding:2px 10px; border-radius:999px; font-size:.78rem; font-weight:600; background:var(--accent-soft); color:var(--accent); }
-      .tag.paid, .tag.done { background:var(--ok-soft); color:var(--ok); }
-      .tag.refunded, .tag.disputed, .tag.failed { background:var(--bad-soft); color:var(--bad); }
-      .tag.wait { background:var(--warn-soft); color:var(--warn); }
-      .tag.pending, .tag.expired { background:var(--line); color:var(--muted); }
-      details summary { cursor:pointer; color:var(--accent); }
-      dl { margin:8px 0 0; white-space:normal; max-width:520px; }
-      dt { font-weight:600; margin-top:8px; }
-      dd { margin:2px 0 0; color:var(--muted); }
-      .deliv { display:grid; gap:12px; }
-      .dcard { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px; display:grid; gap:10px; }
-      .dcard .row { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:center; }
-      .dcard .meta { color:var(--muted); font-size:.85rem; }
-      .actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-      .note { font-size:.85rem; color:var(--muted); }
-      .actions2 { display:grid; gap:10px; padding:12px 14px; background:var(--bg); border:1px solid var(--line); border-radius:12px; }
-      .grp { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-      .note.ok { color:var(--ok); font-weight:600; }
-      .note.bad { color:var(--bad); font-weight:600; }
-      #toasts { position:fixed; right:16px; bottom:16px; display:grid; gap:8px; z-index:20; max-width:min(380px, calc(100vw - 32px)); }
-      .toast { background:var(--ink); color:var(--bg); padding:12px 16px; border-radius:12px; font-size:.92rem; box-shadow:0 8px 28px rgba(0,0,0,.25); }
-      .toast.ok { background:var(--ok); color:#fff; }
-      .toast.bad { background:var(--bad); color:#fff; }
-      form.login { max-width:340px; margin:12vh auto 0; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; display:grid; gap:12px; }
-      input { padding:11px 14px; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--ink); font:inherit; }
-      .err { color:var(--bad); min-height:1.2em; margin:0; font-size:.9rem; }
-      .muted { color:var(--muted); }
-      @media (max-width:520px) { .grid2 { grid-template-columns:1fr; } }
-    </style>
+    <link rel="stylesheet" href="/admin/admin.css?v=1" />
   </head>
   <body>
-    <main>
-      {!configured && (
-        <>
-          <h1 style="margin-top:24px">Tableau de bord</h1>
-          <p class="muted">Non configuré : ajoutez la variable <code>ADMIN_PASSWORD</code> (12 caractères minimum) dans Coolify, puis redéployez.</p>
-        </>
-      )}
+    {!configured && (
+      <main class="narrow">
+        <h1>Tableau de bord</h1>
+        <p class="muted">Non configuré : ajoutez la variable <code>ADMIN_PASSWORD</code> (12 caractères minimum) dans Coolify, puis redéployez.</p>
+      </main>
+    )}
 
-      {configured && !authed && (
+    {configured && !authed && (
+      <main class="narrow">
         <form class="login" id="login">
+          <div class="brand-mark">Binta Kande</div>
           <h1>Connexion</h1>
+          <p class="muted">Espace privé : suivi des commandes et des diagnostics.</p>
           <input type="password" id="pw" placeholder="Mot de passe" autocomplete="current-password" required />
           <p class="err" id="err" role="alert"></p>
           <button class="btn primary" type="submit">Entrer</button>
         </form>
-      )}
+      </main>
+    )}
 
-      {authed && (
-        <>
-          <div class="top">
-            <div class="in">
-              <h1>Tableau de bord</h1>
-              <div>
-                {umami && <a class="btn" href={umami} target="_blank" rel="noopener noreferrer">Visites du site</a>}{' '}
-                <a class="btn" href="/admin?logout">Se déconnecter</a>
+    {authed && (
+      <div class="app" id="app">
+        <aside class="side" id="side">
+          <div class="side-top">
+            <div class="brand-mark">Binta Kande</div>
+            <div class="brand-sub">Tableau de bord</div>
+          </div>
+          <nav class="nav" id="nav" aria-label="Navigation">
+            <a href="#overview" data-view="overview"><svg viewBox="0 0 24 24"><path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6v-9h-6v9Zm0-16v5h6V4h-6Z"/></svg><span>Vue d’ensemble</span></a>
+            <a href="#orders" data-view="orders"><svg viewBox="0 0 24 24"><path d="M3 5h18v2H3V5Zm0 6h18v2H3v-2Zm0 6h12v2H3v-2Z"/></svg><span>Commandes</span><b class="count" id="n-orders"></b></a>
+            <a href="#delivery" data-view="delivery"><svg viewBox="0 0 24 24"><path d="M3 4h18v4H3V4Zm0 6h8v10H3V10Zm10 0h8v6h-8v-6Z"/></svg><span>Livraisons</span><b class="count warn" id="n-delivery"></b></a>
+            <a href="#customers" data-view="customers"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5Z"/></svg><span>Clients</span></a>
+            <a href="#automations" data-view="automations"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg><span>Automatisations</span><b class="count bad" id="n-auto"></b></a>
+          </nav>
+          <div class="side-foot">
+            {umami && <a class="foot-link" href={umami} target="_blank" rel="noopener noreferrer">Visites du site ↗</a>}
+            <a class="foot-link" href="/admin?logout">Se déconnecter</a>
+          </div>
+        </aside>
+
+        <div class="main">
+          <header class="bar">
+            <button class="burger" id="burger" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6Zm0 5h18v2H3v-2Zm0 5h18v2H3v-2Z"/></svg></button>
+            <h1 id="view-title">Vue d’ensemble</h1>
+            <div class="bar-right">
+              <div class="seg" id="period" role="tablist" aria-label="Période">
+                <button data-p="7">7 j</button><button data-p="30" class="on">30 j</button><button data-p="90">90 j</button><button data-p="365">12 mois</button><button data-p="0">Tout</button>
               </div>
             </div>
-          </div>
+          </header>
 
-          {!hasDb() && <p class="muted">Base de données non configurée (<code>DATABASE_URL</code>).</p>}
-          {dbError && (
-            <p class="err">Impossible de lire la base de données.{dbErrorDetail && <> <span class="muted">({dbErrorDetail})</span></>}</p>
-          )}
+          {boot.dbError && <div class="banner bad">Impossible de lire la base de données ({boot.dbError}).</div>}
+          {!boot.hasDb && <div class="banner">Base de données non configurée (<code>DATABASE_URL</code>).</div>}
 
-          {hasDb() && !dbError && (
-            <>
-              <div class="kpis">
-                <div class="kpi"><b>{eur(stats.revenue)}</b><span>Chiffre d’affaires net</span></div>
-                <div class="kpi"><b>{stats.paid}</b><span>Commandes payées</span></div>
-                <div class="kpi"><b>{eur(stats.last30Revenue)}</b><span>30 derniers jours · {stats.last30} commande{stats.last30 > 1 ? 's' : ''}</span></div>
-                <div class="kpi"><b>{eur(stats.refunded)}</b><span>Remboursé</span></div>
-                <div class="kpi"><b>{stats.pending}</b><span>Paiements en attente</span></div>
-                <div class="kpi"><b>{stats.expired}</b><span>Paniers abandonnés</span></div>
-              </div>
+          <main id="content">
+            <section class="view" id="view-overview"></section>
+            <section class="view" id="view-orders" hidden></section>
+            <section class="view" id="view-delivery" hidden></section>
+            <section class="view" id="view-customers" hidden></section>
+            <section class="view" id="view-automations" hidden></section>
+          </main>
+        </div>
 
-              <h2>Livraison des résultats</h2>
-              <div class="deliv">
-                {orders.filter((o) => o.paid_at && ['diagnostic', 'prompt'].includes(o.product)).length === 0 && <p class="muted">Aucune commande à livrer pour l’instant.</p>}
-                {orders.filter((o) => o.paid_at && ['diagnostic', 'prompt'].includes(o.product)).map((o) => {
-                  const st = o.agent_status;
-                  const kind = !o.answers ? 'pending' : st === 'done' ? 'done' : st?.startsWith('failed') ? 'failed' : 'wait';
-                  const label = !o.answers ? 'Questionnaire pas encore rempli' : st === 'done' ? 'E-mail du résultat envoyé' : st?.startsWith('failed') ? `Échec (${st.slice(7)})` : st === 'sent' ? 'Agent en cours de travail' : 'Pas encore envoyé à l’agent';
-                  return (
-                    <div class="dcard" data-card={o.id}>
-                      <div class="row">
-                        <div>
-                          <h3>{productName(o.product, 'fr')} · {o.name ?? ''} {o.email ?? ''}</h3>
-                          <div class="meta">Payé le {fmt(o.paid_at)}{o.submitted_at ? ` · réponses reçues le ${fmt(o.submitted_at)}` : ''}</div>
-                        </div>
-                        <span class={`tag ${kind}`} data-pill>{label}</span>
-                      </div>
-                      {o.answers && (
-                        <>
-                          <div class="note" data-detail>
-                            {st === 'done' && o.agent_done_at ? `Envoyé le ${fmt(o.agent_done_at)}${o.agent_mail_to ? ` à ${o.agent_mail_to}` : ''}.` : `Dernier essai : ${o.agent_at ? fmt(o.agent_at) : 'aucun'} · ${o.agent_attempts ?? 0} essai${(o.agent_attempts ?? 0) > 1 ? 's' : ''}. Relance automatique toutes les 10 minutes.`}
-                          </div>
-                          <div class="actions">
-                            <button type="button" class="btn primary relance" data-order={o.id}>Relancer l’agent</button>
-                            <span class="note" data-note aria-live="polite">Le bouton se bloque 10 secondes après un clic.</span>
-                          </div>
-                          {o.product === 'diagnostic' && (
-                            <div class="actions2">
-                              <div class="grp">
-                                <span class="note"><strong>Diagnostic PDF</strong>{o.has_result ? '' : ' : pas encore généré'}</span>
-                                {o.has_result && <a class="btn" href={`/admin/pdf?order_id=${o.id}`} target="_blank" rel="noopener">Voir le PDF</a>}
-                                <button type="button" class="btn act" data-order={o.id} data-action="pdf_me" disabled={!o.has_result}>M’envoyer le PDF (test)</button>
-                                <button type="button" class="btn primary act" data-order={o.id} data-action="pdf_client" data-confirm={`Envoyer le PDF à ${o.email ?? 'ce client'} ?`} disabled={!o.has_result}>Envoyer le PDF au client</button>
-                              </div>
-                              <div class="note" data-sent>{o.client_sent_at ? `PDF envoyé au client le ${fmt(o.client_sent_at)}${o.client_sent_to ? ` (${o.client_sent_to})` : ''}.` : ''}</div>
-                              <div class="grp">
-                                <span class="note"><strong>Questionnaire</strong></span>
-                                <button type="button" class="btn act" data-order={o.id} data-action="questionnaire_me">Me renvoyer le questionnaire (test)</button>
-                                <button type="button" class="btn act" data-order={o.id} data-action="questionnaire_client" data-confirm={`Renvoyer le lien du questionnaire à ${o.email ?? 'ce client'} ?`}>Le renvoyer au client</button>
-                              </div>
-                            </div>
-                          )}
-                          <details>
-                            <summary>Réponses du client ({o.answers.length})</summary>
-                            <dl>{o.answers.map((a) => (<><dt>{a.label}</dt><dd>{a.value}</dd></>))}</dl>
-                          </details>
-                        </>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+        <div class="scrim" id="scrim" hidden></div>
+        <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Détail de la commande"></aside>
+        <div id="toasts" role="status"></div>
+        <div class="modal" id="modal" hidden><div class="modal-card" id="modal-card"></div></div>
+        <script type="application/json" id="boot" set:html={JSON.stringify(boot).replace(/</g, '\\u003c')} />
+        <script is:inline src="/admin/app.js?v=1"></script>
+      </div>
+    )}
 
-              <h2>Ventes dans le temps</h2>
-              <div class="grid2">
-                <div class="card">
-                  <h3>Chiffre d’affaires par mois</h3>
-                  <p class="sub">{bestMonth ? <>Meilleur mois : <strong>{bestMonth.label}</strong> ({eur(bestMonth.revenue)}).</> : 'Pas encore de vente.'}</p>
-                  {monthly.length === 0 ? <div class="empty">Les mois apparaîtront avec les premières ventes.</div> : (
-                    <svg class="chart" viewBox="0 0 640 220" role="img" aria-label="Chiffre d’affaires par mois">
-                      <line x1="8" x2="632" y1="192" y2="192" />
-                      {bars(monthly, 'revenue', 'eur').map((b) => (
-                        <g><title>{b.text}</title>
-                          <rect class={`bar${b.hot ? ' hot' : ''}`} x={b.x} y={b.y} width={b.bw} height={Math.max(b.h, 1)} rx="5" />
-                          <text class="val" x={b.cx} y={b.y - 6} text-anchor="middle">{b.fmt}</text>
-                          <text x={b.cx} y="210" text-anchor="middle">{b.label}</text>
-                        </g>
-                      ))}
-                    </svg>
-                  )}
-                </div>
-                <div class="card">
-                  <h3>Commandes par heure de la journée</h3>
-                  <p class="sub">{bestHour ? <>Heure la plus active : <strong>{bestHour.label}</strong> ({bestHour.n} commande{bestHour.n > 1 ? 's' : ''}), heure de Paris.</> : 'Pas encore de vente.'}</p>
-                  {!bestHour ? <div class="empty">Le graphique apparaîtra avec les premières ventes.</div> : (
-                    <svg class="chart" viewBox="0 0 640 220" role="img" aria-label="Commandes par heure">
-                      <line x1="8" x2="632" y1="192" y2="192" />
-                      {bars(hourly, 'n', 'n', 3).map((b) => (
-                        <g><title>{b.text}</title>
-                          <rect class={`bar${b.hot ? ' hot' : ''}`} x={b.x} y={b.y} width={b.bw} height={Math.max(b.h, b.v ? 1 : 0)} rx="3" />
-                          {b.v > 0 && <text class="val" x={b.cx} y={b.y - 5} text-anchor="middle">{b.v}</text>}
-                          {b.showLabel && <text x={b.cx} y="210" text-anchor="middle">{b.label}</text>}
-                        </g>
-                      ))}
-                    </svg>
-                  )}
-                </div>
-                <div class="card">
-                  <h3>Commandes par jour de la semaine</h3>
-                  <p class="sub">{bestDay && bestDay.n ? <>Meilleur jour : <strong>{fullDays[bestDay.label]}</strong> ({bestDay.n} commande{bestDay.n > 1 ? 's' : ''}).</> : 'Pas encore de vente.'}</p>
-                  {!bestDay || !bestDay.n ? <div class="empty">Le graphique apparaîtra avec les premières ventes.</div> : (
-                    <svg class="chart" viewBox="0 0 640 220" role="img" aria-label="Commandes par jour">
-                      <line x1="8" x2="632" y1="192" y2="192" />
-                      {bars(weekday, 'n', 'n').map((b) => (
-                        <g><title>{b.text}</title>
-                          <rect class={`bar${b.hot ? ' hot' : ''}`} x={b.x} y={b.y} width={b.bw} height={Math.max(b.h, b.v ? 1 : 0)} rx="5" />
-                          {b.v > 0 && <text class="val" x={b.cx} y={b.y - 6} text-anchor="middle">{b.v}</text>}
-                          <text x={b.cx} y="210" text-anchor="middle">{b.label}</text>
-                        </g>
-                      ))}
-                    </svg>
-                  )}
-                </div>
-                <div class="card">
-                  <h3>Par produit</h3>
-                  <p class="sub">Commandes payées et chiffre d’affaires net.</p>
-                  <div class="tablewrap" style="border:0;border-radius:0">
-                    <table>
-                      <thead><tr><th>Produit</th><th>Commandes</th><th>CA</th></tr></thead>
-                      <tbody>
-                        {byProduct.length === 0 && <tr><td colspan="3" class="muted">Aucune vente pour l’instant.</td></tr>}
-                        {byProduct.map((p) => <tr><td>{productName(p.product, 'fr')}</td><td>{p.n}</td><td>{eur(p.revenue)}</td></tr>)}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-              <h2>Commandes</h2>
-              <div class="tablewrap">
-                <table>
-                  <thead><tr><th>Date</th><th>Produit</th><th>Client</th><th>Montant</th><th>Statut</th></tr></thead>
-                  <tbody>
-                    {orders.length === 0 && <tr><td colspan="5" class="muted">Aucune commande pour l’instant.</td></tr>}
-                    {orders.map((o) => (
-                      <tr>
-                        <td>{fmt(o.paid_at ?? o.created_at)}</td>
-                        <td>{productName(o.product, 'fr')}</td>
-                        <td class="wrap">{o.name ?? ''}{o.name && o.email ? ' · ' : ''}{o.email ?? ''}</td>
-                        <td>{o.amount ? money(o.amount, o.currency) : ''}{o.refunded ? ` (−${money(o.refunded, o.currency)})` : ''}</td>
-                        <td><span class={`tag ${o.status}`}>{statusLabel[o.status] ?? o.status}</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
-
-          <h2>Automatisations (n8n)</h2>
-          {!n8nConfigured && <p class="muted">Non configuré : ajoutez <code>N8N_URL</code> et <code>N8N_API_KEY</code> (n8n, Settings puis n8n API) dans Coolify, puis redéployez.</p>}
-          {n8nError && <p class="err">Impossible de joindre n8n ({n8nError}).</p>}
-          {n8n && (
-            <>
-              <div class="kpis">
-                <div class="kpi"><b>{n8n.workflows.filter((w) => w.active).length}/{n8n.workflows.length}</b><span>Workflows actifs</span></div>
-                <div class="kpi"><b>{n8n.executions.filter((x) => ['error', 'crashed'].includes(execStatus(x))).length}</b><span>Erreurs sur les {n8n.executions.length} dernières exécutions</span></div>
-              </div>
-              <div class="tablewrap" style="margin-top:12px">
-                <table>
-                  <thead><tr><th>Workflow</th><th>État</th></tr></thead>
-                  <tbody>
-                    {n8n.workflows.length === 0 && <tr><td colspan="2" class="muted">Aucun workflow.</td></tr>}
-                    {n8n.workflows.map((w) => <tr><td class="wrap">{w.name}</td><td><span class={`tag ${w.active ? 'paid' : ''}`}>{w.active ? 'actif' : 'inactif'}</span></td></tr>)}
-                  </tbody>
-                </table>
-              </div>
-              <h2>Dernières exécutions</h2>
-              <div class="tablewrap">
-                <table>
-                  <thead><tr><th>Date</th><th>Workflow</th><th>Résultat</th></tr></thead>
-                  <tbody>
-                    {n8n.executions.length === 0 && <tr><td colspan="3" class="muted">Aucune exécution.</td></tr>}
-                    {n8n.executions.map((x) => (
-                      <tr>
-                        <td>{fmt(x.startedAt ? new Date(x.startedAt) : null)}</td>
-                        <td class="wrap">{wfName(x.workflowId)}</td>
-                        <td><span class={`tag ${execStatus(x) === 'success' ? 'paid' : ['error', 'crashed'].includes(execStatus(x)) ? 'failed' : ''}`}>{execLabel[execStatus(x)] ?? execStatus(x)}</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
-        </>
-      )}
-    </main>
-
-    <div id="toasts" role="status"></div>
-    <script is:inline>
-      const toasts = document.getElementById('toasts');
-      function toast(msg, kind) {
-        if (!toasts) return;
-        const t = document.createElement('div');
-        t.className = 'toast ' + (kind || '');
-        t.textContent = msg;
-        toasts.appendChild(t);
-        setTimeout(() => t.remove(), 9000);
-      }
-      const hhmm = (d) => new Date(d).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Paris' });
-
-      function paint(card, s) {
-        const pill = card.querySelector('[data-pill]');
-        const detail = card.querySelector('[data-detail]');
-        const st = s.status || '';
-        const kind = st === 'done' ? 'done' : st.startsWith('failed') ? 'failed' : 'wait';
-        pill.className = 'tag ' + kind;
-        pill.textContent = st === 'done' ? 'E-mail du résultat envoyé' : st.startsWith('failed') ? 'Échec (' + st.slice(7) + ')' : st === 'sent' ? 'Agent en cours de travail' : 'Pas encore envoyé à l’agent';
-        if (detail) detail.textContent = st === 'done' && s.done_at ? 'Envoyé à ' + hhmm(s.done_at) + (s.mail_to ? ' à ' + s.mail_to : '') + '.' : 'Dernier essai : ' + (s.at ? hhmm(s.at) : 'aucun') + ' · ' + (s.attempts || 0) + ' essai(s). Relance automatique toutes les 10 minutes.';
-      }
-
-      async function watch(card, id, note) {
-        for (let i = 0; i < 40; i++) {
-          await new Promise((r) => setTimeout(r, 5000));
-          const res = await fetch('/admin/relance?order_id=' + id).catch(() => null);
-          if (!res || !res.ok) continue;
-          const s = await res.json();
-          paint(card, s);
-          if (s.status === 'done') {
-            note.className = 'note ok';
-            note.textContent = '✓ Terminé : l’e-mail du résultat est parti' + (s.mail_to ? ' vers ' + s.mail_to : '') + '.';
-            toast('Résultat envoyé' + (s.mail_to ? ' à ' + s.mail_to : '') + '.', 'ok');
-            return;
-          }
-          if ((s.status || '').startsWith('failed')) {
-            note.className = 'note bad';
-            note.textContent = 'L’agent a signalé un échec. Une nouvelle tentative automatique aura lieu dans 10 minutes.';
-            return;
-          }
-        }
-        note.className = 'note';
-        note.textContent = 'Toujours en cours après 3 minutes : le suivi automatique continue et vous écrira à 4 h, 6 h et 12 h si besoin.';
-      }
-
-      document.querySelectorAll('.relance').forEach((b) => b.addEventListener('click', async () => {
-        const card = b.closest('[data-card]');
-        const note = card.querySelector('[data-note]');
-        const id = Number(b.dataset.order);
-        const label = b.textContent;
-        b.disabled = true;
-        note.className = 'note';
-        note.textContent = 'Envoi à l’agent en cours…';
-        let ok = false;
-        try {
-          const res = await fetch('/admin/relance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order_id: id }) });
-          const j = await res.json().catch(() => ({}));
-          ok = res.ok && j.status === 'sent';
-          if (ok) {
-            paint(card, j);
-            note.className = 'note ok';
-            note.textContent = '✓ Bien parti vers l’agent à ' + hhmm(j.sentAt) + '. L’e-mail arrive dans 2 à 3 minutes : le statut se met à jour tout seul.';
-            toast('Envoyé à l’agent à ' + hhmm(j.sentAt) + '. Vous recevrez l’e-mail dans 2 à 3 minutes.', 'ok');
-            watch(card, id, note);
-          } else {
-            note.className = 'note bad';
-            note.textContent = 'Échec de l’envoi (' + (j.status || j.error || res.status) + '). Réessai automatique dans 10 minutes.';
-            toast('Échec de l’envoi à l’agent (' + (j.status || j.error || res.status) + ').', 'bad');
-          }
-        } catch (e) {
-          note.className = 'note bad';
-          note.textContent = 'Connexion impossible, réessayez.';
-          toast('Connexion impossible.', 'bad');
-        }
-        let left = 10;
-        b.textContent = label + ' (' + left + ' s)';
-        const tick = setInterval(() => {
-          left -= 1;
-          if (left <= 0) { clearInterval(tick); b.disabled = false; b.textContent = label; }
-          else b.textContent = label + ' (' + left + ' s)';
-        }, 1000);
-      }));
-
-      const doneText = { pdf_me: 'PDF envoyé à votre adresse', pdf_client: 'PDF envoyé au client', questionnaire_me: 'Lien du questionnaire envoyé à votre adresse', questionnaire_client: 'Lien du questionnaire envoyé au client' };
-      const errText = { no_result: 'Le PDF n’est pas encore généré.', mail_failed: 'L’e-mail n’a pas pu partir.', no_client_email: 'Pas d’adresse e-mail pour ce client.', no_owner_email: 'OWNER_EMAIL n’est pas configuré.' };
-      document.querySelectorAll('.act').forEach((b) => b.addEventListener('click', async () => {
-        if (b.dataset.confirm && !confirm(b.dataset.confirm)) return;
-        const label = b.textContent;
-        const card = b.closest('[data-card]');
-        document.querySelectorAll('.act').forEach((x) => { x.dataset.was = x.disabled ? '1' : ''; x.disabled = true; });
-        b.textContent = 'Envoi…';
-        try {
-          const res = await fetch('/admin/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order_id: Number(b.dataset.order), action: b.dataset.action }) });
-          const j = await res.json().catch(() => ({}));
-          if (res.ok) {
-            toast('✓ ' + doneText[b.dataset.action] + ' (' + j.to + ') à ' + hhmm(j.at) + '.', 'ok');
-            if (b.dataset.action === 'pdf_client') card.querySelector('[data-sent]').textContent = 'PDF envoyé au client à ' + hhmm(j.at) + ' (' + j.to + ').';
-          } else toast(errText[j.error] || 'Échec (' + (j.error || res.status) + ').', 'bad');
-        } catch (e) { toast('Connexion impossible.', 'bad'); }
-        b.textContent = label + ' (10 s)';
-        let left = 10;
-        const tick = setInterval(() => {
-          left -= 1;
-          if (left <= 0) { clearInterval(tick); b.textContent = label; document.querySelectorAll('.act').forEach((x) => { x.disabled = x.dataset.was === '1'; }); }
-          else b.textContent = label + ' (' + left + ' s)';
-        }, 1000);
-      }));
-
-      const form = document.getElementById('login');
-      if (form) {
-        form.addEventListener('submit', async (e) => {
+    {configured && !authed && (
+      <script is:inline>
+        document.getElementById('login').addEventListener('submit', async (e) => {
           e.preventDefault();
           const err = document.getElementById('err');
           err.textContent = '';
-          const res = await fetch('/api/admin-login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password: document.getElementById('pw').value }),
-          });
+          const res = await fetch('/api/admin-login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: document.getElementById('pw').value }) });
           if (res.ok) location.reload();
           else err.textContent = res.status === 429 ? 'Trop d’essais, réessayez dans 15 minutes.' : 'Mot de passe incorrect.';
         });
-      }
-    </script>
+      </script>
+    )}
   </body>
 </html>
