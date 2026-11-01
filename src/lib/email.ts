@@ -12,7 +12,7 @@ export const esc = (s: string) =>
 
 const firstName = (full: string) => full.trim().split(/\s+/)[0] || full;
 
-export type Mail = { to: string; subject: string; html: string; replyTo?: string };
+export type Mail = { to: string; subject: string; html: string; replyTo?: string; attachments?: { filename: string; content: string }[] };
 
 export async function sendMail(m: Mail): Promise<boolean> {
   if (!hasResend()) return false;
@@ -25,6 +25,7 @@ export async function sendMail(m: Mail): Promise<boolean> {
       subject: m.subject,
       html: m.html,
       ...(m.replyTo ? { reply_to: m.replyTo } : {}),
+      ...(m.attachments?.length ? { attachments: m.attachments } : {}),
     }),
   });
   return res.ok;
@@ -58,7 +59,7 @@ export function shell(opts: { preheader: string; title: string; body: string; fo
     <h1 style="margin:0 0 18px;font:800 28px/1.15 ${FONT};letter-spacing:-0.03em;color:${C.dark};">${opts.title}</h1>
     ${opts.body}
   </td></tr>
-  <tr><td style="padding:18px 8px;font:12px/1.5 ${FONT};color:${C.muted};text-align:center;">${opts.footer}</td></tr>
+  <tr><td style="padding:20px 8px 4px;font:12px/1.6 ${FONT};color:${C.muted};text-align:center;">${opts.footer}<br><a href="mailto:hello@bintakande.com" style="color:${C.violet};text-decoration:none;">hello@bintakande.com</a> &middot; <a href="https://bintakande.com" style="color:${C.violet};text-decoration:none;">bintakande.com</a></td></tr>
 </table></td></tr></table></body></html>`;
 }
 
@@ -69,6 +70,27 @@ export const row = (k: string, v: string) =>
   `<tr><td style="padding:10px 0;border-bottom:1px solid ${C.line};width:130px;color:${C.muted};font-size:14px;vertical-align:top;">${esc(k)}</td><td style="padding:10px 0;border-bottom:1px solid ${C.line};font-size:15px;">${v}</td></tr>`;
 
 export const table = (rows: string) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0;">${rows}</table>`;
+
+/** Encadré : tone = info (lilas), key (violet foncé), warm (cannelle), ok (vert). */
+export function callout(title: string, body: string, tone: 'info' | 'key' | 'warm' | 'ok' = 'info') {
+  const t = {
+    info: { bg: C.lilas, bar: C.violet, ink: C.dark },
+    key: { bg: C.dark, bar: '#c6b8e4', ink: '#fbf7ee' },
+    warm: { bg: '#f3e3d6', bar: C.cannelle, ink: '#4a2a1d' },
+    ok: { bg: '#e2f1e6', bar: '#2f7d4f', ink: '#1c4a30' },
+  }[tone];
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;"><tr><td style="background:${t.bg};border-left:5px solid ${t.bar};border-radius:12px;padding:16px 20px;font:15px/1.6 ${FONT};color:${t.ink};"><div style="font:800 13px/1.2 ${FONT};letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px;opacity:.85;">${title}</div>${body}</td></tr></table>`;
+}
+
+/** Étapes numérotées (ce qui se passe ensuite, plan d'action). */
+export function steps(items: { title: string; text?: string }[]) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0;">${items
+    .map(
+      (it, i) =>
+        `<tr><td width="44" valign="top" style="padding:8px 0;"><div style="width:32px;height:32px;line-height:32px;border-radius:50%;background:${C.violet};color:#fffaf4;text-align:center;font:800 15px/32px ${FONT};">${i + 1}</div></td><td valign="top" style="padding:8px 0 8px 4px;border-bottom:1px solid ${C.line};font:15px/1.55 ${FONT};color:${C.text};"><strong style="color:${C.dark};">${it.title}</strong>${it.text ? `<br><span style="color:${C.muted};">${it.text}</span>` : ''}</td></tr>`,
+    )
+    .join('')}</table>`;
+}
 
 export const para = (s: string) => `<p style="margin:0 0 16px;">${s}</p>`;
 

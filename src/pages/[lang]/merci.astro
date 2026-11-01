@@ -16,6 +16,8 @@ Astro.response.headers.set('Cache-Control', 'no-store');
 const sessionId = Astro.url.searchParams.get('session_id') ?? '';
 let state: 'unconfigured' | 'unknown' | 'pending' | 'form' | 'done' | 'error' = 'unconfigured';
 let product: 'diagnostic' | 'prompt' | null = null;
+const refaire = Astro.url.searchParams.get('refaire') === '1';
+let prefill: Record<string, string> = {};
 
 if (hasDb() && hasStripe() && /^cs_[A-Za-z0-9_]+$/.test(sessionId)) {
   try {
@@ -24,8 +26,9 @@ if (hasDb() && hasStripe() && /^cs_[A-Za-z0-9_]+$/.test(sessionId)) {
     else if (order.status === 'pending' || order.status === 'failed' || order.status === 'expired') state = 'pending';
     else if (isProduct(order.product)) {
       product = order.product;
-      const a = await db().query('SELECT 1 FROM answers WHERE order_id = $1', [order.id]);
-      state = a.rowCount ? 'done' : 'form';
+      const a = await db().query<{ data: { id: string; value: string }[] }>('SELECT data FROM answers WHERE order_id = $1', [order.id]);
+      if (a.rowCount && refaire) prefill = Object.fromEntries(a.rows[0].data.map((x) => [x.id, x.value]));
+      state = a.rowCount && !refaire ? 'done' : 'form';
     } else state = 'unknown';
   } catch (e) {
     console.error('merci: order lookup failed', (e as { code?: string }).code, (e as Error).message);
@@ -40,6 +43,13 @@ const L = {
   kicker: fr ? 'Merci pour votre commande' : 'Thank you for your order',
   title: fr ? 'Quelques questions pour préparer votre résultat' : 'A few questions to prepare your result',
   lead: fr ? 'Prenez 5 minutes. Plus vos réponses sont précises, plus votre résultat l’est.' : 'Take 5 minutes. The more precise your answers, the more precise your result.',
+  banner: fr ? 'Plus vous donnez d’informations, meilleur sera votre audit.' : 'The more information you give, the better your audit.',
+  bannerText: fr ? 'Chaque détail compte : des chiffres, des exemples, des noms d’outils. Une réponse de 3 mots donne un conseil générique ; une réponse de 3 phrases donne un conseil sur mesure. Un exemple est affiché dans chaque champ pour vous guider. Vos réponses sont enregistrées sur votre appareil au fur et à mesure : vous pouvez faire une pause.' : 'Every detail counts: numbers, examples, tool names. A 3-word answer gives generic advice; a 3-sentence answer gives tailored advice. An example is shown in each field to guide you. Your answers are saved on your device as you go: you can take a break.',
+  short: fr ? 'Réponse très courte : ajoutez des détails (chiffres, exemples) pour un résultat plus précis.' : 'Very short answer: add details (numbers, examples) for a more precise result.',
+  good: fr ? 'Très bien, c’est précis.' : 'Great, that is precise.',
+  chars: fr ? 'caractères' : 'characters',
+  warnSubmit: fr ? 'Plusieurs réponses sont très courtes. Complétez-les pour un meilleur résultat, ou cliquez à nouveau pour envoyer tel quel.' : 'Several answers are very short. Complete them for a better result, or click again to send as is.',
+  progress: fr ? 'questions renseignées' : 'questions answered',
   send: fr ? 'Envoyer mes réponses' : 'Send my answers',
   sending: fr ? 'Envoi…' : 'Sending…',
   optional: fr ? 'facultatif' : 'optional',
@@ -78,19 +88,28 @@ const L = {
   <section style="padding-top:clamp(16px,3vw,32px)">
     <div class="wrap">
       {state === 'form' && (
-        <form class="form" id="q-form" novalidate data-session={sessionId}>
-          {questions.map((q) => (
-            <div class="field">
-              <label for={`q-${q.id}`}>
-                {q.label[lang]} {!q.required && <span>({L.optional})</span>}
-              </label>
-              {q.hint && <p class="hint" style="margin:0 0 6px;opacity:.7;font-size:.9em">{q.hint[lang]}</p>}
-              {q.type === 'textarea' ? (
-                <textarea id={`q-${q.id}`} name={q.id} data-required={q.required ? '1' : ''} maxlength="3000"></textarea>
-              ) : (
-                <input id={`q-${q.id}`} name={q.id} type="text" data-required={q.required ? '1' : ''} maxlength="3000" />
-              )}
-            </div>
+        <div class="q-banner">
+          <strong>{L.banner}</strong>
+          <p>{L.bannerText}</p>
+          <div class="q-progress" aria-live="polite"><span id="q-count">0</span>/{questions.length} {L.progress}<i><b id="q-bar"></b></i></div>
+        </div>
+        <form class="form" id="q-form" novalidate data-session={sessionId} data-warn={L.warnSubmit}>
+          {questions.map((q, i) => (
+            <>
+              {q.section && (i === 0 || questions[i - 1].section?.fr !== q.section.fr) && <h2 class="q-sec">{q.section[lang]}</h2>}
+              <div class="field">
+                <label for={`q-${q.id}`}>
+                  {q.label[lang]} {!q.required && <span>({L.optional})</span>}
+                </label>
+                {q.hint && <p class="q-hint">{q.hint[lang]}</p>}
+                {q.type === 'textarea' ? (
+                  <textarea id={`q-${q.id}`} name={q.id} rows="4" data-required={q.required ? '1' : ''} data-min={q.min ?? ''} maxlength="3000" placeholder={q.example?.[lang] ?? ''}>{prefill[q.id] ?? ''}</textarea>
+                ) : (
+                  <input id={`q-${q.id}`} name={q.id} type="text" data-required={q.required ? '1' : ''} data-min={q.min ?? ''} maxlength="3000" placeholder={q.example?.[lang] ?? ''} value={prefill[q.id] ?? ''} />
+                )}
+                <p class="q-note" data-for={q.id} aria-live="polite"></p>
+              </div>
+            </>
           ))}
           <p class="form-msg" id="q-msg" role="alert" aria-live="polite"></p>
           <div class="btn-row">
@@ -114,8 +133,24 @@ const L = {
     </div>
   </section>
 
-  <script type="application/json" id="q-i18n" set:html={JSON.stringify({ err: L.err, invalid: L.invalid, send: L.send, sending: L.sending, lang })} />
+  <script type="application/json" id="q-i18n" set:html={JSON.stringify({ err: L.err, invalid: L.invalid, send: L.send, sending: L.sending, short: L.short, good: L.good, chars: L.chars, lang })} />
 </Base>
+
+<style>
+  .q-banner { background: var(--surface-2); border-left: 5px solid var(--violet); border-radius: 14px; padding: 18px 22px; margin: 0 0 28px; }
+  .q-banner strong { color: var(--heading); font-size: 1.1rem; }
+  .q-banner p { margin: 8px 0 12px; font-size: .95rem; color: var(--text); }
+  .q-progress { font-size: .85rem; color: var(--muted); }
+  .q-progress i { display: block; height: 6px; border-radius: 99px; background: rgba(105, 76, 172, .18); margin-top: 6px; overflow: hidden; }
+  .q-progress b { display: block; height: 100%; width: 0; background: var(--violet); border-radius: 99px; transition: width .3s var(--ease); }
+  .q-sec { font-size: 1.25rem; margin: 40px 0 6px; padding-top: 18px; border-top: 2px solid var(--line); color: var(--heading); }
+  .q-hint { margin: 0 0 6px; opacity: .75; font-size: .9em; }
+  .q-note { margin: 6px 0 0; font-size: .85rem; min-height: 1.1em; }
+  .q-note.short { color: #9a6700; font-weight: 600; }
+  .q-note.good { color: #1f7a4d; }
+  textarea::placeholder, input::placeholder { color: var(--taupe); font-style: italic; opacity: .85; }
+  textarea:focus::placeholder { opacity: .45; }
+</style>
 
 <script>
   const form = document.getElementById('q-form') as HTMLFormElement | null;
@@ -124,19 +159,68 @@ const L = {
     const success = document.getElementById('q-success')!;
     const btn = document.getElementById('q-submit') as HTMLButtonElement;
     const t = JSON.parse(document.getElementById('q-i18n')!.textContent || '{}');
+    const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea'));
+    const draftKey = `q-draft:${form.dataset.session}`;
+    let warned = false;
+
+    // brouillon enregistré sur l'appareil (jamais envoyé tant que le formulaire n'est pas validé)
+    try {
+      const saved = JSON.parse(localStorage.getItem(draftKey) || '{}');
+      fields.forEach((el) => { if (!el.value && saved[el.name]) el.value = saved[el.name]; });
+    } catch {}
+
+    const shortCount = () => fields.filter((el) => el.dataset.min && el.value.trim() && el.value.trim().length < Number(el.dataset.min)).length;
+
+    function refresh(el?: HTMLInputElement | HTMLTextAreaElement) {
+      const done = fields.filter((f) => f.value.trim()).length;
+      document.getElementById('q-count')!.textContent = String(done);
+      (document.getElementById('q-bar') as HTMLElement).style.width = `${Math.round((done / fields.length) * 100)}%`;
+      const list = el ? [el] : fields;
+      list.forEach((f) => {
+        const note = form!.querySelector<HTMLElement>(`.q-note[data-for="${f.name}"]`);
+        if (!note) return;
+        const len = f.value.trim().length;
+        const min = Number(f.dataset.min || 0);
+        note.className = 'q-note';
+        if (!len || !min) { note.textContent = ''; return; }
+        if (len < min) { note.textContent = `${t.short} (${len}/${min} ${t.chars})`; note.classList.add('short'); }
+        else { note.textContent = t.good; note.classList.add('good'); }
+      });
+    }
+
+    fields.forEach((el) => el.addEventListener('input', () => {
+      refresh(el);
+      warned = false;
+      try {
+        const data: Record<string, string> = {};
+        fields.forEach((f) => { if (f.value) data[f.name] = f.value; });
+        localStorage.setItem(draftKey, JSON.stringify(data));
+      } catch {}
+    }));
+    refresh();
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const answers: Record<string, string> = {};
-      let missing = false;
-      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea').forEach((el) => {
+      let missing: HTMLElement | null = null;
+      fields.forEach((el) => {
         answers[el.name] = el.value.trim();
-        if (el.dataset.required && !el.value.trim()) missing = true;
+        if (el.dataset.required && !el.value.trim() && !missing) missing = el;
       });
       msg.className = 'form-msg';
       if (missing) {
         msg.textContent = t.invalid;
         msg.classList.add('err');
+        (missing as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        (missing as HTMLElement).focus();
+        return;
+      }
+      if (!warned && shortCount() >= 3) {
+        warned = true;
+        msg.textContent = form.dataset.warn || '';
+        msg.classList.add('err');
+        const first = fields.find((el) => el.dataset.min && el.value.trim() && el.value.trim().length < Number(el.dataset.min));
+        first?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
       btn.disabled = true;
@@ -148,9 +232,12 @@ const L = {
           body: JSON.stringify({ session_id: form.dataset.session, answers }),
         });
         if (!res.ok) throw new Error(String(res.status));
+        try { localStorage.removeItem(draftKey); } catch {}
         form.hidden = true;
+        document.querySelector('.q-banner')?.setAttribute('hidden', '');
         success.hidden = false;
         success.focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch {
         msg.textContent = t.err;
         msg.classList.add('err');

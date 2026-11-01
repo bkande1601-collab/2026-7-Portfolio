@@ -17,10 +17,10 @@ export function clean(v: unknown, max: number): string {
 
 export const toLang = (v: unknown): Lang => (v === 'en' ? 'en' : 'fr');
 
-export async function readJson(request: Request): Promise<Record<string, unknown> | null> {
+export async function readJson(request: Request, maxBytes = 20_000): Promise<Record<string, unknown> | null> {
   try {
     const len = Number(request.headers.get('content-length') || 0);
-    if (len > 20_000) return null;
+    if (len > maxBytes) return null;
     const j = await request.json();
     return j && typeof j === 'object' ? (j as Record<string, unknown>) : null;
   } catch {

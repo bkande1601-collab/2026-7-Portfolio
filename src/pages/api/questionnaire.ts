@@ -10,7 +10,7 @@ export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
   if (!hasDb() || !hasStripe()) return json({ error: 'not_configured' }, 503);
-  const body = await readJson(request);
+  const body = await readJson(request, 160_000);
   if (!body) return json({ error: 'bad_request' }, 400);
 
   const sessionId = clean(body.session_id, 200);

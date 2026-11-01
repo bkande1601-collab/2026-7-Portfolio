@@ -2,7 +2,7 @@
 import type Stripe from 'stripe';
 import { db, ensureSchema } from './db';
 import { stripe, siteOrigin, isProduct, type ProductKey } from './stripe';
-import { sendMail, ownerEmail, shell, button, para, table, row, esc, type Mail } from './email';
+import { sendMail, ownerEmail, shell, button, para, table, row, esc, callout, steps, type Mail } from './email';
 import { site } from '../config/site';
 import { t, type Lang } from '../content';
 
@@ -141,7 +141,28 @@ export function clientPaidMail(o: Order): Mail {
             ? 'Il reste une étape : répondre à quelques questions, pour que votre résultat parte de votre situation. Vous le recevrez ensuite par e-mail.'
             : 'One step left: answer a few questions so your result starts from your situation. You will then receive it by email.',
         ) +
+        callout(
+          fr ? 'Le conseil qui change tout' : 'The tip that changes everything',
+          fr
+            ? 'Plus vous donnez d’informations (chiffres, exemples, outils), plus votre résultat sera précis. Comptez 10 à 15 minutes : votre résultat vaut ce que vous y mettez.'
+            : 'The more you share (numbers, examples, tools), the more precise your result will be. Allow 10 to 15 minutes: your result is only as good as what you put in.',
+          'key',
+        ) +
         button(merciUrl(o.lang, o.session_id), fr ? 'Répondre au questionnaire' : 'Answer the questionnaire') +
+        para(fr ? '<strong>La suite en 3 étapes</strong>' : '<strong>What happens next</strong>') +
+        steps(
+          fr
+            ? [
+                { title: 'Vous répondez au questionnaire', text: 'Quand vous voulez, en plusieurs fois si besoin : vos réponses sont gardées sur votre appareil.' },
+                { title: 'J’analyse votre situation', text: 'Je lis chacune de vos réponses et je prépare votre document.' },
+                { title: 'Vous recevez votre résultat', text: 'Par e-mail, en PDF, avec un plan d’action à appliquer dès la lecture.' },
+              ]
+            : [
+                { title: 'You answer the questionnaire', text: 'Whenever you like, in several sittings if needed: your answers are saved on your device.' },
+                { title: 'I analyse your situation', text: 'I read every answer and prepare your document.' },
+                { title: 'You receive your result', text: 'By email, as a PDF, with an action plan you can apply right away.' },
+              ],
+        ) +
         para(fr ? 'Une question ? Répondez simplement à cet e-mail.' : 'A question? Just reply to this email.') +
         `<p style="margin:24px 0 0;">${fr ? 'À très vite,' : 'Talk soon,'}<br><strong>${esc(site.name)}</strong></p>`,
       footer: fr ? 'Reçu de paiement envoyé séparément par Stripe.' : 'Payment receipt sent separately by Stripe.',
@@ -209,7 +230,14 @@ export async function notifyAnswers(o: Order, answers: { label: string; value: s
         preheader: fr ? 'Je prépare votre résultat.' : 'I am preparing your result.',
         title: fr ? 'C’est reçu, merci.' : 'Received, thank you.',
         body:
-          para(fr ? 'Je lis vos réponses et je prépare votre résultat. Vous le recevrez par e-mail à cette adresse.' : 'I am reading your answers and preparing your result. You will receive it by email at this address.') +
+          para(fr ? 'Merci d’avoir pris le temps de répondre : c’est ce qui rend votre résultat précis.' : 'Thank you for taking the time to answer: it is what makes your result precise.') +
+          callout(
+            fr ? 'Ce qui se passe maintenant' : 'What happens now',
+            fr
+              ? 'Je lis vos réponses et je prépare votre document. Vous le recevrez en PDF, par e-mail à cette adresse, avec un plan d’action concret.'
+              : 'I am reading your answers and preparing your document. You will receive it as a PDF, by email at this address, with a concrete action plan.',
+            'info',
+          ) +
           `<p style="margin:24px 0 0;">${fr ? 'À très vite,' : 'Talk soon,'}<br><strong>${esc(site.name)}</strong></p>`,
         footer: fr ? 'Confirmation automatique.' : 'Automatic confirmation.',
       }),
