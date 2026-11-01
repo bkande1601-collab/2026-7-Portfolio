@@ -21,6 +21,7 @@ type Row = Order & {
   answers: { label: string; value: string }[] | null;
   agent_status: string | null; agent_at: Date | null; agent_attempts: number | null;
   agent_mail_to: string | null; agent_done_at: Date | null; submitted_at: Date | null;
+  has_result: boolean; client_sent_at: Date | null; client_sent_to: string | null;
 };
 type Bucket = { key: string; label: string; n: number; revenue: number };
 let monthly: Bucket[] = [];
@@ -43,7 +44,7 @@ if (authed && hasDb()) {
   try {
     await ensureSchema();
     const o = await db().query<Row>(
-      `SELECT o.*, a.data AS answers, a.agent_status, a.agent_at, a.agent_attempts, a.agent_mail_to, a.agent_done_at, a.submitted_at FROM orders o LEFT JOIN answers a ON a.order_id = o.id ORDER BY o.created_at DESC LIMIT 200`,
+      `SELECT o.*, a.data AS answers, a.agent_status, a.agent_at, a.agent_attempts, a.agent_mail_to, a.agent_done_at, a.submitted_at, (a.result IS NOT NULL) AS has_result, a.client_sent_at, a.client_sent_to FROM orders o LEFT JOIN answers a ON a.order_id = o.id ORDER BY o.created_at DESC LIMIT 200`,
     );
     orders = o.rows;
     const s = await db().query(
@@ -201,6 +202,8 @@ const umami = (env('PUBLIC_UMAMI_URL') || (import.meta.env.PUBLIC_UMAMI_URL ?? '
       .dcard .meta { color:var(--muted); font-size:.85rem; }
       .actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
       .note { font-size:.85rem; color:var(--muted); }
+      .actions2 { display:grid; gap:10px; padding:12px 14px; background:var(--bg); border:1px solid var(--line); border-radius:12px; }
+      .grp { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
       .note.ok { color:var(--ok); font-weight:600; }
       .note.bad { color:var(--bad); font-weight:600; }
       #toasts { position:fixed; right:16px; bottom:16px; display:grid; gap:8px; z-index:20; max-width:min(380px, calc(100vw - 32px)); }
@@ -285,6 +288,22 @@ const umami = (env('PUBLIC_UMAMI_URL') || (import.meta.env.PUBLIC_UMAMI_URL ?? '
                             <button type="button" class="btn primary relance" data-order={o.id}>Relancer l’agent</button>
                             <span class="note" data-note aria-live="polite">Le bouton se bloque 10 secondes après un clic.</span>
                           </div>
+                          {o.product === 'diagnostic' && (
+                            <div class="actions2">
+                              <div class="grp">
+                                <span class="note"><strong>Diagnostic PDF</strong>{o.has_result ? '' : ' : pas encore généré'}</span>
+                                {o.has_result && <a class="btn" href={`/admin/pdf?order_id=${o.id}`} target="_blank" rel="noopener">Voir le PDF</a>}
+                                <button type="button" class="btn act" data-order={o.id} data-action="pdf_me" disabled={!o.has_result}>M’envoyer le PDF (test)</button>
+                                <button type="button" class="btn primary act" data-order={o.id} data-action="pdf_client" data-confirm={`Envoyer le PDF à ${o.email ?? 'ce client'} ?`} disabled={!o.has_result}>Envoyer le PDF au client</button>
+                              </div>
+                              <div class="note" data-sent>{o.client_sent_at ? `PDF envoyé au client le ${fmt(o.client_sent_at)}${o.client_sent_to ? ` (${o.client_sent_to})` : ''}.` : ''}</div>
+                              <div class="grp">
+                                <span class="note"><strong>Questionnaire</strong></span>
+                                <button type="button" class="btn act" data-order={o.id} data-action="questionnaire_me">Me renvoyer le questionnaire (test)</button>
+                                <button type="button" class="btn act" data-order={o.id} data-action="questionnaire_client" data-confirm={`Renvoyer le lien du questionnaire à ${o.email ?? 'ce client'} ?`}>Le renvoyer au client</button>
+                              </div>
+                            </div>
+                          )}
                           <details>
                             <summary>Réponses du client ({o.answers.length})</summary>
                             <dl>{o.answers.map((a) => (<><dt>{a.label}</dt><dd>{a.value}</dd></>))}</dl>
@@ -502,6 +521,31 @@ const umami = (env('PUBLIC_UMAMI_URL') || (import.meta.env.PUBLIC_UMAMI_URL ?? '
         const tick = setInterval(() => {
           left -= 1;
           if (left <= 0) { clearInterval(tick); b.disabled = false; b.textContent = label; }
+          else b.textContent = label + ' (' + left + ' s)';
+        }, 1000);
+      }));
+
+      const doneText = { pdf_me: 'PDF envoyé à votre adresse', pdf_client: 'PDF envoyé au client', questionnaire_me: 'Lien du questionnaire envoyé à votre adresse', questionnaire_client: 'Lien du questionnaire envoyé au client' };
+      const errText = { no_result: 'Le PDF n’est pas encore généré.', mail_failed: 'L’e-mail n’a pas pu partir.', no_client_email: 'Pas d’adresse e-mail pour ce client.', no_owner_email: 'OWNER_EMAIL n’est pas configuré.' };
+      document.querySelectorAll('.act').forEach((b) => b.addEventListener('click', async () => {
+        if (b.dataset.confirm && !confirm(b.dataset.confirm)) return;
+        const label = b.textContent;
+        const card = b.closest('[data-card]');
+        document.querySelectorAll('.act').forEach((x) => { x.dataset.was = x.disabled ? '1' : ''; x.disabled = true; });
+        b.textContent = 'Envoi…';
+        try {
+          const res = await fetch('/admin/action', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order_id: Number(b.dataset.order), action: b.dataset.action }) });
+          const j = await res.json().catch(() => ({}));
+          if (res.ok) {
+            toast('✓ ' + doneText[b.dataset.action] + ' (' + j.to + ') à ' + hhmm(j.at) + '.', 'ok');
+            if (b.dataset.action === 'pdf_client') card.querySelector('[data-sent]').textContent = 'PDF envoyé au client à ' + hhmm(j.at) + ' (' + j.to + ').';
+          } else toast(errText[j.error] || 'Échec (' + (j.error || res.status) + ').', 'bad');
+        } catch (e) { toast('Connexion impossible.', 'bad'); }
+        b.textContent = label + ' (10 s)';
+        let left = 10;
+        const tick = setInterval(() => {
+          left -= 1;
+          if (left <= 0) { clearInterval(tick); b.textContent = label; document.querySelectorAll('.act').forEach((x) => { x.disabled = x.dataset.was === '1'; }); }
           else b.textContent = label + ' (' + left + ' s)';
         }, 1000);
       }));

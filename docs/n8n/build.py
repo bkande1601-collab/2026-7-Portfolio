@@ -23,7 +23,7 @@ function md(src) {
       close();
       const lvl = m[1].length;
       const size = { 1: '24px', 2: '19px', 3: '16px' }[lvl];
-      html.push(`<h${lvl} style="margin:22px 0 8px;font:700 ${size}/1.25 Helvetica,Arial,sans-serif;color:#1a1410;">${inline(m[2])}</h${lvl}>`);
+      html.push(`<h${lvl} style="margin:22px 0 8px;font:700 ${size}/1.25 Helvetica,Arial,sans-serif;color:#3b2a63;">${inline(m[2])}</h${lvl}>`);
     } else if ((m = line.match(/^\s*[-*]\s+(.*)$/))) {
       if (list !== 'ul') { close(); html.push('<ul style="margin:8px 0;padding-left:22px;">'); list = 'ul'; }
       html.push(`<li style="margin:0 0 6px;">${inline(m[1])}</li>`);
@@ -42,10 +42,10 @@ function alertPayload(config, title, reason, body) {
   const answers = (Array.isArray(body?.answers) ? body.answers : [])
     .map((a) => `<li><strong>${esc(a.label)}</strong><br>${esc(String(a.value ?? '').slice(0, 3000)).replace(/\n/g, '<br>')}</li>`)
     .join('');
-  const html = `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#f4ece2;">
+  const html = `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#f6f0e4;">
 <div style="max-width:640px;margin:0 auto;font:16px/1.6 Helvetica,Arial,sans-serif;color:#2a211b;">
-  <div style="background:#b3372c;color:#fff;padding:14px 20px;border-radius:14px 14px 0 0;font-weight:700;">⚠ ${esc(title)}</div>
-  <div style="background:#fffaf4;padding:22px 26px;border-radius:0 0 14px 14px;">
+  <div style="background:#8a4b36;color:#fff;padding:14px 20px;border-radius:14px 14px 0 0;font-weight:700;">⚠ ${esc(title)}</div>
+  <div style="background:#fbf7ee;padding:22px 26px;border-radius:0 0 14px 14px;">
     <p><strong>Raison :</strong> ${esc(reason)}</p>
     <p>Le client attend son résultat : <strong>à traiter à la main</strong>.</p>
     <p>Client : ${esc(body?.name ?? '')} (${esc(body?.email ?? '')}) · commande n° ${esc(body?.orderId ?? '?')} · produit : ${esc(body?.product ?? '?')}</p>
@@ -157,15 +157,15 @@ if (sections < 5) warnings.push(`Structure incomplète (${sections} sections sur
 if (body.lang === 'fr' && /\b(the|your|and)\b/i.test(diag.slice(0, 400))) warnings.push('Langue à vérifier (le début ressemble à de l\'anglais)');
 
 const warn = warnings.length
-  ? `<div style="background:#fde8e6;border:1px solid #b3372c;padding:12px 20px;font-size:14px;"><strong>À vérifier avant envoi :</strong><ul style="margin:6px 0 0;padding-left:20px;">${warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div>`
+  ? `<div style="background:#f3e3d6;border:1px solid #8a4b36;padding:12px 20px;font-size:14px;"><strong>À vérifier avant envoi :</strong><ul style="margin:6px 0 0;padding-left:20px;">${warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div>`
   : '';
 const note = esc(out.note_interne || '').replace(/\n/g, '<br>');
-const html = `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#f4ece2;">
+const html = `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#f6f0e4;">
 <div style="max-width:640px;margin:0 auto;font:16px/1.6 Helvetica,Arial,sans-serif;color:#2a211b;">
-  <div style="background:#1a1410;color:#f1e8de;padding:14px 20px;border-radius:14px 14px 0 0;font-weight:700;">À relire avant envoi : ${esc(body.name || 'client')} (${esc(body.email)}) · ${body.lang.toUpperCase()}</div>
+  <div style="background:#3b2a63;color:#fbf7ee;padding:14px 20px;border-radius:14px 14px 0 0;font-weight:700;border-bottom:4px solid #694cac;">À relire avant envoi : ${esc(body.name || 'client')} (${esc(body.email)}) · ${body.lang.toUpperCase()}</div>
   ${warn}
-  <div style="background:#fff3cd;border:1px solid #e8b75a;padding:14px 20px;font-size:14px;"><strong>Note interne (ne pas transmettre)</strong><br>${note}</div>
-  <div style="background:#fffaf4;padding:24px 28px;border-radius:0 0 14px 14px;">${md(diag)}</div>
+  <div style="background:#e4d9f1;border:1px solid #694cac;padding:14px 20px;font-size:14px;"><strong>Note interne (ne pas transmettre)</strong><br>${note}</div>
+  <div style="background:#fbf7ee;padding:24px 28px;border-radius:0 0 14px 14px;">${md(diag)}</div>
   <p style="font-size:12px;color:#7a6a5c;text-align:center;">Répondez à cet e-mail pour écrire directement au client. Commande n° ${esc(body.orderId)}.</p>
 </div></body></html>`;
 
@@ -200,19 +200,19 @@ const todo = (prompt.match(/\[À COMPLÉTER|\[TO COMPLETE|\[TO BE COMPLETED/gi) 
 if (todo > 8) warnings.push(`Beaucoup de marqueurs à compléter (${todo}) : réponses du client peu détaillées`);
 
 const warn = warnings.length
-  ? `<div style="background:#fde8e6;border:1px solid #b3372c;padding:12px 20px;font-size:14px;"><strong>À vérifier avant envoi :</strong><ul style="margin:6px 0 0;padding-left:20px;">${warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div>`
+  ? `<div style="background:#f3e3d6;border:1px solid #8a4b36;padding:12px 20px;font-size:14px;"><strong>À vérifier avant envoi :</strong><ul style="margin:6px 0 0;padding-left:20px;">${warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div>`
   : '';
 const note = esc(out.note_interne || '').replace(/\n/g, '<br>');
-const html = `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#f4ece2;">
+const html = `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#f6f0e4;">
 <div style="max-width:680px;margin:0 auto;font:16px/1.6 Helvetica,Arial,sans-serif;color:#2a211b;">
-  <div style="background:#1a1410;color:#f1e8de;padding:14px 20px;border-radius:14px 14px 0 0;font-weight:700;">Master prompt à relire : ${esc(body.name || 'client')} (${esc(body.email)}) · ${body.lang.toUpperCase()} · ${nWords} mots</div>
+  <div style="background:#3b2a63;color:#fbf7ee;padding:14px 20px;border-radius:14px 14px 0 0;font-weight:700;">Master prompt à relire : ${esc(body.name || 'client')} (${esc(body.email)}) · ${body.lang.toUpperCase()} · ${nWords} mots</div>
   ${warn}
-  <div style="background:#fff3cd;border:1px solid #e8b75a;padding:14px 20px;font-size:14px;"><strong>Note interne (ne pas transmettre)</strong><br>${note}</div>
-  <div style="background:#fffaf4;padding:22px 26px;">
+  <div style="background:#e4d9f1;border:1px solid #694cac;padding:14px 20px;font-size:14px;"><strong>Note interne (ne pas transmettre)</strong><br>${note}</div>
+  <div style="background:#fbf7ee;padding:22px 26px;">
     <h2 style="margin:0 0 10px;font:700 18px/1.2 Helvetica,Arial,sans-serif;">Mode d'emploi</h2>
     ${md(out.mode_emploi)}
   </div>
-  <div style="background:#fffaf4;padding:4px 26px 24px;border-radius:0 0 14px 14px;">
+  <div style="background:#fbf7ee;padding:4px 26px 24px;border-radius:0 0 14px 14px;">
     <h2 style="margin:0 0 10px;font:700 18px/1.2 Helvetica,Arial,sans-serif;">Le master prompt (également en pièce jointe)</h2>
     <div style="white-space:pre-wrap;font:14px/1.55 Menlo,Consolas,monospace;background:#fff;border:1px solid #eadccc;border-radius:10px;padding:16px;">${esc(prompt)}</div>
   </div>
@@ -242,6 +242,83 @@ let mailId = '';
 try { mailId = String($('Envoyer via Resend').first().json.id ?? ''); } catch (e) {}
 return [{ json: { url: `${SITE_URL}/api/agent-done`, orderId, kind, to, mailId } }];
 """
+
+def _schema(spec):
+    """Spécification compacte -> responseSchema Gemini (JSON valide en JavaScript)."""
+    if spec == 's': return {"type": "STRING"}
+    if spec == 'i': return {"type": "INTEGER"}
+    if isinstance(spec, list):
+        return {"type": "ARRAY", "items": _schema(spec[0])}
+    return {"type": "OBJECT", "properties": {k: _schema(v) for k, v in spec.items()}, "required": list(spec.keys())}
+
+DIAG_SPEC = {
+    "resume": "s", "score_global": "i",
+    "scores": [{"axe": "s", "score": "i", "commentaire": "s"}],
+    "forces": ["s"],
+    "freins": [{"titre": "s", "constat": "s", "cause": "s", "impact": "s"}],
+    "pistes": [{"titre": "s", "probleme": "s", "solution": "s", "effet": "s", "effort": "s", "delai": "s", "premier_pas": "s"}],
+    "outils": [{"besoin": "s", "outil": "s", "pourquoi": "s", "cout": "s"}],
+    "plan": [{"periode": "s", "actions": ["s"]}],
+    "indicateurs": [{"indicateur": "s", "cible": "s"}],
+    "a_eviter": ["s"], "questions": ["s"], "note_interne": "s",
+}
+DIAG_PROPS = json.dumps({k: _schema(v) for k, v in DIAG_SPEC.items()}, ensure_ascii=False)
+DIAG_REQUIRED = json.dumps(list(DIAG_SPEC.keys()))
+
+# Diagnostic : l'agent envoie le résultat structuré au site, qui fabrique le PDF et envoie les e-mails
+RESULT_DIAG = r"""const v = $('Valider et dédoublonner').first().json;
+const body = v.body;
+const SITE_URL = 'https://bintakande.com';
+const send = (data) => [{ json: { url: `${SITE_URL}/api/agent-result`, payload: { orderId: body.orderId, product: body.product, ...data } } }];
+const res = $input.first().json;
+const cand = res.candidates?.[0];
+const text = (cand?.content?.parts ?? []).map((p) => p.text ?? '').join('');
+if (!text) return send({ ok: false, reason: res.promptFeedback?.blockReason ? `Bloqué par le modèle : ${res.promptFeedback.blockReason}` : 'Réponse vide du modèle' });
+let out;
+try { out = JSON.parse(text); } catch { return send({ ok: false, reason: cand?.finishReason === 'MAX_TOKENS' ? 'Réponse tronquée (limite de longueur)' : 'Réponse du modèle illisible (JSON invalide)' }); }
+const warnings = [];
+if (cand?.finishReason === 'MAX_TOKENS') warnings.push('Réponse tronquée (limite de longueur atteinte)');
+if (!out.resume || String(out.resume).split(/\s+/).length < 25) return send({ ok: false, reason: 'Résumé absent ou trop court' });
+if ((out.pistes ?? []).length !== 3) warnings.push(`Nombre de pistes inattendu (${(out.pistes ?? []).length} au lieu de 3)`);
+if ((out.plan ?? []).length < 4) warnings.push('Plan d\'action incomplet (moins de 4 semaines)');
+if ((out.scores ?? []).length < 6) warnings.push('Scores par axe incomplets');
+if (body.lang === 'fr' && /\b(the|your|and)\b/i.test(String(out.resume).slice(0, 300))) warnings.push('Langue à vérifier (le début ressemble à de l\'anglais)');
+const note = String(out.note_interne ?? '');
+delete out.note_interne;
+return send({ ok: true, result: out, warnings, note });
+"""
+
+FAIL_DIAG = r"""const v = $('Valider et dédoublonner').first().json;
+const inp = $input.first().json;
+const reason = Array.isArray(inp.problems) && inp.problems.length
+  ? inp.problems.join(' ; ')
+  : String(inp.error?.message ?? inp.error?.description ?? JSON.stringify(inp.error ?? inp)).slice(0, 400);
+return [{ json: { url: 'https://bintakande.com/api/agent-result', payload: { orderId: v.body.orderId, product: v.body.product, ok: false, reason } } }];
+"""
+
+def build_diag(cfg):
+    base = build(cfg)
+    names = {n['name']: n for n in base['nodes']}
+    keep = ["Webhook", "Valider et dédoublonner", "Données valides ?", "Préparer la requête", "Gemini Flash-Lite"]
+    nodes = [names[k] for k in keep]
+    nodes.append(node("Préparer le résultat", "n8n-nodes-base.code", 2, [1180, -160], {"jsCode": RESULT_DIAG}))
+    nodes.append(node("Préparer l'échec", "n8n-nodes-base.code", 2, [1180, 120], {"jsCode": FAIL_DIAG}))
+    nodes.append(node("Envoyer au site", "n8n-nodes-base.httpRequest", 4.2, [1440, 0], {
+        "method": "POST", "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
+        "sendBody": True, "specifyBody": "json", "jsonBody": "={{ JSON.stringify($json.payload) }}", "options": {"timeout": 120000}},
+        retryOnFail=True, maxTries=5, waitBetweenTries=15000, credentials={"httpHeaderAuth": {"id": "REMPLACER", "name": "Webhook Secret"}}))
+    main = lambda *targets: {"main": [[{"node": t, "type": "main", "index": 0} for t in out] for out in targets]}
+    conn = {
+        "Webhook": main(["Valider et dédoublonner"]),
+        "Valider et dédoublonner": main(["Données valides ?"]),
+        "Données valides ?": main(["Préparer la requête"], ["Préparer l'échec"]),
+        "Préparer la requête": main(["Gemini Flash-Lite"]),
+        "Gemini Flash-Lite": main(["Préparer le résultat"], ["Préparer l'échec"]),
+        "Préparer le résultat": main(["Envoyer au site"]),
+        "Préparer l'échec": main(["Envoyer au site"]),
+    }
+    return {"name": cfg['name'], "nodes": nodes, "connections": conn, "settings": {"executionOrder": "v1"}}
 
 def node(name, type_, ver, pos, params, **extra):
     n = {"parameters": params, "id": str(uuid.uuid4()), "name": name, "type": type_, "typeVersion": ver, "position": pos}
@@ -319,9 +396,8 @@ def build_watchdog():
 
 CONFIGS = [
     dict(file='diagnostic.workflow.json', name='Diagnostic IA du business', product='diagnostic', prompt_file='diagnostic-prompt.md',
-         min_answers=3, min_chars=120, temp=0.4, maxtok=6000, email_code=EMAIL_DIAG,
-         props="{ diagnostic_markdown: { type: 'STRING' }, note_interne: { type: 'STRING' } }",
-         required="['diagnostic_markdown', 'note_interne']"),
+         min_answers=3, min_chars=120, temp=0.4, maxtok=12000, email_code=EMAIL_DIAG, site_result=True,
+         props=DIAG_PROPS, required=DIAG_REQUIRED),
     dict(file='prompt.workflow.json', name='Master prompt', product='prompt', prompt_file='master-prompt-prompt.md',
          min_answers=4, min_chars=200, temp=0.5, maxtok=8192, email_code=EMAIL_PROMPT,
          props="{ master_prompt: { type: 'STRING' }, mode_emploi: { type: 'STRING' }, note_interne: { type: 'STRING' } }",
@@ -330,7 +406,7 @@ CONFIGS = [
 
 if __name__ == '__main__':
     for c in CONFIGS:
-        wf = build(c)
+        wf = build_diag(c) if c.get('site_result') else build(c)
         json.dump(wf, open(os.path.join(HERE, c['file']), 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
         print('écrit', c['file'], len(wf['nodes']), 'nœuds')
     json.dump(build_watchdog(), open(os.path.join(HERE, 'watchdog.workflow.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=2)

@@ -15,7 +15,12 @@ const firstName = (full: string) => full.trim().split(/\s+/)[0] || full;
 export type Mail = { to: string; subject: string; html: string; replyTo?: string; attachments?: { filename: string; content: string }[] };
 
 export async function sendMail(m: Mail): Promise<boolean> {
-  if (!hasResend()) return false;
+  return Boolean(await sendMailId(m));
+}
+
+/** Envoie l'e-mail et renvoie l'identifiant Resend (ou null en cas d'échec). */
+export async function sendMailId(m: Mail): Promise<string | null> {
+  if (!hasResend()) return null;
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env('RESEND_API_KEY')}`, 'Content-Type': 'application/json' },
@@ -28,7 +33,9 @@ export async function sendMail(m: Mail): Promise<boolean> {
       ...(m.attachments?.length ? { attachments: m.attachments } : {}),
     }),
   });
-  return res.ok;
+  if (!res.ok) return null;
+  const j = (await res.json().catch(() => ({}))) as { id?: string };
+  return j.id ?? 'sent';
 }
 
 export const ownerEmail = () => env('OWNER_EMAIL');

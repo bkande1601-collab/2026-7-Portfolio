@@ -55,6 +55,11 @@ ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_alerts integer NOT NULL DEFAU
 ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_mail_to text;
 ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_mail_id text;
 ALTER TABLE answers ADD COLUMN IF NOT EXISTS agent_done_at timestamptz;
+ALTER TABLE answers ADD COLUMN IF NOT EXISTS result jsonb;
+ALTER TABLE answers ADD COLUMN IF NOT EXISTS result_note text;
+ALTER TABLE answers ADD COLUMN IF NOT EXISTS result_warnings jsonb;
+ALTER TABLE answers ADD COLUMN IF NOT EXISTS client_sent_at timestamptz;
+ALTER TABLE answers ADD COLUMN IF NOT EXISTS client_sent_to text;
 CREATE TABLE IF NOT EXISTS stripe_events (
   id text PRIMARY KEY,
   type text NOT NULL,

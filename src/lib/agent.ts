@@ -54,6 +54,11 @@ export async function sendToAgent(order: Order, answers: Answer[], opts: { retry
   if (!failure) return void (await setStatus(order.id, 'sent')); // accepté ; 'done' viendra de la confirmation de n8n
   await setStatus(order.id, `failed:${failure}`);
   if (opts.silent) return; // le suivi automatique prévient aux seuils 4 h, 6 h et 12 h
+  await alertOwner(order, answers, failure);
+}
+
+/** E-mail d'alerte à Binta, avec les réponses du client pour traiter à la main. */
+export async function alertOwner(order: Order, answers: Answer[], failure: string) {
   await sendMail({
     to: ownerEmail(),
     subject: `⚠ Agent IA injoignable : préparez le résultat à la main (${order.email ?? ''})`,
