@@ -33,7 +33,7 @@ if (authed && hasDb()) {
   try {
     await ensureSchema();
     const o = await db().query(
-      `SELECT o.id, o.session_id, o.payment_intent, o.product, o.lang, o.email, o.name, o.amount, o.currency, o.status, o.refunded, o.created_at, o.paid_at,
+      `SELECT o.id, o.session_id, o.payment_intent, o.product, o.lang, o.email, o.name, o.phone, o.country, o.amount, o.currency, o.status, o.refunded, o.created_at, o.paid_at,
               (a.order_id IS NOT NULL) AS has_answers, a.submitted_at, a.agent_status, a.agent_at, a.agent_attempts, a.agent_done_at, a.agent_mail_to,
               (a.result IS NOT NULL) AS has_result, a.client_sent_at, a.client_sent_to
          FROM orders o LEFT JOIN answers a ON a.order_id = o.id ORDER BY o.created_at DESC LIMIT 1000`,
@@ -66,6 +66,7 @@ if (authed && n8nConfigured) {
 }
 
 
+const n8nOpen = n8nBase || (env('N8N_WEBHOOK_URL').match(/^https?:\/\/[^/]+/)?.[0] ?? '');
 const umami = (env('PUBLIC_UMAMI_URL') || (import.meta.env.PUBLIC_UMAMI_URL ?? '')).replace(/\/$/, '');
 const boot = {
   orders,
@@ -73,6 +74,7 @@ const boot = {
   n8n,
   n8nError,
   n8nConfigured,
+  n8nOpen,
   umami,
   hasDb: hasDb(),
   dbError,

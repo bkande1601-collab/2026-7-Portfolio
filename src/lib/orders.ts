@@ -15,6 +15,8 @@ export type Order = {
   lang: string;
   email: string | null;
   name: string | null;
+  phone?: string | null;
+  country?: string | null;
   amount: number;
   currency: string;
   status: string;
@@ -59,12 +61,14 @@ export async function markPaid(session: Stripe.Checkout.Session): Promise<Order>
   const pi = typeof session.payment_intent === 'string' ? session.payment_intent : (session.payment_intent?.id ?? null);
 
   const r = await db().query<Order>(
-    `INSERT INTO orders (session_id, payment_intent, product, lang, email, name, amount, currency, status, paid_at)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'paid', now())
+    `INSERT INTO orders (session_id, payment_intent, product, lang, email, name, amount, currency, phone, country, status, paid_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'paid', now())
      ON CONFLICT (session_id) DO UPDATE SET
        payment_intent = COALESCE(EXCLUDED.payment_intent, orders.payment_intent),
        email = COALESCE(EXCLUDED.email, orders.email),
        name = COALESCE(EXCLUDED.name, orders.name),
+       phone = COALESCE(EXCLUDED.phone, orders.phone),
+       country = COALESCE(EXCLUDED.country, orders.country),
        amount = EXCLUDED.amount,
        currency = EXCLUDED.currency,
        status = CASE WHEN orders.status IN ('refunded', 'disputed') THEN orders.status ELSE 'paid' END,
@@ -79,6 +83,8 @@ export async function markPaid(session: Stripe.Checkout.Session): Promise<Order>
       session.customer_details?.name ?? null,
       session.amount_total ?? 0,
       session.currency ?? 'eur',
+      session.customer_details?.phone ?? null,
+      session.customer_details?.address?.country ?? null,
     ],
   );
   const order = r.rows[0];

@@ -1,0 +1,53 @@
+---
+/**
+ * Barre fixe en bas des pages de services : toujours visible, elle propose les deux produits pendant la lecture.
+ * Les boutons ouvrent directement le paiement (BuyButton), comme sur la page produit.
+ */
+import BuyButton from './BuyButton.astro';
+import { href, type Lang } from '../content';
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const T = fr
+  ? { lead: 'Passez à l’action pendant que vous lisez', sub: 'Résultat par e-mail, sans rendez-vous.', diag: 'Je veux mon diagnostic IA · 19 €', prompt: 'Je veux mon prompt maître · 39 €', diagShort: 'Mon diagnostic · 19 €', promptShort: 'Mon prompt · 39 €', all: 'Voir tous les produits', soon: 'Bientôt', err: 'Paiement indisponible' }
+  : { lead: 'Take action while you read', sub: 'Result by email, no appointment needed.', diag: 'Get my AI diagnostic · €19', prompt: 'Get my master prompt · €39', diagShort: 'My diagnostic · €19', promptShort: 'My prompt · €39', all: 'See all products', soon: 'Soon', err: 'Payment unavailable' };
+---
+
+<div class="buybar" role="region" aria-label={T.lead}>
+  <div class="buybar-in">
+    <p class="buybar-text"><strong>{T.lead}</strong><span>{T.sub} <a href={href(lang, 'products')}>{T.all}</a></span></p>
+    <div class="buybar-btns">
+      <BuyButton product="diagnostic" lang={lang} label={T.diag} soon={T.soon} link={href(lang, 'products/diagnostic')} />
+      <BuyButton product="prompt" lang={lang} label={T.prompt} soon={T.soon} link={href(lang, 'products/prompt')} />
+    </div>
+  </div>
+</div>
+<div class="buybar-spacer" aria-hidden="true"></div>
+
+<style is:global>
+  :root { --buybar-h: 76px; }
+  .buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 80; background: var(--violet-deep); color: #fbf7ee; box-shadow: 0 -8px 30px rgba(43, 29, 22, 0.22); border-top: 3px solid var(--violet); padding-bottom: env(safe-area-inset-bottom); }
+  .buybar-in { max-width: var(--max); margin: 0 auto; padding: 12px var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .buybar-text { margin: 0; display: grid; gap: 1px; min-width: 0; line-height: 1.3; }
+  .buybar-text strong { font-size: 1rem; }
+  .buybar-text span { color: #c6b8e4; font-size: 0.85rem; }
+  .buybar-text a { color: #fff; text-underline-offset: 3px; }
+  .buybar-btns { display: flex; gap: 10px; flex-wrap: nowrap; }
+  .buybar .btn { white-space: nowrap; padding: 11px 20px; font-size: 0.95rem; }
+  .buybar .btn.btn-primary { background: #f6f0e4; color: var(--violet-deep); border: 0; }
+  .buybar .btn.btn-primary:hover { background: #fff; }
+  .buybar-btns .btn + .btn, .buybar-btns > :last-child .btn { background: transparent; color: #fff; box-shadow: inset 0 0 0 2px #c6b8e4; }
+  .buybar-btns > :last-child .btn:hover { background: rgba(255, 255, 255, 0.1); }
+  .buybar-spacer { height: calc(var(--buybar-h) + 8px); }
+  body:has(.buybar) .site-chat, body:has(.buybar) .welcome, body:has(.buybar) .welcome-launch { bottom: calc(var(--buybar-h) + 14px); }
+  @media (max-width: 820px) {
+    :root { --buybar-h: 66px; }
+    .buybar-text { display: none; }
+    .buybar-in { padding: 10px 12px; }
+    .buybar-btns { width: 100%; gap: 8px; }
+    .buybar-btns > * { flex: 1; }
+    .buybar .btn { width: 100%; padding: 12px 8px; font-size: 0.85rem; white-space: normal; line-height: 1.2; }
+  }
+</style>

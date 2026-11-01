@@ -44,7 +44,7 @@
   }
 
   /* ---------- état ---------- */
-  const state = { view: 'overview', period: 30, q: '', status: 'all', product: 'all', sort: 'date', dir: -1, page: 1, cq: '' };
+  const state = { cview: 'overview', view: 'overview', period: 30, q: '', status: 'all', product: 'all', sort: 'date', dir: -1, page: 1, cq: '' };
   const range = () => {
     const now = Date.now();
     if (!state.period) return { from: 0, to: now, pf: null, pt: null };
@@ -248,46 +248,126 @@
   }
 
   /* ---------- clients ---------- */
+  const splitName = (n) => { const t = String(n || '').trim().split(/\s+/); return { first: t[0] || '', last: t.slice(1).join(' ') }; };
+  const link = (u) => { const v = String(u || '').trim(); if (!v) return '<span class="muted">—</span>'; const h = /^https?:\/\//i.test(v) ? v : `https://${v}`; return `<a href="${esc(h)}" target="_blank" rel="noopener noreferrer">${esc(v.replace(/^https?:\/\/(www\.)?/i, '').slice(0, 42))}</a>`; };
+  let clientsData = null;
+  async function loadClients() {
+    if (clientsData) return clientsData;
+    const r = await fetch('/admin/clients'); const j = await r.json(); clientsData = j.rows || []; return clientsData;
+  }
+  function buildClients(rows) {
+    const map = new Map();
+    rows.forEach((x) => {
+      const key = (x.email || '').toLowerCase() || `id${x.id}`;
+      const c = map.get(key) || { key, email: x.email || '', name: '', phone: '', country: '', lang: '', website: '', linkedin: '', socials: '', activity: '', problem: '', revenue: '', products: new Set(), ids: [], n: 0, total: 0, firstT: Infinity, lastT: 0 };
+      ['name', 'phone', 'country', 'lang', 'website', 'linkedin', 'socials', 'activity', 'problem', 'revenue'].forEach((f) => { if (!c[f] && x[f]) c[f] = x[f]; });
+      const o = byId.get(x.id);
+      c.products.add(NAMES[x.product] || x.product); c.ids.push(x.id); c.n++;
+      if (o) c.total += net(o);
+      const t = new Date(x.paid_at).getTime(); c.lastT = Math.max(c.lastT, t); c.firstT = Math.min(c.firstT, t);
+      map.set(key, c);
+    });
+    return [...map.values()].sort((a, b) => b.lastT - a.lastT);
+  }
+  const tableOf = (rows) => rows.map((r) => r.map((c) => `"${String(c ?? '').replace(/"/g, '""')}"`).join(';')).join('\n');
+  const DBCOLS = ['Prénom', 'Nom', 'E-mail', 'Téléphone', 'Pays', 'Langue', 'Site web', 'LinkedIn', 'Autres présences', 'Activité', 'Produits', 'Commandes', 'Total net (EUR)', 'Première commande', 'Dernière commande'];
+  const dbRow = (c) => { const n = splitName(c.name); return [n.first, n.last, c.email, c.phone, c.country, (c.lang || '').toUpperCase(), c.website, c.linkedin, c.socials, c.activity, [...c.products].join(', '), c.n, (c.total / 100).toFixed(2), new Date(c.firstT).toISOString().slice(0, 10), new Date(c.lastT).toISOString().slice(0, 10)]; };
+  async function exportClients(kind) {
+    const list = buildClients(await loadClients());
+    const rows = [DBCOLS, ...list.map(dbRow)];
+    if (kind === 'copy') {
+      const tsv = rows.map((r) => r.map((c) => String(c ?? '').replace(/[\t\r\n]+/g, ' ')).join('\t')).join('\n');
+      try { await navigator.clipboard.writeText(tsv); toast('✓ Base clients copiée : collez-la dans Google Sheets (Ctrl+V ou Cmd+V).', 'ok'); } catch { toast('Copie impossible : utilisez « Exporter (CSV) ».', 'bad'); }
+      return;
+    }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + tableOf(rows)], { type: 'text/csv;charset=utf-8' })); a.download = `clients-${new Date().toISOString().slice(0, 10)}.csv`; a.click(); URL.revokeObjectURL(a.href);
+  }
   function renderCustomers() {
+    const tabs = `<div class="seg" style="margin-bottom:16px"><button data-cview="overview" class="${state.cview === 'overview' ? 'on' : ''}">Vue d’ensemble</button><button data-cview="db" class="${state.cview === 'db' ? 'on' : ''}">Base de données clients</button></div>`;
+    const q = state.cq.trim().toLowerCase();
+    if (state.cview === 'db') {
+      $('#view-customers').innerHTML = `${tabs}<div class="toolbar"><div class="search">${searchIcon}<input id="cq" type="search" placeholder="Rechercher un client…" value="${esc(state.cq)}" /></div><span class="spacer"></span><button class="btn" data-cexport="copy">Copier pour Google Sheets</button><button class="btn primary" data-cexport="csv">Exporter (CSV)</button></div><div id="cdb"><div class="card"><div class="skeleton"></div></div></div>`;
+      const q2 = $('#cq'); if (state.focusC) { q2.focus(); q2.setSelectionRange(q2.value.length, q2.value.length); state.focusC = false; }
+      loadClients().then((rows) => {
+        const list = buildClients(rows).filter((c) => !q || `${c.name} ${c.email} ${c.phone} ${c.website} ${c.linkedin}`.toLowerCase().includes(q));
+        const box = $('#cdb'); if (!box) return;
+        box.innerHTML = `<div class="tablewrap"><div class="tscroll"><table class="t db"><thead><tr>${DBCOLS.map((h, i) => `<th class="${i === 11 || i === 12 ? 'num' : ''}">${esc(h)}</th>`).join('')}</tr></thead><tbody>${list.map((c) => { const n = splitName(c.name); return `<tr data-client="${esc(c.key)}"><td>${esc(n.first) || '—'}</td><td>${esc(n.last) || '—'}</td><td class="ellip">${esc(c.email)}</td><td class="nw">${esc(c.phone) || '<span class="muted">—</span>'}</td><td>${esc(c.country) || '—'}</td><td>${esc((c.lang || '').toUpperCase())}</td><td class="ellip">${link(c.website)}</td><td class="ellip">${link(c.linkedin)}</td><td class="ellip">${esc(c.socials) || '—'}</td><td class="long">${esc(c.activity) || '—'}</td><td>${esc([...c.products].join(', '))}</td><td class="num">${c.n}</td><td class="num nw">${eur(c.total)}</td><td class="nw">${dfmt.format(c.firstT)}</td><td class="nw">${dfmt.format(c.lastT)}</td></tr>`; }).join('') || `<tr style="cursor:default"><td colspan="${DBCOLS.length}" class="empty">Aucun client.</td></tr>`}</tbody></table></div><div class="pager"><span>${list.length} client${list.length > 1 ? 's' : ''} · cliquez sur une ligne pour ouvrir la fiche</span></div></div>`;
+      }).catch(() => { const box = $('#cdb'); if (box) box.innerHTML = '<div class="card"><p class="err">Impossible de charger la base clients.</p></div>'; });
+      return;
+    }
     const map = new Map();
     orders.filter(isPaid).forEach((o) => {
       const k = (o.email || '').toLowerCase() || `id${o.id}`;
-      const c = map.get(k) || { email: o.email, name: o.name, n: 0, total: 0, last: 0, products: new Set(), id: o.id };
-      c.n++; c.total += net(o); if (o.paidT > c.last) { c.last = o.paidT; c.id = o.id; c.name = o.name || c.name; } c.products.add(NAMES[o.product] || o.product); map.set(k, c);
+      const c = map.get(k) || { key: k, email: o.email, name: o.name, n: 0, total: 0, last: 0, products: new Set() };
+      c.n++; c.total += net(o); if (o.paidT > c.last) { c.last = o.paidT; c.name = o.name || c.name; } c.products.add(NAMES[o.product] || o.product); map.set(k, c);
     });
-    const q = state.cq.trim().toLowerCase();
     const list = [...map.values()].filter((c) => !q || `${c.name} ${c.email}`.toLowerCase().includes(q)).sort((a, b) => b.last - a.last);
-    $('#view-customers').innerHTML = `
+    $('#view-customers').innerHTML = `${tabs}
       <div class="toolbar"><div class="search">${searchIcon}<input id="cq" type="search" placeholder="Rechercher un client…" value="${esc(state.cq)}" /></div><span class="spacer"></span><span class="muted">${list.length} client${list.length > 1 ? 's' : ''}</span></div>
       <div class="tablewrap"><div class="tscroll"><table class="t"><thead><tr><th>Client</th><th>Produits</th><th class="num">Commandes</th><th class="num">Total net</th><th>Dernier achat</th></tr></thead>
-      <tbody>${list.map((c) => `<tr data-open="${c.id}"><td class="name"><b>${esc(c.name || '—')}</b><span>${esc(c.email || '')}</span></td><td>${esc([...c.products].join(', '))}</td><td class="num">${c.n}</td><td class="num nw">${eur(c.total)}</td><td class="nw">${dfmt.format(c.last)}</td></tr>`).join('') || '<tr style="cursor:default"><td colspan="5" class="empty">Aucun client pour l’instant.</td></tr>'}</tbody></table></div></div>`;
+      <tbody>${list.map((c) => `<tr data-client="${esc(c.key)}"><td class="name"><b>${esc(c.name || '—')}</b><span>${esc(c.email || '')}</span></td><td>${esc([...c.products].join(', '))}</td><td class="num">${c.n}</td><td class="num nw">${eur(c.total)}</td><td class="nw">${dfmt.format(c.last)}</td></tr>`).join('') || '<tr style="cursor:default"><td colspan="5" class="empty">Aucun client pour l’instant.</td></tr>'}</tbody></table></div></div>`;
     const q2 = $('#cq'); if (state.focusC) { q2.focus(); q2.setSelectionRange(q2.value.length, q2.value.length); state.focusC = false; }
   }
 
+  /* ---------- espace client ---------- */
+  async function openClient(key) {
+    const dr = $('#drawer'); current = null;
+    dr.innerHTML = '<div class="dr-head"><div><h2>Espace client</h2><div class="sub">Chargement…</div></div><button class="dr-x" id="dr-close" aria-label="Fermer">×</button></div><div class="dr-body"><div class="skeleton"></div><div class="skeleton"></div></div>';
+    dr.classList.add('open'); dr.setAttribute('aria-hidden', 'false'); $('#scrim').hidden = false;
+    let c;
+    try { c = buildClients(await loadClients()).find((x) => x.key === key); } catch { /* repli ci-dessous */ }
+    if (!c) { const o = orders.find((x) => (x.email || '').toLowerCase() === key || `id${x.id}` === key); c = { key, email: o?.email || '', name: o?.name || '', phone: o?.phone || '', country: o?.country || '', lang: o?.lang || '', website: '', linkedin: '', socials: '', activity: '', problem: '', revenue: '', products: new Set(), ids: orders.filter((x) => (x.email || '').toLowerCase() === key && isPaid(x)).map((x) => x.id), n: 0, total: 0, firstT: 0, lastT: 0 }; }
+    const n = splitName(c.name);
+    const mine = c.ids.map((id) => byId.get(id)).filter(Boolean).sort((a, b) => (b.paidT || 0) - (a.paidT || 0));
+    const total = mine.reduce((t, o) => t + net(o), 0);
+    const row = (k, v) => `<dt>${k}</dt><dd>${v || '<span class="muted">—</span>'}</dd>`;
+    dr.innerHTML = `
+      <div class="dr-head"><div><h2>${esc(c.name || c.email || 'Client')}</h2><div class="sub">Espace client · ${mine.length} commande${mine.length > 1 ? 's' : ''} · ${eur(total)} net</div></div><button class="dr-x" id="dr-close" aria-label="Fermer">×</button></div>
+      <div class="dr-body">
+        <div><div class="group-title">Coordonnées</div><dl class="kv">${row('Prénom', esc(n.first))}${row('Nom', esc(n.last))}${row('E-mail', c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : '')}${row('Téléphone', c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>` : '')}${row('Pays', esc(c.country))}${row('Langue', esc((c.lang || '').toUpperCase()))}</dl></div>
+        <div><div class="group-title">Son activité</div><dl class="kv">${row('Site web', c.website ? link(c.website) : '')}${row('LinkedIn', c.linkedin ? link(c.linkedin) : '')}${row('Autres liens', esc(c.socials))}${row('Chiffre d’affaires', esc(c.revenue))}</dl>
+        ${c.activity ? `<div class="quote" style="margin-top:10px"><b>Activité :</b> ${esc(c.activity)}</div>` : ''}${c.problem ? `<div class="noteb" style="margin-top:8px"><b>Son problème :</b> ${esc(c.problem)}</div>` : ''}</div>
+        <div><div class="group-title">Commandes</div><div class="alerts">${mine.map((o) => `<button class="alert" data-open="${o.id}"><i class="dot" style="background:var(--${o.status === 'paid' ? 'ok' : 'bad'})"></i><div><b>${esc(NAMES[o.product] || o.product)} · ${eur(o.amount)}</b><span>${dtfmt.format(o.paidT || o.createdT)}${delivery(o) ? ` · ${esc(delivery(o).label)}` : ''}</span></div></button>`).join('') || '<span class="muted">Aucune.</span>'}</div></div>
+        ${c.email ? `<div class="actions"><a class="btn primary" href="mailto:${esc(c.email)}">Écrire au client</a></div>` : ''}
+      </div>`;
+  }
+
   /* ---------- automatisations ---------- */
-  const AUTO = [['off', 'Jamais (je l’envoie moi-même)', 'Le PDF ne part que si vous cliquez sur « Envoyer au client ».'], ['now', 'Tout de suite', 'Le client reçoit le PDF dès qu’il est prêt, sans relecture.'], ['1', 'Dans l’heure (recommandé)', 'Vous avez environ 45 minutes pour relire et corriger. Sinon il part tout seul. Le client est prévenu : « dans l’heure ».'], ['4', 'Après 4 heures', 'Vous avez 4 heures pour relire et corriger. Sinon il part tout seul.'], ['12', 'Après 12 heures', 'Un peu plus de temps pour relire.'], ['24', 'Après 24 heures', 'Un jour entier pour relire.']];
+  const AUTO = [['off', 'Jamais (je l’envoie moi-même)', 'Le PDF ne part que si vous cliquez sur « Envoyer au client ».'], ['now', 'Tout de suite', 'Le client reçoit le PDF dès qu’il est prêt, sans relecture.'], ['1', 'Dans l’heure (recommandé)', 'Environ 45 minutes pour relire et corriger. Le client est prévenu : « dans l’heure ».'], ['4', 'Après 4 heures', '4 heures pour relire et corriger, puis il part tout seul.'], ['12', 'Après 12 heures', 'Un peu plus de temps pour relire.'], ['24', 'Après 24 heures', 'Un jour entier pour relire.']];
+  const AUTOMS = [
+    { name: 'Livraison du diagnostic', wf: 'Diagnostic IA du business', desc: 'Analyse les réponses du questionnaire, fabrique le PDF et vous l’envoie pour relecture, puis l’envoie au client.', setting: 'autosend' },
+    { name: 'Livraison du master prompt', wf: 'Master prompt', desc: 'Génère le prompt maître à partir du questionnaire et vous l’envoie pour relecture.' },
+    { name: 'Suivi des livraisons', wf: 'Surveillance des livraisons', desc: 'Toutes les 10 minutes : relance l’agent si un résultat manque, et vous écrit à 4 h, 6 h et 12 h de retard.' },
+  ];
   function renderAutomations() {
     const n = boot.n8n;
+    const base = (boot.n8nOpen || '').replace(/\/$/, '');
+    const wfUrl = (id) => (base ? (id ? `${base}/workflow/${encodeURIComponent(id)}` : `${base}/home/workflows`) : '');
     const exec = (n?.executions || []);
     const wf = (id) => n?.workflows.find((w) => w.id === id)?.name || id;
     const st = (x) => x.status || (x.finished ? 'success' : 'running');
     const label = { success: ['réussie', 'ok'], error: ['en erreur', 'bad'], crashed: ['plantée', 'bad'], running: ['en cours', 'warn'], waiting: ['en attente', 'warn'], canceled: ['annulée', 'gray'], new: ['en file', 'gray'] };
+    const ext = (u, t) => (u ? `<a class="btn sm" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${t} ↗</a>` : '');
+    const items = AUTOMS.map((a) => {
+      const w = n?.workflows.find((x) => x.name === a.wf);
+      const last = w ? exec.find((x) => x.workflowId === w.id) : null;
+      const [ll, lt] = last ? (label[st(last)] || [st(last), 'gray']) : ['', ''];
+      const stat = w ? tag(w.active ? 'actif' : 'inactif', w.active ? 'ok' : 'bad') : tag(boot.n8nConfigured ? 'introuvable' : 'n8n non relié', 'gray');
+      const sel = a.setting === 'autosend' ? `<div class="setting"><label for="autosel"><b>Envoi du PDF au client</b></label><select id="autosel">${AUTO.map(([v, t]) => `<option value="${v}" ${boot.autoSend === v ? 'selected' : ''}>${t}</option>`).join('')}</select><p class="sub" id="autohint">${esc(AUTO.find((x) => x[0] === boot.autoSend)?.[2] || '')} Jamais automatique si l’agent a signalé un point à vérifier.</p></div>` : '';
+      return `<details class="auto"><summary><span class="an">${esc(a.name)}</span>${stat}${last ? `<span class="muted" style="font-size:.8rem">dernière exécution : ${tag(ll, lt)}</span>` : ''}<i class="chev" aria-hidden="true">⌄</i></summary><div class="auto-body"><p class="sub">${esc(a.desc)}</p>${sel}<div class="actions">${ext(wfUrl(w?.id), 'Ouvrir ce workflow dans n8n')}</div></div></details>`;
+    }).join('');
     $('#view-automations').innerHTML = `
-      <div class="grid g2">
-        <div class="card"><h3>Envoi automatique au client</h3><p class="sub">Quand le PDF du diagnostic est prêt, il vous est d’abord envoyé pour relecture. Choisissez quand il part ensuite au client. Jamais automatiquement si l’agent a signalé un point à vérifier.</p>
-          <div class="opts" id="auto-opts">${AUTO.map(([v, t, d]) => `<label class="opt ${boot.autoSend === v ? 'on' : ''}"><input type="radio" name="auto" value="${v}" ${boot.autoSend === v ? 'checked' : ''}><div><b>${t}</b><span>${d}</span></div></label>`).join('')}</div>
-        </div>
-        <div class="card"><h3>État du système</h3><p class="sub">Vérifié à l’ouverture de cette page.</p><div class="health" id="health"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
-          <p class="sub" style="margin-top:14px">Le suivi automatique relance l’agent toutes les 10 minutes tant que le résultat n’est pas parti, et vous écrit à 4 h, 6 h et 12 h de retard.</p></div>
-      </div>
-      <p class="section-title">n8n</p>
-      ${!boot.n8nConfigured ? '<div class="card"><p class="muted">Non configuré : ajoutez <code>N8N_URL</code> et <code>N8N_API_KEY</code> (n8n, Settings puis n8n API) dans Coolify, puis redéployez.</p></div>' : boot.n8nError ? `<div class="card"><p class="err">Impossible de joindre n8n (${esc(boot.n8nError)}).</p></div>` : `
-      <div class="grid g2"><div class="card"><h3>Workflows</h3><div class="tscroll"><table class="t"><tbody>${(n?.workflows || []).map((w) => `<tr style="cursor:default"><td class="name"><b>${esc(w.name)}</b></td><td class="num">${tag(w.active ? 'actif' : 'inactif', w.active ? 'ok' : 'gray')}</td></tr>`).join('') || '<tr style="cursor:default"><td class="muted">Aucun workflow.</td></tr>'}</tbody></table></div></div>
-      <div class="card"><h3>Dernières exécutions</h3><p class="sub">${exec.filter((x) => ['error', 'crashed'].includes(st(x))).length} erreur(s) sur les ${exec.length} dernières.</p><div class="tscroll"><table class="t"><tbody>${exec.slice(0, 10).map((x) => { const [l, tn] = label[st(x)] || [st(x), 'gray']; return `<tr style="cursor:default"><td class="name"><b>${esc(wf(x.workflowId))}</b><span>${x.startedAt ? dtfmt.format(new Date(x.startedAt)) : ''}</span></td><td class="num">${tag(l, tn)}</td></tr>`; }).join('') || '<tr style="cursor:default"><td class="muted">Aucune exécution.</td></tr>'}</tbody></table></div></div></div>`}`;
+      <div class="health-bar"><span class="muted" style="font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em">Système</span><div id="health" class="chips-row"><span class="skeleton" style="width:200px"></span></div><span class="spacer"></span>${ext(base ? `${base}/home/workflows` : '', 'Ouvrir n8n')}</div>
+      <p class="section-title">Mes automatisations</p>
+      <div class="autos">${items}</div>
+      <p class="section-title">Workflows n8n</p>
+      ${!boot.n8nConfigured ? `<div class="card"><p class="muted">Pour voir ici vos workflows et leurs exécutions, ajoutez <code>N8N_URL</code> et <code>N8N_API_KEY</code> (n8n, Settings puis n8n API) dans Coolify, puis redéployez.${base ? '' : ''}</p></div>` : boot.n8nError ? `<div class="card"><p class="err">Impossible de joindre n8n (${esc(boot.n8nError)}).</p></div>` : `
+      <div class="grid g2"><div class="card"><h3>Workflows</h3><p class="sub">Cliquez sur un nom pour ouvrir le workflow dans n8n.</p><div class="tscroll"><table class="t"><tbody>${(n?.workflows || []).map((w) => `<tr style="cursor:default"><td class="name"><b>${base ? `<a href="${esc(wfUrl(w.id))}" target="_blank" rel="noopener noreferrer">${esc(w.name)} ↗</a>` : esc(w.name)}</b></td><td class="num">${tag(w.active ? 'actif' : 'inactif', w.active ? 'ok' : 'gray')}</td></tr>`).join('') || '<tr style="cursor:default"><td class="muted">Aucun workflow.</td></tr>'}</tbody></table></div></div>
+      <div class="card"><h3>Dernières exécutions</h3><p class="sub">${exec.filter((x) => ['error', 'crashed'].includes(st(x))).length} erreur(s) sur les ${exec.length} dernières. Cliquez pour ouvrir le détail.</p><div class="tscroll"><table class="t"><tbody>${exec.slice(0, 10).map((x) => { const [l, tn] = label[st(x)] || [st(x), 'gray']; const u = base ? `${base}/workflow/${encodeURIComponent(x.workflowId)}/executions/${encodeURIComponent(x.id)}` : ''; return `<tr style="cursor:default"><td class="name"><b>${u ? `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(wf(x.workflowId))} ↗</a>` : esc(wf(x.workflowId))}</b><span>${x.startedAt ? dtfmt.format(new Date(x.startedAt)) : ''}</span></td><td class="num">${tag(l, tn)}</td></tr>`; }).join('') || '<tr style="cursor:default"><td class="muted">Aucune exécution.</td></tr>'}</tbody></table></div></div></div>`}`;
     fetch('/api/health').then((r) => r.json()).then((h) => {
-      const row = (l, ok, extra = '') => `<div class="hrow"><span>${l}</span>${tag(ok ? 'OK' : 'À vérifier', ok ? 'ok' : 'bad')}${extra}</div>`;
-      $('#health').innerHTML = row('Paiement Stripe', h.stripe) + row('Webhook Stripe', h.webhookSecret) + row('E-mails (Resend)', h.resend) + row('Agent IA (n8n)', h.agent) + row('Base de données', h.db === 'ok');
-    }).catch(() => { $('#health').innerHTML = '<span class="muted">Vérification impossible.</span>'; });
+      const chip = (l, ok) => `<span class="tag ${ok ? 'ok' : 'bad'}">${ok ? '✓' : '!'} ${l}</span>`;
+      const el = $('#health'); if (el) el.innerHTML = chip('Stripe', h.stripe) + chip('Webhook', h.webhookSecret) + chip('E-mails', h.resend) + chip('Agent IA', h.agent) + chip('Base de données', h.db === 'ok');
+    }).catch(() => { const el = $('#health'); if (el) el.innerHTML = '<span class="muted">Vérification impossible.</span>'; });
   }
 
   /* ---------- fiche ---------- */
@@ -329,7 +409,8 @@
         ${res?.analyse_expert?.verdict ? `<div><div class="group-title">Verdict de l’expert</div><div class="quote">${esc(res.analyse_expert.verdict)}</div></div>` : ''}
         ${detail?.warnings?.length ? `<div><div class="group-title">À vérifier</div><div class="noteb">${esc(detail.warnings.join('\n'))}</div></div>` : ''}
         ${detail?.note ? `<div><div class="group-title">Note interne</div><div class="noteb">${esc(detail.note)}</div></div>` : ''}
-        ${o.has_answers ? `<div><div class="group-title">Réponses du client${ans.length ? ` (${ans.length})` : ''}</div><div class="qa" id="qa">${detail ? ans.map((a) => `<details><summary>${esc(a.label)}</summary><div class="ans">${esc(a.value)}</div></details>`).join('') : '<div class="skeleton"></div>'}</div></div>` : ''}
+        ${o.has_answers ? `<details class="outer"><summary>Réponses du client${ans.length ? ` (${ans.length})` : ''} <span class="muted">· masquées, cliquez pour afficher</span></summary><div class="qa" id="qa">${detail ? ans.map((a) => `<details><summary>${esc(a.label)}</summary><div class="ans">${esc(a.value)}</div></details>`).join('') : '<div class="skeleton"></div>'}</div></details>` : ''}
+        <div><div class="group-title">Gérer la commande</div><div class="actions">${o.email ? `<button class="btn" data-client="${esc((o.email || '').toLowerCase())}">Ouvrir l’espace client</button>` : ''}<button class="btn" data-manage="edit">Modifier</button><button class="btn danger" data-manage="delete">Supprimer</button></div></div>
       </div>`;
   }
   async function openOrder(id) {
@@ -357,6 +438,41 @@
       const done = (v) => { m.hidden = true; res(v); };
       $('#m-yes').onclick = () => done(true); $('#m-no').onclick = () => done(false);
     });
+  }
+
+  /* ---------- modifier / supprimer une commande ---------- */
+  function editDialog(o) {
+    const m = $('#modal'); const val = (v) => esc(v || '');
+    $('#modal-card').innerHTML = `<h3 style="font-size:1.05rem">Modifier la commande n° ${o.id}</h3>
+      <label class="fld">Nom complet<input id="e-name" value="${val(o.name)}" /></label>
+      <label class="fld">E-mail<input id="e-email" type="email" value="${val(o.email)}" /></label>
+      <label class="fld">Téléphone<input id="e-phone" value="${val(o.phone)}" /></label>
+      <div class="two"><label class="fld">Produit<select id="e-product"><option value="diagnostic" ${o.product === 'diagnostic' ? 'selected' : ''}>Diagnostic</option><option value="prompt" ${o.product === 'prompt' ? 'selected' : ''}>Master prompt</option></select></label>
+      <label class="fld">Langue<select id="e-lang"><option value="fr" ${o.lang !== 'en' ? 'selected' : ''}>Français</option><option value="en" ${o.lang === 'en' ? 'selected' : ''}>Anglais</option></select></label></div>
+      <p class="err" id="e-err"></p>
+      <div class="actions"><button class="btn" id="m-no">Annuler</button><button class="btn primary" id="m-yes">Enregistrer</button></div>`;
+    m.hidden = false; $('#e-name').focus();
+    $('#m-no').onclick = () => { m.hidden = true; };
+    $('#m-yes').onclick = async () => {
+      const body = { order_id: o.id, name: $('#e-name').value, email: $('#e-email').value, phone: $('#e-phone').value, product: $('#e-product').value, lang: $('#e-lang').value };
+      const res = await fetch('/admin/order-edit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) { $('#e-err').textContent = j.error === 'bad_email' ? 'Adresse e-mail invalide.' : 'Enregistrement impossible.'; return; }
+      Object.assign(o, j.order); clientsData = null; m.hidden = true; toast('✓ Commande modifiée.', 'ok'); renderCurrent();
+    };
+  }
+  function deleteDialog(o) {
+    const m = $('#modal');
+    $('#modal-card').innerHTML = `<h3 style="font-size:1.05rem">Supprimer cette commande ?</h3><p>Commande n° ${o.id} · <b>${esc(o.name || o.email || '')}</b> · ${esc(NAMES[o.product] || o.product)}${o.amount ? ` · ${eur(o.amount)}` : ''}.</p><p class="muted" style="font-size:.88rem">Ses réponses et son diagnostic seront effacés. C’est définitif.${isPaid(o) ? ' <b>Cette commande est payée : la supprimer ne rembourse pas le client</b> (le remboursement se fait dans Stripe).' : ''}</p><div class="actions"><button class="btn primary" id="m-no">Non, ne pas supprimer</button><button class="btn danger" id="m-yes">Oui, je suis sûr de supprimer</button></div>`;
+    m.hidden = false; $('#m-no').focus();
+    $('#m-no').onclick = () => { m.hidden = true; };
+    $('#m-yes').onclick = async () => {
+      const res = await fetch('/admin/order-delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order_id: o.id, confirm: true }) });
+      m.hidden = true;
+      if (!res.ok) { toast('Suppression impossible.', 'bad'); return; }
+      const i = orders.findIndex((x) => x.id === o.id); if (i >= 0) orders.splice(i, 1); byId.delete(o.id); clientsData = null;
+      closeDrawer(); render(); toast('Commande supprimée.', 'ok');
+    };
   }
 
   /* ---------- actions de la fiche ---------- */
@@ -429,6 +545,10 @@
   /* ---------- événements ---------- */
   document.addEventListener('click', (e) => {
     const t = e.target;
+    const cli = t.closest('[data-client]'); if (cli) { openClient(cli.dataset.client); return; }
+    const man = t.closest('[data-manage]'); if (man && current) { man.dataset.manage === 'edit' ? editDialog(current) : deleteDialog(current); return; }
+    const cv = t.closest('[data-cview]'); if (cv) { state.cview = cv.dataset.cview; renderCustomers(); return; }
+    const ce = t.closest('[data-cexport]'); if (ce) { exportClients(ce.dataset.cexport); return; }
     const open = t.closest('[data-open]'); if (open) { openOrder(+open.dataset.open); return; }
     const nav = t.closest('#nav a'); if (nav) { e.preventDefault(); go(nav.dataset.view); return; }
     if (t.closest('#dr-close') || t.id === 'scrim') { if ($('#side').classList.contains('open')) { $('#side').classList.remove('open'); $('#scrim').hidden = true; } else closeDrawer(); return; }
@@ -446,10 +566,10 @@
   });
   document.addEventListener('change', async (e) => {
     if (e.target.id === 'prod') { state.product = e.target.value; state.page = 1; render(); }
-    if (e.target.name === 'auto') {
+    if (e.target.id === 'autosel') {
       const v = e.target.value;
       const res = await fetch('/admin/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: 'auto_send', value: v }) });
-      if (res.ok) { boot.autoSend = v; toast('Réglage enregistré.', 'ok'); $$('.opt').forEach((l) => l.classList.toggle('on', l.querySelector('input').checked)); } else { toast('Impossible d’enregistrer le réglage.', 'bad'); renderAutomations(); }
+      if (res.ok) { boot.autoSend = v; toast('Réglage enregistré.', 'ok'); const hint = $('#autohint'); if (hint) hint.textContent = `${AUTO.find((x) => x[0] === v)?.[2] || ''} Jamais automatique si l’agent a signalé un point à vérifier.`; } else { toast('Impossible d’enregistrer le réglage.', 'bad'); renderAutomations(); }
     }
   });
   document.addEventListener('keydown', (e) => {

@@ -231,3 +231,30 @@ table.t { width:100%; border-collapse:collapse; font-size:.9rem; }
   .kv { grid-template-columns:100px minmax(0,1fr); }
 }
 @media (max-width:560px) { .g4 { grid-template-columns:1fr 1fr; } .board { grid-template-columns:1fr; } .kpi .val { font-size:1.5rem; } .spark { display:none; } }
+
+.btn.danger { background:var(--bad); border-color:var(--bad); color:#fff; }
+.btn.danger:hover { filter:brightness(1.08); border-color:var(--bad); }
+.fld { display:grid; gap:5px; font-size:.84rem; font-weight:600; color:var(--muted); }
+.fld input, .fld select { width:100%; color:var(--ink); font-weight:400; }
+.two { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+details.outer { border:1px solid var(--line); border-radius:12px; background:var(--panel); padding:0 14px; }
+details.outer > summary { cursor:pointer; padding:12px 0; font-weight:700; font-size:.92rem; }
+details.outer[open] > summary { border-bottom:1px solid var(--line); margin-bottom:10px; }
+details.outer .qa { padding-bottom:12px; }
+.health-bar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 16px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); }
+.chips-row { display:flex; gap:6px; flex-wrap:wrap; }
+.autos { display:grid; gap:10px; }
+details.auto { background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
+details.auto > summary { list-style:none; display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:14px 18px; cursor:pointer; }
+details.auto > summary::-webkit-details-marker { display:none; }
+details.auto .an { font-weight:700; flex:1 1 220px; min-width:0; }
+details.auto .chev { font-style:normal; font-size:1.2rem; color:var(--muted); transition:transform .15s; margin-left:auto; }
+details.auto[open] .chev { transform:rotate(180deg); }
+.auto-body { padding:0 18px 16px; display:grid; gap:12px; border-top:1px solid var(--line); padding-top:14px; }
+.auto-body .sub { color:var(--muted); font-size:.86rem; }
+.setting { display:grid; gap:6px; padding:12px 14px; background:var(--panel-2); border:1px solid var(--line); border-radius:12px; max-width:560px; }
+.setting select { width:100%; }
+table.db { min-width:1500px; }
+table.db td.ellip { max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+table.db td.long { min-width:260px; max-width:340px; font-size:.84rem; color:var(--muted); }
+table.db tbody tr { cursor:pointer; }

@@ -7,6 +7,7 @@ import { site } from '../config/site';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ChatWidget from '../components/ChatWidget.astro';
+import StickyBuyBar from '../components/StickyBuyBar.astro';
 
 interface Props {
   lang: Lang;
@@ -15,8 +16,10 @@ interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
+  /** barre fixe « diagnostic / prompt » en bas de page (pages de services) */
+  buybar?: boolean;
 }
-const { lang, page = '', title, description, noindex = false } = Astro.props;
+const { lang, page = '', title, description, noindex = false, buybar = false } = Astro.props;
 const umamiUrl = (import.meta.env.PUBLIC_UMAMI_URL ?? '').replace(/\/$/, '');
 const umamiId = import.meta.env.PUBLIC_UMAMI_ID ?? '';
 const c = t(lang);
@@ -57,6 +60,7 @@ const origin = Astro.site ? Astro.site.origin : '';
       <slot />
     </main>
     <Footer lang={lang} />
+    {buybar && <StickyBuyBar lang={lang} />}
     <ChatWidget lang={lang} />
 
     <script>
