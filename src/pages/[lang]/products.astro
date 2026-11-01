@@ -11,6 +11,15 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const c = t(lang);
 const p = c.products;
+const tag = { diagnostic: { fr: 'Diagnostic', en: 'Diagnostic' }, prompt: { fr: 'Prompt', en: 'Prompt' } } as Record<string, Record<string, string>>;
+const short = {
+  diagnostic: { fr: 'Votre business analysé par des agents IA.', en: 'Your business analysed by AI agents.' },
+  prompt: { fr: 'Un prompt long, écrit pour vous.', en: 'A long prompt, written for you.' },
+} as Record<string, Record<string, string>>;
+const icon = {
+  diagnostic: '<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true"><circle cx="60" cy="60" r="46" fill="none" stroke="currentColor" opacity=".25" stroke-width="12"/><circle cx="60" cy="60" r="46" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-dasharray="180 290" transform="rotate(-90 60 60)"/><text x="60" y="70" text-anchor="middle" font-size="30" font-weight="800" fill="currentColor">62</text></svg>',
+  prompt: '<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true"><rect x="10" y="22" width="76" height="44" rx="14" fill="currentColor" opacity=".28"/><rect x="34" y="52" width="76" height="44" rx="14" fill="currentColor"/><path d="M26 66 l-8 16 l22 -10z" fill="currentColor" opacity=".28"/></svg>',
+} as Record<string, string>;
 ---
 
 <Base lang={lang} page="products" title={c.nav.products} description={p.hero.sub}>
@@ -28,31 +37,33 @@ const p = c.products;
   <!-- Les produits -->
   <section style="padding-top:clamp(24px,4vw,48px)">
     <div class="wrap">
-      <ul class="products">
+      <ul class="sc">
         {
-          p.items.map((it) => {
+          p.items.map((it, n) => {
             const price = formatPrice(it.key as PriceKey, lang);
             const link = stripeLinks[it.key as 'diagnostic' | 'prompt'];
             return (
-              <li class="product reveal">
-                <div class="product-main">
-                  <h2><a class="rung-link" href={href(lang, it.slug)}>{it.name}</a></h2>
-                  <p class="lead">{it.line}</p>
-                  <div class="product-buy">
-                    <span class="product-price">{price.amount}</span>
-                    <BuyButton product={it.key as 'diagnostic' | 'prompt'} lang={lang} label={it.cta} soon={p.soon} link={link} />
-                    <a class="textlink" href={href(lang, it.slug)}><span class="arrow">{c.nav.more}&nbsp;</span></a>
+              <li class="sc-card reveal" tabindex="0">
+                <div class={`sc-art t${n}`}>
+                  <span class="sc-tag">{tag[it.key][lang]}</span>
+                  <div class="sc-ic" set:html={icon[it.key]} />
+                </div>
+                <div class="sc-body">
+                  <div class="sc-row"><h2>{it.name}</h2><b>{price.amount}</b></div>
+                  <p class="sc-short">{short[it.key][lang]}</p>
+                  <div class="sc-more">
+                    <div>
+                      <span class="sc-h">{p.forWhoLabel}</span>
+                      <p>{it.forWho}</p>
+                      <span class="sc-h">{p.getsLabel}</span>
+                      <ul>{it.gets.map((g) => <li>{g.t}</li>)}</ul>
+                      <div class="sc-cta">
+                        <a class="btn btn-primary" href={href(lang, it.slug)}>{c.nav.more}</a>
+                        <BuyButton product={it.key as 'diagnostic' | 'prompt'} lang={lang} label={it.cta} soon={p.soon} link={link} />
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <ol class="gets">
-                  {it.gets.map((g, i) => (
-                    <li>
-                      <span class="gets-n">0{i + 1}</span>
-                      <span class="gets-t">{g.t}</span>
-                      <span class="gets-d">{g.d}</span>
-                    </li>
-                  ))}
-                </ol>
               </li>
             );
           })
