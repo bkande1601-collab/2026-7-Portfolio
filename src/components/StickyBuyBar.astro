@@ -13,8 +13,8 @@ interface Props {
 const { lang, only } = Astro.props;
 const fr = lang === 'fr';
 const T = fr
-  ? { lead: 'Passez à l’action pendant que vous lisez', sub: 'Résultat par e-mail, sans rendez-vous.', diag: 'Je veux mon diagnostic IA · 19 €', prompt: 'Je veux mon master prompt · 39 €', diagShort: 'Mon diagnostic · 19 €', promptShort: 'Mon prompt · 39 €', all: 'Voir tous les produits', soon: 'Bientôt', err: 'Paiement indisponible' }
-  : { lead: 'Take action while you read', sub: 'Result by email, no appointment needed.', diag: 'Get my AI diagnostic · €19', prompt: 'Get my master prompt · €39', diagShort: 'My diagnostic · €19', promptShort: 'My prompt · €39', all: 'See all products', soon: 'Soon', err: 'Payment unavailable' };
+  ? { lead: 'Passez à l’action pendant que vous lisez', sub: 'Résultat par e-mail, sans rendez-vous.', diag: 'Je veux mon diagnostic IA', prompt: 'Je veux mon master prompt', all: 'Voir tous les produits', soon: 'Bientôt', err: 'Paiement indisponible' }
+  : { lead: 'Take action while you read', sub: 'Result by email, no appointment needed.', diag: 'Get my AI diagnostic', prompt: 'Get my master prompt', all: 'See all products', soon: 'Soon', err: 'Payment unavailable' };
 ---
 
 <div class="buybar" role="region" aria-label={T.lead}>
