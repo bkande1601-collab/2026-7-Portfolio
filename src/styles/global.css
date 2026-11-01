@@ -4566,3 +4566,58 @@ html.trailer-on body {
   width: 36px;
   height: 36px;
 }
+
+/* ---------- exemple de rapport (diagnostic) ---------- */
+.rep { display: grid; gap: 16px; }
+.rep-top { display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: center; padding: 24px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+.rep-score { display: grid; justify-items: center; gap: 6px; }
+.rep-score b { font-family: var(--font-head); color: var(--heading); }
+.rep-h { display: block; font-family: var(--font-head); font-weight: 800; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--violet); margin-bottom: 14px; }
+.rep-axes .rep-h { margin-bottom: 10px; }
+.rep-bar { display: grid; grid-template-columns: minmax(110px, 190px) 1fr 46px; align-items: center; gap: 12px; font-size: 0.92rem; padding-block: 4px; }
+.rep-bar i { display: block; height: 10px; border-radius: 6px; background: var(--lilas); overflow: hidden; }
+.rep-bar u { display: block; height: 100%; border-radius: 6px; background: var(--violet); }
+.rep-bar em { font-style: normal; font-weight: 700; color: var(--heading); text-align: right; font-size: 0.85rem; }
+.rep-box { padding: 24px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+.rep-box > p { margin-top: 12px; color: var(--muted); font-size: 0.9rem; }
+.rep-expert { background: var(--marine); border-color: var(--marine); color: var(--beige); }
+.rep-expert .rep-h { color: var(--lilas); }
+.rep-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.rep-3 b { font-family: var(--font-head); color: var(--lilas); display: block; margin-bottom: 4px; }
+.rep-3 p { color: rgba(246, 240, 228, 0.92); font-size: 0.95rem; }
+.rep-funnel { display: grid; gap: 8px; justify-items: center; }
+.fn { width: var(--w); display: grid; grid-template-columns: 130px 1fr auto; gap: 14px; align-items: center; padding: 11px 16px; border-radius: 12px; font-size: 0.92rem; }
+.fn b { font-family: var(--font-head); color: var(--heading); }
+.fn em { font-style: normal; font-weight: 700; font-size: 0.75rem; padding: 3px 10px; border-radius: 99px; background: var(--surface); white-space: nowrap; }
+.fn-ok { background: #d9e8d4; } .fn-ok em { color: #2f5a2a; }
+.fn-mid { background: #f3e2b8; } .fn-mid em { color: #7a5a10; }
+.fn-low { background: #f0cbbd; } .fn-low em { color: #8a2f10; }
+.rep-swot { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.sw { padding: 16px 18px; border-radius: 14px; }
+.sw b { font-family: var(--font-head); color: var(--heading); }
+.sw ul, .rep-plan ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; font-size: 0.92rem; }
+.sw-0 { background: #d9e8d4; } .sw-1 { background: #f0cbbd; } .sw-2 { background: var(--lilas); } .sw-3 { background: #f3e2b8; }
+.rep-ice { display: grid; gap: 12px; }
+.ic { padding: 16px 18px; border-radius: 14px; background: var(--bg); border: 1px solid var(--line); }
+.ic-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.ic-head b { flex: 1; font-family: var(--font-head); color: var(--heading); }
+.ic-n { font-family: var(--font-head); font-weight: 800; color: var(--violet); }
+.ic-head strong { font-family: var(--font-head); font-size: 1.4rem; color: var(--rouille); }
+.ic p { margin-top: 6px; font-size: 0.88rem; color: var(--muted); }
+.rep-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.rep-pot { background: var(--lilas); border-color: var(--lilas); }
+.pot { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pot strong { display: block; font-family: var(--font-head); font-weight: 900; font-size: clamp(2rem, 4vw, 2.8rem); color: var(--violet-deep); line-height: 1; }
+.pot span { font-size: 0.88rem; color: var(--violet-deep); }
+.kpi { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.kpi li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--line-2); padding-bottom: 8px; font-size: 0.92rem; }
+.kpi b { color: var(--heading); text-align: right; }
+.rep-plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.rep-plan > div { padding-top: 12px; border-top: 3px solid var(--violet); }
+.rep-plan b { font-family: var(--font-head); color: var(--heading); }
+@media (max-width: 800px) {
+  .rep-top, .rep-3, .rep-duo, .rep-plan, .rep-swot { grid-template-columns: 1fr; }
+  .fn { width: 100%; grid-template-columns: 1fr; gap: 2px; }
+  .fn em { justify-self: start; }
+  .rep-bar { grid-template-columns: 1fr 1fr 40px; }
+}

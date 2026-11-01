@@ -18,6 +18,10 @@ const it = p.items.find((x) => x.key === key)!;
 const price = formatPrice(key as PriceKey, lang);
 const link = stripeLinks[key];
 const other = p.items.find((x) => x.key !== key)!;
+const r = p.report;
+const score = Math.round((r.axes.reduce((a, x) => a + x.s, 0) / r.axes.length) * 10);
+const C = 2 * Math.PI * 52;
+const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).toFixed(1).replace('.', lang === 'fr' ? ',' : '.');
 ---
 
 <Base lang={lang} page={`products/${key}`} title={it.name} description={it.line}>
@@ -70,16 +74,108 @@ const other = p.items.find((x) => x.key !== key)!;
         <h2>{it.example.who}</h2>
         <p class="lead">{it.example.problem}</p>
       </div>
-      <div class="example reveal">
-        {it.example.result.map((r, i) => (
-          <div class="example-card">
-            <span class="example-n">0{i + 1}</span>
-            <b>{r.t}</b>
-            <p>{r.d}</p>
+      {key === 'diagnostic' ? (
+        <div class="rep reveal">
+          <div class="rep-top">
+            <div class="rep-score">
+              <svg viewBox="0 0 120 120" width="150" height="150" role="img" aria-label={`${r.scoreLabel} ${score} ${r.outOf}`}>
+                <circle cx="60" cy="60" r="52" fill="none" stroke="var(--lilas)" stroke-width="12" />
+                <circle cx="60" cy="60" r="52" fill="none" stroke="var(--rouille)" stroke-width="12" stroke-linecap="round" stroke-dasharray={`${(C * score) / 100} ${C}`} transform="rotate(-90 60 60)" />
+                <text x="60" y="62" text-anchor="middle" font-size="34" font-weight="800" fill="var(--violet-deep)">{score}</text>
+                <text x="60" y="82" text-anchor="middle" font-size="11" fill="var(--muted)">{r.outOf}</text>
+              </svg>
+              <b>{r.scoreLabel}</b>
+            </div>
+            <div class="rep-axes">
+              <span class="rep-h">{r.axesLabel}</span>
+              {r.axes.map((a) => (
+                <div class="rep-bar"><span>{a.t}</span><i><u style={`width:${a.s * 10}%`}></u></i><em>{a.s}/10</em></div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
-      <p class="note reveal">{it.example.note}</p>
+
+          <div class="rep-box rep-expert">
+            <span class="rep-h">{r.expertLabel}</span>
+            <div class="rep-3">
+              {r.expert.map((x) => <div><b>{x.t}</b><p>{x.d}</p></div>)}
+            </div>
+          </div>
+
+          <div class="rep-box">
+            <span class="rep-h">{r.funnelLabel}</span>
+            <div class="rep-funnel">
+              {r.funnel.map((x, n) => (
+                <div class={`fn fn-${x.st}`} style={`--w:${100 - n * 6}%`}>
+                  <b>{x.t}</b><span>{x.d}</span><em>{r.funnelState[x.st as 'ok' | 'mid' | 'low']}</em>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="rep-box">
+            <span class="rep-h">{r.swotLabel}</span>
+            <div class="rep-swot">
+              {r.swot.map((q, n) => (
+                <div class={`sw sw-${n}`}><b>{q.t}</b><ul>{q.items.map((i) => <li>{i}</li>)}</ul></div>
+              ))}
+            </div>
+          </div>
+
+          <div class="rep-box">
+            <span class="rep-h">{r.iceLabel}</span>
+            <div class="rep-ice">
+              {r.ice.map((x, n) => (
+                <div class="ic">
+                  <div class="ic-head"><span class="ic-n">0{n + 1}</span><b>{x.t}</b><strong>{ice(x)}</strong></div>
+                  <div class="ic-bars">
+                    {[[r.iceCols[0], x.i], [r.iceCols[1], x.c], [r.iceCols[2], x.f]].map(([l, v]) => (
+                      <div class="rep-bar"><span>{l}</span><i><u style={`width:${Number(v) * 10}%`}></u></i><em>{v}/10</em></div>
+                    ))}
+                  </div>
+                  <p>{x.effect} · {x.delay}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="rep-duo">
+            <div class="rep-box rep-pot">
+              <span class="rep-h">{r.potentialLabel}</span>
+              <div class="pot">
+                <div><strong>{r.hours}</strong><span>{r.hoursLabel}</span></div>
+                <div><strong>{r.revenue}</strong><span>{r.revenueLabel}</span></div>
+              </div>
+              <p>{r.potentialNote}</p>
+            </div>
+            <div class="rep-box">
+              <span class="rep-h">{r.kpiLabel}</span>
+              <ul class="kpi">
+                {r.kpi.map((k) => <li><span>{k.t}</span><b>{k.v}</b></li>)}
+              </ul>
+            </div>
+          </div>
+
+          <div class="rep-box">
+            <span class="rep-h">{r.planLabel}</span>
+            <div class="rep-plan">
+              {r.plan.map((x) => (
+                <div><b>{x.p}</b><ul>{x.a.map((i) => <li>{i}</li>)}</ul></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div class="example reveal">
+          {it.example.result.map((x, i) => (
+            <div class="example-card">
+              <span class="example-n">0{i + 1}</span>
+              <b>{x.t}</b>
+              <p>{x.d}</p>
+            </div>
+          ))}
+        </div>
+      )}
+      <p class="note reveal">{key === 'diagnostic' ? `${r.pdfNote} ` : ''}{it.example.note}</p>
     </div>
   </section>
 
