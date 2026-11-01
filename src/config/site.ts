@@ -57,7 +57,7 @@ export const site = {
    * Fichiers : trailer-fr.mp4, trailer-en.mp4 (paysage), trailer-portrait-fr.mp4,
    * trailer-portrait-en.mp4 (mobile). Mettez false pour la retirer.
    */
-  trailer: true,
+  trailer: false,
 
   /** Publication LinkedIn du hackathon Mirakl x Eugenia School. */
   hackathonLink: 'https://lnkd.in/p/eW7JqGUB',
