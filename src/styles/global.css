@@ -4759,3 +4759,19 @@ html.trailer-on body {
 }
 
 .note-box .note-link { display: inline-block; margin-top: 12px; color: #fff; font-weight: 700; text-underline-offset: 3px; }
+
+/* ---------- blog : vignettes carrées et petites, aucune photo dans l'article ---------- */
+.pgrid { grid-template-columns: repeat(2, 1fr); }
+.pcard { grid-template-columns: 120px 1fr; align-items: center; }
+.pcard-cover { aspect-ratio: 1 / 1; width: 120px; margin: 18px 0 18px 18px; border-radius: 14px; }
+.pcard-cover.typo .typo-mark { width: 52px; height: 52px; }
+.pcard-cover.typo .typo-tag { display: none; }
+.pcard-body { padding: 18px 22px 18px 18px; }
+.pcard.big { grid-template-columns: 180px 1fr; }
+.pcard.big .pcard-cover { aspect-ratio: 1 / 1; min-height: 0; width: 180px; margin: 24px 0 24px 24px; }
+.pcard.big .pcard-body { padding: clamp(20px, 3vw, 32px); }
+@media (max-width: 800px) {
+  .pgrid { grid-template-columns: 1fr; }
+  .pcard, .pcard.big { grid-template-columns: 96px 1fr; }
+  .pcard-cover, .pcard.big .pcard-cover { width: 96px; margin: 14px 0 14px 14px; aspect-ratio: 1 / 1; }
+}

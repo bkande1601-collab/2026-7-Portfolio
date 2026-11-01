@@ -78,33 +78,20 @@ const shareTitle = encodeURIComponent(x.title);
 >
   <div class="readbar" id="readbar" aria-hidden="true"></div>
 
-  <section class={`page-hero post-hero${post.cover.cutout ? ' has-photo' : ''}`}>
-    <div class={`wrap${post.cover.cutout ? ' hero-split' : ''}`}>
-      <div class={post.cover.cutout ? 'hero-text' : ''}>
+  <section class="page-hero post-hero">
+    <div class="wrap">
+      <div>
         <Crumb lang={lang} parent="blog" label={b.back} />
         <span class="kicker" style="display:flex">{x.tag}</span>
         <h1>{x.title}</h1>
         <p class="lead">{x.excerpt}</p>
         <p class="post-meta"><time datetime={post.date}>{date}</time>{updated && <> · {b.updated} <time datetime={post.updated}>{updated}</time></>} · {post.minutes} {b.minutes}</p>
       </div>
-      {post.cover.cutout && post.cover.src && <img class="hero-photo" src={post.cover.src} alt="" width="900" height="1100" />}
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      {
-        !post.cover.cutout && post.cover.src && (
-          <img class="article-photo" src={post.cover.src} alt="" width="1600" height="900" />
-        )
-      }
-      {
-        post.cover.credit && (
-          <p class="photo-credit">
-            <a href={post.cover.credit.url} rel="noopener noreferrer" target="_blank">{post.cover.credit.label}</a>
-          </p>
-        )
-      }
 
       <article class="article" itemscope itemtype="https://schema.org/BlogPosting">
         {
@@ -173,6 +160,14 @@ const shareTitle = encodeURIComponent(x.title);
           )
         }
       </article>
+
+      {
+        post.cover.credit && (
+          <p class="photo-credit">
+            <a href={post.cover.credit.url} rel="noopener noreferrer" target="_blank">{post.cover.credit.label}</a>
+          </p>
+        )
+      }
 
       <!-- Gros encadré : la ressource offerte (livre blanc) -->
       <ResourceBox lang={lang} slug={post.resource} />
