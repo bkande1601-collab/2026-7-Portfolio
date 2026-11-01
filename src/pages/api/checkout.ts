@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { stripe, hasStripe, priceId, isProduct, siteOrigin } from '../../lib/stripe';
+import { stripe, hasStripe, resolvePrice, isProduct, siteOrigin } from '../../lib/stripe';
 import { hasDb } from '../../lib/db';
 import { createPending } from '../../lib/orders';
 import { json, readJson, toLang } from '../../lib/http';
@@ -12,7 +12,7 @@ export const POST: APIRoute = async ({ request }) => {
   const product = body.product;
   const lang = toLang(body.lang);
 
-  const price = hasStripe() ? priceId(product) : '';
+  const price = hasStripe() ? await resolvePrice(product) : '';
   const origin = siteOrigin();
   if (!price || !origin) return json({ error: 'not_configured' }, 503);
 
@@ -23,6 +23,12 @@ export const POST: APIRoute = async ({ request }) => {
       customer_creation: 'always',
       phone_number_collection: { enabled: true },
       locale: lang,
+      // petite phrase signée, juste au-dessus du bouton de paiement
+      custom_text: {
+        submit: {
+          message: lang === 'fr' ? '**C’est ici que commence votre investissement sur vous-même.** — Binta Kande' : '**This is where your investment in yourself begins.** — Binta Kande',
+        },
+      },
       // aux couleurs du site : ivoire, bouton violet, logo en couleur
       branding_settings: {
         display_name: 'Binta Kande',
