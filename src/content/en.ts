@@ -661,7 +661,7 @@ export const en: Content = {
     hero: {
       kicker: 'Pricing',
       title: 'A clear ladder. *You* choose the rung.',
-      sub: 'From a 19 € product to a complete system. Each rung is useful on its own, and nothing is compulsory.',
+      sub: 'From a 9.99 € product to a complete system. Each rung is useful on its own, and nothing is compulsory.',
     },
     free: {
       title: 'The first call is *free*.',
@@ -923,7 +923,7 @@ export const en: Content = {
     },
     items: [
       {
-        q: 'How do the 19 € and 39 € products work?',
+        q: 'How do the 19 € and 9.99 € products work?',
         a: 'You pay online, fill in a form about you and your business, and receive your result by email. The result is produced by AI agents I designed, from your answers.',
       },
       {
@@ -989,7 +989,7 @@ export const en: Content = {
       'marketing/content': { name: 'Social media content', line: 'Strategy, creation, publishing and a weekly report, from 900 € per month.' },
       'marketing/webinars': { name: 'Webinars', line: 'A base formula with everything included, and custom work on quote.' },
       'products/diagnostic': { name: 'AI diagnosis of your business', line: 'One form, a personalised result by email, 19 €.' },
-      'products/prompt': { name: 'Tailored master prompt', line: 'A prompt written for your business, ready to paste, 39 €.' },
+      'products/prompt': { name: 'Tailored master prompt', line: 'A prompt written for your business, ready to paste, 9.99 €.' },
     },
     resource: {
       kicker: 'Free resource',
