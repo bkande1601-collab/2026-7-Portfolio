@@ -24,7 +24,7 @@ const C = 2 * Math.PI * 52;
 const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).toFixed(1).replace('.', lang === 'fr' ? ',' : '.');
 ---
 
-<Base lang={lang} page={`products/${key}`} title={it.name} description={it.line}>
+<Base buybar buybarOnly={key} lang={lang} page={`products/${key}`} title={it.name} description={it.line}>
   <section class="page-hero has-photo">
     <div class="wrap hero-split">
       <div class="hero-text">

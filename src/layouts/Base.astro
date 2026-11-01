@@ -18,8 +18,10 @@ interface Props {
   noindex?: boolean;
   /** barre fixe « diagnostic / prompt » en bas de page (pages de services) */
   buybar?: boolean;
+  /** sur la page d'un produit : n'affiche que ce produit dans la barre */
+  buybarOnly?: 'diagnostic' | 'prompt';
 }
-const { lang, page = '', title, description, noindex = false, buybar = false } = Astro.props;
+const { lang, page = '', title, description, noindex = false, buybar = false, buybarOnly } = Astro.props;
 const umamiUrl = (import.meta.env.PUBLIC_UMAMI_URL ?? '').replace(/\/$/, '');
 const umamiId = import.meta.env.PUBLIC_UMAMI_ID ?? '';
 const c = t(lang);
@@ -60,7 +62,7 @@ const origin = Astro.site ? Astro.site.origin : '';
       <slot />
     </main>
     <Footer lang={lang} />
-    {buybar && <StickyBuyBar lang={lang} />}
+    {buybar && <StickyBuyBar lang={lang} only={buybarOnly} />}
     <ChatWidget lang={lang} />
 
     <script>
