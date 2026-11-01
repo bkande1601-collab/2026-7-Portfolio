@@ -6,7 +6,20 @@
  * un encadré de service (`service`, voir les clés dans `blog.services` de fr.ts et en.ts).
  * `resource` : le slug d'une ressource gratuite de src/content/resources.json (PDF envoyé par e-mail).
  */
-export type Section = { h?: string; p?: string[]; list?: string[]; service?: string };
+export type Prompt = { title: string; use: string; text: string; tip?: string };
+export type Section = {
+  h?: string;
+  p?: string[];
+  list?: string[];
+  service?: string;
+  /** étapes numérotées */
+  steps?: { t: string; d: string }[];
+  /** prompts à copier, présentés comme dans un terminal */
+  prompts?: Prompt[];
+  /** encadré mis en avant */
+  note?: { title: string; text: string };
+};
+export type Faq = { q: string; a: string };
 export type Source = { label: string; url: string };
 export type PostText = {
   tag: string;
@@ -16,19 +29,35 @@ export type PostText = {
   callTitle: string;
   callText: string;
   sources?: Source[];
+  /** balise <title> si elle doit différer du titre de l'article (60 caractères environ) */
+  seoTitle?: string;
+  /** meta description (150 caractères environ) ; sinon l'extrait */
+  description?: string;
+  /** « En bref » : l'essentiel en 3 ou 4 lignes, en haut de l'article */
+  takeaways?: string[];
+  /** questions fréquentes (affichées et balisées pour Google) */
+  faq?: Faq[];
 };
 export type Post = {
   slug: string;
   date: string;
   minutes: number;
   /** photo de couverture : un détourage sur fond de couleur, ou une photo entière */
-  cover: { src: string; tone: 'rouille' | 'violet' | 'marine' | 'lilas'; cutout: boolean; credit?: { label: string; url: string } };
+  /** `src` absent : couverture typographique (aucune photo) */
+  cover: { src?: string; tone: 'rouille' | 'violet' | 'marine' | 'lilas'; cutout: boolean; credit?: { label: string; url: string } };
+  /** date de dernière mise à jour (sinon `date`) */
+  updated?: string;
+  /** image de partage (réseaux sociaux, Google) */
+  ogImage?: string;
   resource: string;
   fr: PostText;
   en: PostText;
 };
 
+import { promptsPost } from './blog-prompts';
+
 export const posts: Post[] = [
+  promptsPost,
   /* ------------------------------------------------------------------ 1 */
   {
     slug: 'premieres-automatisations',

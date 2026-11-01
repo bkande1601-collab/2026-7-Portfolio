@@ -73,6 +73,8 @@ def main():
     os.makedirs(out, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         for res in data:
+            if res.get('custom'):
+                continue  # livres blancs faits à part (node scripts/build-whitepaper.mjs)
             for lang in ('fr', 'en'):
                 src = os.path.join(tmp, f"{res['slug']}-{lang}.html")
                 open(src, 'w', encoding='utf-8').write(page(res, lang))

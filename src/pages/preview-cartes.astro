@@ -1,0 +1,168 @@
+---
+import Base from '../layouts/Base.astro';
+import { t, href } from '../content';
+import { formatPrice, type PriceKey } from '../config/site';
+const lang = 'fr';
+const p = t(lang).products;
+const items = p.items.map((it) => ({ ...it, price: formatPrice(it.key as PriceKey, lang).amount }));
+const short = { diagnostic: 'Votre business analysé par des agents IA.', prompt: 'Un prompt long, écrit pour vous.' } as Record<string, string>;
+const icon = {
+  diagnostic: '<svg viewBox="0 0 120 120" width="100%" height="100%"><circle cx="60" cy="60" r="46" fill="none" stroke="currentColor" opacity=".25" stroke-width="12"/><circle cx="60" cy="60" r="46" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-dasharray="180 290" transform="rotate(-90 60 60)"/><text x="60" y="70" text-anchor="middle" font-size="30" font-weight="800" fill="currentColor">62</text></svg>',
+  prompt: '<svg viewBox="0 0 120 120" width="100%" height="100%"><rect x="10" y="22" width="76" height="44" rx="14" fill="currentColor" opacity=".28"/><rect x="34" y="52" width="76" height="44" rx="14" fill="currentColor"/><path d="M26 66 l-8 16 l22 -10z" fill="currentColor" opacity=".28"/></svg>',
+} as Record<string, string>;
+---
+<Base lang={lang} page="products" title="Aperçu des cartes" description="" noindex>
+<section style="padding-top:120px">
+<div class="wrap">
+<span class="kicker">Mix B + C : visuel qui se réduit, étiquette en haut à gauche</span>
+<ul class="pc pd">
+{items.map((it, n) => (
+  <li class="pc-card" tabindex="0">
+    <div class={`pc-art t${n}`}>
+      <span class="pd-tag">{it.key === 'diagnostic' ? 'Diagnostic' : 'Prompt'}</span>
+      <div class="pd-ic" set:html={icon[it.key]} />
+    </div>
+    <div class="pc-body">
+      <div class="pc-row"><h3>{it.name}</h3><b>{it.price}</b></div>
+      <p>{short[it.key]}</p>
+      <div class="pc-more">
+        <div>
+          <span class="pc-h">Pour qui</span>
+          <p>{it.forWho}</p>
+          <span class="pc-h">Vous recevez</span>
+          <ul>{it.gets.map((g) => <li>{g.t}</li>)}</ul>
+          <a class="btn btn-primary" style="margin-top:6px" href={href(lang, it.slug)}>Voir le détail</a>
+        </div>
+      </div>
+    </div>
+  </li>
+))}
+</ul>
+
+<span class="kicker" style="margin-top:72px;display:flex">Proposition A : carte qui se retourne</span>
+<ul class="pa">
+{items.map((it, n) => (
+  <li class="pa-card" tabindex="0">
+    <div class="pa-in">
+      <div class={`pa-front t${n}`}>
+        <div class="pa-ic" set:html={icon[it.key]} />
+        <h3>{it.name}</h3>
+        <p>{short[it.key]}</p>
+        <div class="pa-foot"><b>{it.price}</b><span>Survolez</span></div>
+      </div>
+      <div class="pa-back">
+        <b>Vous recevez</b>
+        <ul>{it.gets.map((g) => <li>{g.t}</li>)}</ul>
+        <a class="btn btn-primary" href={href(lang, it.slug)}>Voir le détail</a>
+      </div>
+    </div>
+  </li>
+))}
+</ul>
+
+<span class="kicker" style="margin-top:72px;display:flex">Proposition B : volet qui monte</span>
+<ul class="pb">
+{items.map((it, n) => (
+  <li class={`pb-card t${n}`} tabindex="0">
+    <div class="pb-top">
+      <span class="pb-tag">{it.key === 'diagnostic' ? 'Diagnostic' : 'Prompt'}</span>
+      <h3>{it.name}</h3>
+      <p>{short[it.key]}</p>
+    </div>
+    <div class="pb-price">{it.price}</div>
+    <div class="pb-sheet">
+      <ol>{it.gets.map((g) => <li><b>{g.t}</b></li>)}</ol>
+      <a class="textlink" href={href(lang, it.slug)}><span class="arrow">Voir le détail&nbsp;</span></a>
+    </div>
+  </li>
+))}
+</ul>
+
+<span class="kicker" style="margin-top:72px;display:flex">Proposition C : visuel et détails qui s’ouvrent</span>
+<ul class="pc">
+{items.map((it, n) => (
+  <li class="pc-card" tabindex="0">
+    <div class={`pc-art t${n}`} set:html={icon[it.key]} />
+    <div class="pc-body">
+      <div class="pc-row"><h3>{it.name}</h3><b>{it.price}</b></div>
+      <p>{short[it.key]}</p>
+      <div class="pc-more">
+        <div>
+          <span class="pc-h">Pour qui</span>
+          <p>{it.forWho}</p>
+          <span class="pc-h">Vous recevez</span>
+          <ul>{it.gets.map((g) => <li>{g.t}</li>)}</ul>
+          <a class="textlink" href={href(lang, it.slug)}><span class="arrow">En savoir plus&nbsp;</span></a>
+        </div>
+      </div>
+    </div>
+  </li>
+))}
+</ul>
+</div>
+</section>
+</Base>
+<style is:global>
+.pa,.pb,.pc{align-items:start;list-style:none;margin:24px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+/* A */
+.pa-card{perspective:1200px;height:380px;outline:none}
+.pa-in{position:relative;width:100%;height:100%;transition:transform .7s var(--ease);transform-style:preserve-3d}
+.pa-card:hover .pa-in,.pa-card:focus-within .pa-in,.pa-card:focus .pa-in{transform:rotateY(180deg)}
+.pa-front,.pa-back{position:absolute;inset:0;border-radius:24px;padding:32px;backface-visibility:hidden;display:flex;flex-direction:column}
+.pa-front.t0{background:var(--marine);color:var(--beige)}
+.pa-front.t1{background:var(--rouille);color:var(--beige)}
+.pa-ic{width:110px;height:110px;color:var(--lilas)}
+.pa-front.t1 .pa-ic{color:var(--beige)}
+.pa-front h3{font-family:var(--font-head);font-size:1.9rem;margin:auto 0 6px;color:inherit;line-height:1.1}
+.pa-front p{opacity:.85;margin:0}
+.pa-foot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;font-size:.85rem;opacity:.9}
+.pa-foot b{font-family:var(--font-head);font-size:1.5rem}
+.pa-back{transform:rotateY(180deg);background:var(--lilas);color:var(--violet-deep);gap:12px}
+.pa-back>b{font-family:var(--font-head);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--violet)}
+.pa-back ul{margin:0;padding-left:18px;display:grid;gap:8px;font-size:1.05rem;font-weight:600}
+.pa-back .btn{margin-top:auto;align-self:flex-start}
+/* B */
+.pb-card{position:relative;overflow:hidden;height:380px;border-radius:24px;padding:32px;outline:none}
+.pb-card.t0{background:var(--lilas);color:var(--violet-deep)}
+.pb-card.t1{background:var(--marron);color:var(--beige)}
+.pb-tag{display:inline-block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:800;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.55);color:var(--violet-deep)}
+.pb-card.t1 .pb-tag{background:rgba(246,240,228,.16);color:var(--beige)}
+.pb-top h3{font-family:var(--font-head);font-size:2rem;margin:18px 0 8px;color:inherit;line-height:1.1}
+.pb-top p{margin:0;opacity:.85}
+.pb-price{position:absolute;left:32px;bottom:28px;font-family:var(--font-head);font-weight:900;font-size:2.4rem;transition:opacity .3s}
+.pb-sheet{position:absolute;inset:auto 0 0 0;height:100%;box-sizing:border-box;transform:translateY(100%);transition:transform .5s var(--ease);background:var(--surface);color:var(--text);padding:22px 32px;display:flex;flex-direction:column;gap:12px;border-radius:24px 24px 0 0}
+.pb-card:hover .pb-sheet,.pb-card:focus .pb-sheet,.pb-card:focus-within .pb-sheet{transform:translateY(50%)}
+.pb-sheet ol{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:.95rem}.pb-sheet li::before{content:'✓ ';color:var(--violet);font-weight:800}.pb-sheet li{display:block}
+.pb-sheet b{font-family:var(--font-head);color:var(--heading)}
+.pb-sheet span{font-size:.85rem;color:var(--muted)}
+.pb-sheet .btn{align-self:flex-start;margin-top:auto;margin-bottom:14px}.pb-sheet .textlink{margin-top:auto}
+.pb-card:hover .pb-price{opacity:0}
+/* C */
+.pc-card{border-radius:24px;overflow:hidden;background:var(--surface);border:1px solid var(--line);outline:none;transition:box-shadow .3s}
+.pc-art{height:190px;display:grid;place-items:center;transition:height .5s var(--ease)}
+.pc-art>svg{width:120px;height:120px;transition:all .5s var(--ease)}
+.pc-art.t0{background:var(--marine);color:var(--lilas)}
+.pc-art.t1{background:var(--rouille);color:var(--beige)}
+.pc-card:hover .pc-art,.pc-card:focus-within .pc-art,.pc-card:focus .pc-art{height:110px}
+.pc-card:hover .pc-art>svg,.pc-card:focus .pc-art>svg{width:70px;height:70px}
+.pc-body{padding:24px 28px 28px}
+.pc-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.pc-row h3{font-family:var(--font-head);font-size:1.5rem;margin:0}
+.pc-row b{font-family:var(--font-head);font-size:1.4rem;color:var(--rouille)}
+.pc-body>p{margin:6px 0 0;color:var(--muted)}
+.pc-more{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+.pc-more>div{overflow:hidden}
+.pc-card:hover .pc-more,.pc-card:focus .pc-more,.pc-card:focus-within .pc-more{grid-template-rows:1fr}
+.pc-more>div>*:first-child{margin-top:16px}
+.pc-h{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--violet);margin:12px 0 4px}
+.pc-more p{margin:0;font-size:.92rem}
+.pc-more ul{margin:0 0 10px;padding-left:18px;font-size:.92rem}
+
+.pd .pc-art{position:relative}
+.pd-tag{position:absolute;top:16px;left:18px;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:800;padding:5px 12px;border-radius:99px;background:rgba(246,240,228,.18);color:var(--beige)}
+.pd .pc-art.t0 .pd-tag{background:rgba(198,184,228,.22);color:var(--lilas)}
+.pd-ic{width:120px;height:120px;transition:all .5s var(--ease)}
+.pd .pc-card:hover .pd-ic,.pd .pc-card:focus .pd-ic{width:70px;height:70px}
+.pd .pc-art>svg{width:auto;height:auto}
+@media(max-width:800px){.pa,.pb,.pc{grid-template-columns:1fr}}
+</style>

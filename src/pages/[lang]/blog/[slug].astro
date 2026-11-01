@@ -7,6 +7,7 @@ import PostCard from '../../../components/PostCard.astro';
 import ResourceBox from '../../../components/ResourceBox.astro';
 import { t, em, href, langs, type Lang } from '../../../content';
 import { posts } from '../../../content/blog';
+import { site } from '../../../config/site';
 
 export function getStaticPaths() {
   return langs.flatMap((lang) => posts.map((p) => ({ params: { lang, slug: p.slug } })));
@@ -17,29 +18,83 @@ const c = t(lang);
 const b = c.blog;
 const post = posts.find((p) => p.slug === slug)!;
 const x = post[lang];
-const date = new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(post.date));
+const fmt = new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const date = fmt.format(new Date(post.date));
+const updated = post.updated ? fmt.format(new Date(post.updated)) : '';
 const others = posts.filter((p) => p.slug !== slug).slice(0, 3);
 const services = b.services as Record<string, { name: string; line: string }>;
+
+const slugify = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const toc = x.sections.filter((s) => s.h).map((s) => ({ id: slugify(s.h!), label: s.h! }));
+if (x.faq?.length) toc.push({ id: 'faq', label: b.faqTitle });
+
+// [crochets] colorés dans les prompts ; le texte est échappé avant
+const esc = (v: string) => v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const colorize = (v: string) => esc(v).replace(/\[([^\]\n]+)\]/g, '<mark>[$1]</mark>');
+const words = (v: string) => v.split(/\s+/).filter(Boolean).length;
+
+const origin = Astro.site ? Astro.site.origin : '';
+const url = `${origin}${href(lang, `blog/${slug}`)}`;
+const image = post.ogImage ? `${origin}${post.ogImage}` : `${origin}/og/default.png`;
+const authorUrl = `${origin}${href(lang, 'journey')}`;
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: x.title,
+  description: x.description ?? x.excerpt,
+  image: [image],
+  datePublished: post.date,
+  dateModified: post.updated ?? post.date,
+  inLanguage: lang,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+  author: { '@type': 'Person', name: site.name, url: authorUrl },
+  publisher: { '@type': 'Organization', name: site.name, logo: { '@type': 'ImageObject', url: `${origin}/apple-touch-icon.png` } },
+  wordCount: x.sections.reduce((n, s) => n + words([s.h, ...(s.p ?? []), ...(s.list ?? []), ...(s.steps ?? []).flatMap((i) => [i.t, i.d]), ...(s.prompts ?? []).flatMap((q) => [q.title, q.use, q.text])].filter(Boolean).join(' ')), 0),
+};
+const crumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: c.nav.blog === 'Blog' ? 'Blog' : c.nav.blog, item: `${origin}${href(lang, 'blog')}` },
+    { '@type': 'ListItem', position: 2, name: x.title, item: url },
+  ],
+};
+const faq = x.faq?.length ? { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: x.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) } : null;
+const share = encodeURIComponent(url);
+const shareTitle = encodeURIComponent(x.title);
 ---
 
-<Base lang={lang} page={`blog/${slug}`} title={x.title} description={x.excerpt}>
-  <section class={`page-hero${post.cover.cutout ? ' has-photo' : ''}`}>
+<Base
+  lang={lang}
+  page={`blog/${slug}`}
+  title={x.title}
+  rawTitle={x.seoTitle ? `${x.seoTitle} | ${site.name}` : undefined}
+  description={x.description ?? x.excerpt}
+  ogType="article"
+  ogImage={post.ogImage}
+  published={post.date}
+  modified={post.updated ?? post.date}
+  jsonLd={[article, crumbs, ...(faq ? [faq] : [])]}
+>
+  <div class="readbar" id="readbar" aria-hidden="true"></div>
+
+  <section class={`page-hero post-hero${post.cover.cutout ? ' has-photo' : ''}`}>
     <div class={`wrap${post.cover.cutout ? ' hero-split' : ''}`}>
       <div class={post.cover.cutout ? 'hero-text' : ''}>
         <Crumb lang={lang} parent="blog" label={b.back} />
         <span class="kicker" style="display:flex">{x.tag}</span>
         <h1>{x.title}</h1>
         <p class="lead">{x.excerpt}</p>
-        <p class="post-meta">{date} · {post.minutes} {b.minutes}</p>
+        <p class="post-meta"><time datetime={post.date}>{date}</time>{updated && <> · {b.updated} <time datetime={post.updated}>{updated}</time></>} · {post.minutes} {b.minutes}</p>
       </div>
-      {post.cover.cutout && <img class="hero-photo" src={post.cover.src} alt="" width="900" height="1100" />}
+      {post.cover.cutout && post.cover.src && <img class="hero-photo" src={post.cover.src} alt="" width="900" height="1100" />}
     </div>
   </section>
 
   <section>
     <div class="wrap">
       {
-        !post.cover.cutout && (
+        !post.cover.cutout && post.cover.src && (
           <img class="article-photo" src={post.cover.src} alt="" width="1600" height="900" />
         )
       }
@@ -50,7 +105,26 @@ const services = b.services as Record<string, { name: string; line: string }>;
           </p>
         )
       }
-      <article class="article">
+
+      <article class="article" itemscope itemtype="https://schema.org/BlogPosting">
+        {
+          x.takeaways && (
+            <aside class="keyp" aria-label={b.takeaways}>
+              <b>{b.takeaways}</b>
+              <ul>{x.takeaways.map((k) => <li>{k}</li>)}</ul>
+            </aside>
+          )
+        }
+
+        {
+          toc.length > 2 && (
+            <nav class="toc" aria-label={b.toc}>
+              <b>{b.toc}</b>
+              <ol>{toc.map((i) => <li><a href={`#${i.id}`}>{i.label}</a></li>)}</ol>
+            </nav>
+          )
+        }
+
         {
           x.sections.map((s) =>
             s.service ? (
@@ -60,16 +134,61 @@ const services = b.services as Record<string, { name: string; line: string }>;
                 <span>{services[s.service]?.line}</span>
                 <span class="svc-go" aria-hidden="true">→</span>
               </a>
+            ) : s.note ? (
+              <aside class="note-box">
+                <b>{s.note.title}</b>
+                <p>{s.note.text}</p>
+              </aside>
             ) : (
               <>
-                {s.h && <h2>{s.h}</h2>}
+                {s.h && <h2 id={slugify(s.h)}>{s.h}</h2>}
                 {s.p?.map((para) => <p>{para}</p>)}
+                {s.steps && (
+                  <ol class="steps">
+                    {s.steps.map((st) => <li><b>{st.t}</b><span>{st.d}</span></li>)}
+                  </ol>
+                )}
                 {s.list && <ul class="bullets">{s.list.map((li) => <li>{li}</li>)}</ul>}
+                {s.prompts?.map((pr) => (
+                  <figure class="prompt">
+                    <figcaption>
+                      <h3>{pr.title}</h3>
+                      <p><b>{b.use} :</b> {pr.use}</p>
+                    </figcaption>
+                    <div class="term" role="group" aria-label={pr.title}>
+                      <div class="term-bar">
+                        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <span class="term-name">{b.promptFile}-{slugify(pr.title.replace(/^\d+\.\s*/, ''))}.txt</span>
+                        <button class="term-copy" type="button" data-copy data-done={b.copied}>{b.copy}</button>
+                      </div>
+                      <pre class="term-body"><code set:html={colorize(pr.text)} /></pre>
+                      <div class="term-foot"><span>{words(pr.text)} {lang === 'fr' ? 'mots' : 'words'} · {b.toolHint}</span></div>
+                    </div>
+                    {pr.tip && <p class="prompt-tip"><b>{b.tip} :</b> {pr.tip}</p>}
+                  </figure>
+                ))}
               </>
             ),
           )
         }
       </article>
+
+      <!-- Gros encadré : la ressource offerte (livre blanc) -->
+      <ResourceBox lang={lang} slug={post.resource} />
+
+      {
+        x.faq && (
+          <section class="faq article" id="faq" aria-labelledby="faq-title">
+            <h2 id="faq-title">{b.faqTitle}</h2>
+            {x.faq.map((f) => (
+              <details>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </section>
+        )
+      }
 
       <!-- Gros encadré : réserver un call -->
       <aside class="callbox reveal">
@@ -80,8 +199,23 @@ const services = b.services as Record<string, { name: string; line: string }>;
         <CtaMenu lang={lang} up />
       </aside>
 
-      <!-- Gros encadré : la ressource offerte -->
-      <ResourceBox lang={lang} slug={post.resource} />
+      <aside class="author article" aria-label={b.authorName}>
+        <span class="author-mark" aria-hidden="true"><img src="/logo-symbole.svg" alt="" width="56" height="56" loading="lazy" /></span>
+        <div>
+          <b>{b.authorName}</b>
+          <span class="author-role">{b.authorRole}</span>
+          <p>{b.authorText}</p>
+          <a href={href(lang, 'book')}>{b.authorLink} →</a>
+        </div>
+      </aside>
+
+      <div class="share article" aria-label={b.shareLabel}>
+        <span>{b.share}</span>
+        <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${share}`} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href={`https://twitter.com/intent/tweet?url=${share}&text=${shareTitle}`} target="_blank" rel="noopener noreferrer">X</a>
+        <a href={`mailto:?subject=${shareTitle}&body=${share}`}>E-mail</a>
+        <button type="button" data-copylink data-url={url} data-done={b.linkCopied}>{b.copyLink}</button>
+      </div>
 
       {
         x.sources && (
@@ -101,7 +235,7 @@ const services = b.services as Record<string, { name: string; line: string }>;
   <section class="band-lilas" style="padding-bottom:clamp(48px,7vw,96px)">
     <div class="wrap">
       <div class="section-head reveal">
-        <span class="kicker">{b.allPosts}</span>
+        <span class="kicker">{b.related}</span>
       </div>
       <div class="pgrid">
         {others.map((p) => <div class="reveal"><PostCard lang={lang} post={p} /></div>)}
@@ -111,3 +245,58 @@ const services = b.services as Record<string, { name: string; line: string }>;
 
   <CtaBand lang={lang} title={b.ctaTitle} text={b.ctaText} />
 </Base>
+
+<script>
+  // bouton « Copier » des prompts
+  document.addEventListener('click', async (e) => {
+    const t = e.target as HTMLElement;
+    const btn = t.closest<HTMLButtonElement>('[data-copy]');
+    if (btn) {
+      const code = btn.closest('.term')?.querySelector('code');
+      if (!code) return;
+      const text = code.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const r = document.createRange();
+        r.selectNodeContents(code);
+        const sel = window.getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(r);
+        document.execCommand('copy');
+        sel?.removeAllRanges();
+      }
+      const label = btn.textContent;
+      btn.textContent = btn.dataset.done ?? 'OK';
+      btn.classList.add('ok');
+      setTimeout(() => {
+        btn.textContent = label;
+        btn.classList.remove('ok');
+      }, 1800);
+      return;
+    }
+    const cl = t.closest<HTMLButtonElement>('[data-copylink]');
+    if (cl) {
+      try {
+        await navigator.clipboard.writeText(cl.dataset.url ?? location.href);
+      } catch {
+        /* ignoré */
+      }
+      const label = cl.textContent;
+      cl.textContent = cl.dataset.done ?? 'OK';
+      setTimeout(() => (cl.textContent = label), 1800);
+    }
+  });
+
+  // barre de progression de lecture
+  const bar = document.getElementById('readbar');
+  if (bar) {
+    const update = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      bar.style.transform = `scaleX(${max > 0 ? Math.min(1, h.scrollTop / max) : 0})`;
+    };
+    document.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+</script>

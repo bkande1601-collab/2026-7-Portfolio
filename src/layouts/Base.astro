@@ -20,15 +20,27 @@ interface Props {
   buybar?: boolean;
   /** sur la page d'un produit : n'affiche que ce produit dans la barre */
   buybarOnly?: 'diagnostic' | 'prompt';
+  /** image de partage (chemin ou URL absolue), 1200 x 630 */
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  published?: string;
+  modified?: string;
+  /** titre complet de la balise <title> (sans le nom du site ajouté automatiquement) */
+  rawTitle?: string;
+  /** données structurées (JSON-LD) propres à la page */
+  jsonLd?: object[];
 }
-const { lang, page = '', title, description, noindex = false, buybar = false, buybarOnly } = Astro.props;
+const { lang, page = '', title, description, noindex = false, buybar = false, buybarOnly, ogImage, ogType = 'website', published, modified, rawTitle, jsonLd = [] } = Astro.props;
 const umamiUrl = (import.meta.env.PUBLIC_UMAMI_URL ?? '').replace(/\/$/, '');
 const umamiId = import.meta.env.PUBLIC_UMAMI_ID ?? '';
 const c = t(lang);
 const other: Lang = lang === 'fr' ? 'en' : 'fr';
-const pageTitle = title ? `${title} | ${site.name}` : c.meta.title;
+const pageTitle = rawTitle ?? (title ? `${title} | ${site.name}` : c.meta.title);
 const pageDesc = description ?? c.meta.description;
 const origin = Astro.site ? Astro.site.origin : '';
+const pageUrl = `${origin}${href(lang, page)}`;
+const img = (ogImage ?? '/og/default.png').startsWith('http') ? (ogImage as string) : `${origin}${ogImage ?? '/og/default.png'}`;
+const org = { '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: origin, logo: `${origin}/apple-touch-icon.png`, email: 'hello@bintakande.com' };
 ---
 
 <!doctype html>
@@ -45,11 +57,26 @@ const origin = Astro.site ? Astro.site.origin : '';
     <link rel="alternate" hreflang="fr" href={`${origin}${href('fr', page)}`} />
     <link rel="alternate" hreflang="en" href={`${origin}${href('en', page)}`} />
     <link rel="canonical" href={`${origin}${href(lang, page)}`} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:url" content={pageUrl} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDesc} />
     <meta property="og:locale" content={c.locale} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:locale:alternate" content={t(other).locale} />
+    <meta property="og:image" content={img} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDesc} />
+    <meta name="twitter:image" content={img} />
+    {ogType === 'article' && published && <meta property="article:published_time" content={published} />}
+    {ogType === 'article' && (modified ?? published) && <meta property="article:modified_time" content={modified ?? published} />}
+    {ogType === 'article' && <meta property="article:author" content={site.name} />}
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />}
+    <script type="application/ld+json" set:html={JSON.stringify(org)} />
+    {jsonLd.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
     {umamiUrl && umamiId && <script defer src={`${umamiUrl}/script.js`} data-website-id={umamiId}></script>}
     <script is:inline>
       document.documentElement.classList.add('js');

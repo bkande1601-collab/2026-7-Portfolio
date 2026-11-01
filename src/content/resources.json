@@ -1,5 +1,21 @@
 [
   {
+    "slug": "guide-prompting-5-minutes",
+    "custom": true,
+    "fr": {
+      "title": "Livre blanc : bien prompter en 5 minutes",
+      "subtitle": "La méthode en 5 lignes, une routine de 5 minutes, 10 astuces et 3 avant / après pour obtenir de vraies réponses de l’IA.",
+      "intro": "",
+      "blocks": []
+    },
+    "en": {
+      "title": "White paper: write a good prompt in 5 minutes",
+      "subtitle": "The 5-line method, a 5-minute routine, 10 tips and 3 before / after examples to get real answers from AI.",
+      "intro": "",
+      "blocks": []
+    }
+  },
+  {
     "slug": "taches-a-automatiser",
     "fr": {
       "title": "Checklist de l’entrepreneur : où vous perdez du temps, et par où commencer",

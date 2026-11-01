@@ -12,8 +12,8 @@ const x = post[lang];
 ---
 
 <a class={`pcard${big ? ' big' : ''}`} href={href(lang, `blog/${post.slug}`)}>
-  <span class={`pcard-cover tone-${post.cover.tone}${post.cover.cutout ? ' cut' : ''}`}>
-    <img src={post.cover.src} alt="" width="800" height="600" loading="lazy" />
+  <span class={`pcard-cover tone-${post.cover.tone}${post.cover.cutout ? ' cut' : ''}${post.cover.src ? '' : ' typo'}`}>
+    {post.cover.src ? <img src={post.cover.src} alt="" width="800" height="600" loading="lazy" /> : <><img class="typo-mark" src="/logo-symbole.svg" alt="" width="120" height="120" loading="lazy" /><span class="typo-tag">{x.tag}</span></>}
   </span>
   <span class="pcard-body">
     <span class="post-tag">{x.tag}</span>
