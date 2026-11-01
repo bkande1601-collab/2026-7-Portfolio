@@ -4621,3 +4621,34 @@ html.trailer-on body {
   .fn em { justify-self: start; }
   .rep-bar { grid-template-columns: 1fr 1fr 40px; }
 }
+
+/* ---------- exemple de master prompt ---------- */
+.pdoc { background: var(--surface); }
+.pdoc-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding-bottom: 14px; margin-bottom: 8px; border-bottom: 2px solid var(--violet); }
+.pdoc-head b { font-family: var(--font-head); color: var(--heading); font-size: 1.15rem; }
+.pdoc-head span { color: var(--muted); font-size: 0.88rem; }
+.pdoc-s { display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px dashed var(--line-2); font-size: 0.95rem; }
+.pdoc-s:last-child { border-bottom: 0; }
+.pdoc-s em { font-style: normal; font-family: var(--font-head); font-weight: 800; color: var(--violet); }
+.tn { display: grid; grid-template-columns: 90px 1fr 90px; gap: 12px; align-items: center; font-size: 0.85rem; color: var(--muted); padding-block: 7px; }
+.tn span:last-child { text-align: right; }
+.tn i { position: relative; display: block; height: 8px; border-radius: 6px; background: var(--lilas); }
+.tn u { position: absolute; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--rouille); border: 3px solid var(--surface); }
+.words { display: flex; flex-wrap: wrap; gap: 8px; }
+.words span { padding: 7px 14px; border-radius: 99px; font-size: 0.9rem; }
+.w-ok { background: #d9e8d4; color: #2f5a2a; }
+.w-no { background: #f0cbbd; color: #8a2f10; text-decoration: line-through; }
+.cmp-q { font-style: normal; font-weight: 600; color: var(--heading); margin-bottom: 14px; }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.cmp > div { padding: 18px; border-radius: 14px; }
+.cmp b { font-family: var(--font-head); display: block; margin-bottom: 6px; }
+.cmp p { font-size: 0.95rem; margin: 0; }
+.cmp-b { background: var(--bg-2); color: var(--muted); }
+.cmp-a { background: var(--lilas); color: var(--violet-deep); }
+.kpi li.col { flex-direction: column; gap: 2px; }
+.kpi li.col b { text-align: left; }
+.tick { color: #2f5a2a; }
+@media (max-width: 800px) {
+  .pdoc-s, .cmp { grid-template-columns: 1fr; gap: 4px; }
+  .tn { grid-template-columns: 70px 1fr 70px; }
+}

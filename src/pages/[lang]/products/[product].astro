@@ -19,6 +19,7 @@ const price = formatPrice(key as PriceKey, lang);
 const link = stripeLinks[key];
 const other = p.items.find((x) => x.key !== key)!;
 const r = p.report;
+const d = p.promptDemo;
 const score = Math.round((r.axes.reduce((a, x) => a + x.s, 0) / r.axes.length) * 10);
 const C = 2 * Math.PI * 52;
 const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).toFixed(1).replace('.', lang === 'fr' ? ',' : '.');
@@ -165,17 +166,61 @@ const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).
           </div>
         </div>
       ) : (
-        <div class="example reveal">
-          {it.example.result.map((x, i) => (
-            <div class="example-card">
-              <span class="example-n">0{i + 1}</span>
-              <b>{x.t}</b>
-              <p>{x.d}</p>
+        <div class="rep reveal">
+          <div class="rep-box pdoc">
+            <div class="pdoc-head"><b>{d.docLabel}</b><span>{d.docMeta}</span></div>
+            {d.sections.map((x) => <p class="pdoc-s"><em>{x.t}</em>{x.d}</p>)}
+          </div>
+
+          <div class="rep-duo">
+            <div class="rep-box">
+              <span class="rep-h">{d.toneLabel}</span>
+              {d.tone.map((x) => (
+                <div class="tn"><span>{x.l}</span><i><u style={`left:${x.v}%`}></u></i><span>{x.r}</span></div>
+              ))}
             </div>
-          ))}
+            <div class="rep-box">
+              <span class="rep-h">{d.wordsLabel}</span>
+              <div class="words">
+                {d.use.map((w) => <span class="w-ok">{w}</span>)}
+                {d.avoid.map((w) => <span class="w-no">{w}</span>)}
+              </div>
+            </div>
+          </div>
+
+          <div class="rep-box">
+            <span class="rep-h">{d.cmpLabel}</span>
+            <p class="cmp-q">{d.cmpQ}</p>
+            <div class="cmp">
+              <div class="cmp-b"><b>{d.before.t}</b><p>{d.before.d}</p></div>
+              <div class="cmp-a"><b>{d.after.t}</b><p>{d.after.d}</p></div>
+            </div>
+          </div>
+
+          <div class="rep-duo">
+            <div class="rep-box">
+              <span class="rep-h">{d.checkLabel}</span>
+              <ul class="kpi">
+                {d.checks.map((k) => <li><span>{k.t}</span><b><span class="tick">✓</span> {k.d}</b></li>)}
+              </ul>
+            </div>
+            <div class="rep-box">
+              <span class="rep-h">{d.casesLabel}</span>
+              <ul class="kpi">
+                {d.cases.map((k) => <li class="col"><b>{k.t}</b><span>{k.d}</span></li>)}
+              </ul>
+            </div>
+          </div>
+
+          <div class="rep-box rep-expert">
+            <span class="rep-h">{d.howLabel}</span>
+            <div class="rep-3">
+              {d.how.map((x, n) => <div><b>0{n + 1}</b><p>{x}</p></div>)}
+            </div>
+          </div>
         </div>
       )}
-      <p class="note reveal">{key === 'diagnostic' ? `${r.pdfNote} ` : ''}{it.example.note}</p>
+      <p class="note reveal">{key === 'diagnostic' ? `${r.pdfNote} ` : `${d.pdfNote} `}{it.example.note}</p>
     </div>
   </section>
 
