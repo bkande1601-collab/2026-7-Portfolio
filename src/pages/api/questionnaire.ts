@@ -4,6 +4,7 @@ import { hasStripe, isProduct } from '../../lib/stripe';
 import { syncOrder, notifyAnswers } from '../../lib/orders';
 import { sendToAgent } from '../../lib/agent';
 import { questionnaires } from '../../config/questionnaires';
+import { PICK, promptTypeIds } from '../../config/masterPrompts';
 import { clean, json, readJson, toLang } from '../../lib/http';
 
 export const prerender = false;
@@ -30,8 +31,15 @@ export const POST: APIRoute = async ({ request }) => {
   const lang = toLang(order.lang);
   const raw = (body.answers && typeof body.answers === 'object' ? body.answers : {}) as Record<string, unknown>;
   const answers: { id: string; label: string; value: string }[] = [];
+  // master prompt : exactement 2 types distincts, les questions des autres types sont ignorées
+  let picked: string[] = [];
+  if (order.product === 'prompt') {
+    picked = [...new Set(clean(raw.types, 200).split(',').map((x) => x.trim()).filter((x) => promptTypeIds.includes(x)))];
+    if (picked.length !== PICK) return json({ error: 'invalid', field: 'types' }, 400);
+  }
   for (const q of questionnaires[order.product]) {
-    const value = clean(raw[q.id], 6000);
+    if (q.when && !picked.includes(q.when)) continue;
+    const value = q.type === 'choice' ? picked.join(', ') : clean(raw[q.id], 6000);
     if (q.required && !value) return json({ error: 'invalid', field: q.id }, 400);
     if (value) answers.push({ id: q.id, label: q.label.fr, value });
   }

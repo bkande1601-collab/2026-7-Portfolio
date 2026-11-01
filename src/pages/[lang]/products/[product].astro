@@ -113,6 +113,11 @@ const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).
           </div>
 
           <div class="rep-box">
+            <span class="rep-h">{r.letterLabel}</span>
+            <p style="font-style:italic;margin:0">{r.letter}</p>
+          </div>
+
+          <div class="rep-box">
             <span class="rep-h">{r.funnelLabel}</span>
             <div class="rep-funnel">
               {r.funnel.map((x, n) => (
@@ -167,10 +172,26 @@ const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).
           </div>
 
           <div class="rep-box">
+            <span class="rep-h">{r.ideasLabel}</span>
+            <div class="rep-plan">
+              {r.ideas.map((x) => (
+                <div><b>{x.t}</b><ul><li>{x.b}</li><li>{x.d}</li></ul></div>
+              ))}
+            </div>
+          </div>
+
+          <div class="rep-box">
+            <span class="rep-h">{r.delegLabel}</span>
+            <ul class="kpi">
+              {r.deleg.map((x) => <li class="col"><b>{x.t} · {x.o}</b><span>{x.c} · {x.g}</span></li>)}
+            </ul>
+          </div>
+
+          <div class="rep-box">
             <span class="rep-h">{r.planLabel}</span>
             <div class="rep-plan">
               {r.plan.map((x) => (
-                <div><b>{x.p}</b><ul>{x.a.map((i) => <li>{i}</li>)}</ul></div>
+                <div><b>{x.p}</b><ul>{x.a.map((i) => <li>{i}</li>)}</ul><p style="font-size:.9rem;margin:8px 0 0"><b>{x.done}</b></p></div>
               ))}
             </div>
           </div>
@@ -231,6 +252,7 @@ const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).
         </div>
       )}
       <p class="note reveal">{key === 'diagnostic' ? `${r.pdfNote} ` : `${d.pdfNote} `}{it.example.note}</p>
+      {'replyNote' in it && it.replyNote && <p class="note reveal"><b>{it.replyNote}</b></p>}
     </div>
   </section>
 

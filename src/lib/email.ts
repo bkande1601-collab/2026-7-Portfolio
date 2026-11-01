@@ -56,7 +56,9 @@ const logo = () => {
     : `<span style="font:700 20px/1 ${FONT};color:#f6f0e4;letter-spacing:-0.02em;">${esc(site.brand)}</span>`;
 };
 
-export function shell(opts: { preheader: string; title: string; body: string; footer: string }) {
+/** `contact` : adresse affichée en bas du mail, à la place de hello@bintakande.com. */
+export function shell(opts: { preheader: string; title: string; body: string; footer: string; contact?: string }) {
+  const contact = opts.contact ?? 'hello@bintakande.com';
   return `<!doctype html><html><body style="margin:0;padding:0;background:${C.bg};">
 <span style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(opts.preheader)}</span>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.bg};padding:28px 12px;">
@@ -69,7 +71,7 @@ export function shell(opts: { preheader: string; title: string; body: string; fo
     <h1 style="margin:0 0 18px;font:800 28px/1.15 ${FONT};letter-spacing:-0.03em;color:${C.dark};">${opts.title}</h1>
     ${opts.body}
   </td></tr>
-  <tr><td style="padding:20px 8px 4px;font:12px/1.6 ${FONT};color:${C.muted};text-align:center;">${opts.footer}<br><a href="mailto:hello@bintakande.com" style="color:${C.violet};text-decoration:none;">hello@bintakande.com</a> &middot; <a href="https://bintakande.com" style="color:${C.violet};text-decoration:none;">bintakande.com</a></td></tr>
+  <tr><td style="padding:20px 8px 4px;font:12px/1.6 ${FONT};color:${C.muted};text-align:center;">${opts.footer}<br><a href="mailto:${contact}" style="color:${C.violet};text-decoration:none;">${contact}</a> &middot; <a href="https://bintakande.com" style="color:${C.violet};text-decoration:none;">bintakande.com</a></td></tr>
 </table></td></tr></table></body></html>`;
 }
 
@@ -93,11 +95,12 @@ export function callout(title: string, body: string, tone: 'info' | 'key' | 'war
 }
 
 /** Étapes numérotées (ce qui se passe ensuite, plan d'action). */
-export function steps(items: { title: string; text?: string }[]) {
+export function steps(items: { title: string; text?: string }[], onDark = false) {
+  const ink = onDark ? { title: '#ffffff', text: '#e9e1f7', line: 'rgba(255,255,255,.22)', dot: '#ffffff', dotInk: C.dark } : { title: C.dark, text: C.muted, line: C.line, dot: C.violet, dotInk: '#fffaf4' };
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0;">${items
     .map(
       (it, i) =>
-        `<tr><td width="44" valign="top" style="padding:8px 0;"><div style="width:32px;height:32px;line-height:32px;border-radius:50%;background:${C.violet};color:#fffaf4;text-align:center;font:800 15px/32px ${FONT};">${i + 1}</div></td><td valign="top" style="padding:8px 0 8px 4px;border-bottom:1px solid ${C.line};font:15px/1.55 ${FONT};color:${C.text};"><strong style="color:${C.dark};">${it.title}</strong>${it.text ? `<br><span style="color:${C.muted};">${it.text}</span>` : ''}</td></tr>`,
+        `<tr><td width="44" valign="top" style="padding:8px 0;"><div style="width:32px;height:32px;line-height:32px;border-radius:50%;background:${ink.dot};color:${ink.dotInk};text-align:center;font:800 15px/32px ${FONT};">${i + 1}</div></td><td valign="top" style="padding:8px 0 8px 4px;border-bottom:1px solid ${ink.line};font:15px/1.55 ${FONT};color:${ink.text};"><strong style="color:${ink.title};">${it.title}</strong>${it.text ? `<br><span style="color:${ink.text};">${it.text}</span>` : ''}</td></tr>`,
     )
     .join('')}</table>`;
 }

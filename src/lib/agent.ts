@@ -3,12 +3,21 @@ import { env } from './env';
 import { db } from './db';
 import { esc, ownerEmail, para, row, sendMail, shell, table } from './email';
 import type { Order } from './orders';
+import { commonBrief, outputSchema, promptTypes } from '../config/masterPrompts';
 
 type Answer = { id: string; label: string; value: string };
 
 export const hasAgent = () => Boolean(env('N8N_WEBHOOK_URL') && env('N8N_WEBHOOK_SECRET'));
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/** Master prompt : cadre d'expert des 2 types choisis, à suivre par l'agent qui rédige (rien n'est affiché au client). */
+function promptSpecs(order: Order, answers: Answer[]) {
+  if (order.product !== 'prompt') return {};
+  const ids = (answers.find((a) => a.id === 'types')?.value ?? '').split(',').map((x) => x.trim());
+  const masterPrompts = promptTypes.filter((t) => ids.includes(t.id)).map((t) => ({ id: t.id, name: t.name.fr, brief: t.brief }));
+  return { masterPrompts, commonBrief, outputSchema };
+}
 
 async function post(order: Order, answers: Answer[], retry: boolean): Promise<string | null> {
   // un workflow par produit : .../webhook/diagnostic, .../webhook/prompt
@@ -17,7 +26,7 @@ async function post(order: Order, answers: Answer[], retry: boolean): Promise<st
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Webhook-Secret': env('N8N_WEBHOOK_SECRET') },
-      body: JSON.stringify({ orderId: order.id, product: order.product, lang: order.lang, email: order.email, name: order.name, answers, retry, owner: ownerEmail() }),
+      body: JSON.stringify({ orderId: order.id, product: order.product, lang: order.lang, email: order.email, name: order.name, answers, retry, owner: ownerEmail(), ...promptSpecs(order, answers) }),
       signal: AbortSignal.timeout(15_000),
     });
     return res.ok ? null : `http_${res.status}`;

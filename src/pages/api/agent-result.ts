@@ -4,6 +4,7 @@ import { ownerEmail } from '../../lib/email';
 import { db, ensureSchema, hasDb } from '../../lib/db';
 import { alertOwner, setAgentOutcome } from '../../lib/agent';
 import { deliverToClient, normalizeResult, sendReview } from '../../lib/diagnostic';
+import { normalizePromptResult, promptWarnings } from '../../lib/masterprompt';
 import { getAutoSend } from '../../lib/settings';
 import { clean, json, readJson } from '../../lib/http';
 import type { Order } from '../../lib/orders';
@@ -37,13 +38,16 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ ok: true });
   }
 
-  const result = normalizeResult(body.result);
-  if (!result.resume || result.pistes.length === 0) {
+  const isPrompt = order.product === 'prompt';
+  const result = isPrompt ? normalizePromptResult(body.result) : normalizeResult(body.result);
+  const incomplete = 'kind' in result ? result.prompts.length === 0 || result.prompts.some((p) => !p.texte) : !result.resume || result.pistes.length === 0;
+  if (incomplete) {
     await setAgentOutcome(id, false);
     await alertOwner(order, order.data, 'Résultat incomplet reçu de l’agent');
     return json({ error: 'incomplete' }, 422);
   }
   const warnings = (Array.isArray(body.warnings) ? body.warnings : []).map((w) => clean(w, 200)).filter(Boolean).slice(0, 8);
+  if ('kind' in result) warnings.push(...promptWarnings(result)); // master prompt trop court ou incomplet : pas d'envoi automatique
   const note = clean(body.note, 2500);
   await db().query('UPDATE answers SET result = $2, result_note = $3, result_warnings = $4 WHERE order_id = $1', [id, JSON.stringify(result), note, JSON.stringify(warnings)]);
   try {

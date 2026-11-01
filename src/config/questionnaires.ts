@@ -6,17 +6,20 @@
  *  - min     : nombre de caractères en dessous duquel on invite à détailler
  */
 import type { ProductKey } from '../lib/stripe';
+import { promptTypes } from './masterPrompts';
 
 type L = { fr: string; en: string };
 export type Question = {
   id: string;
-  type: 'text' | 'textarea' | 'url';
+  type: 'text' | 'textarea' | 'url' | 'choice';
   required?: boolean;
   section?: L;
   label: L;
   hint?: L;
   example?: L;
   min?: number;
+  /** question posée seulement si ce type de master prompt est choisi */
+  when?: string;
 };
 
 const S = {
@@ -158,7 +161,7 @@ export const questionnaires: Record<ProductKey, Question[]> = {
     {
       id: 'tools', type: 'textarea', min: 60, section: S.ops,
       label: { fr: 'Les outils que vous utilisez déjà', en: 'Tools you already use' },
-      hint: { fr: 'E-mail, agenda, facturation, CRM, tableurs, Notion, réseaux sociaux, site, paiement…', en: 'Email, calendar, invoicing, CRM, spreadsheets, Notion, social media, website, payments…' },
+      hint: { fr: 'E-mail, agenda, facturation, CRM, tableurs, Notion, réseaux sociaux, site, paiement… Je recommande aussi des outils que vous n’utilisez pas encore, quand ils vous conviennent mieux : si vous ne savez pas, laissez vide.', en: 'Email, calendar, invoicing, CRM, spreadsheets, Notion, social media, website, payments… I also recommend tools you do not use yet when they suit you better: if you are not sure, leave it empty.' },
       example: { fr: 'Exemple : Gmail, Google Agenda, Excel pour suivre les clients, Canva, Stripe, Wix pour le site, Qonto pour la facturation.', en: 'Example: Gmail, Google Calendar, Excel to track customers, Canva, Stripe, Wix for the website, Qonto for invoicing.' },
     },
     {
@@ -197,8 +200,9 @@ export const questionnaires: Record<ProductKey, Question[]> = {
     },
     {
       id: 'budget', type: 'text',
-      label: { fr: 'Le budget et le temps que vous pouvez consacrer à des améliorations', en: 'The budget and time you can devote to improvements' },
-      example: { fr: 'Exemple : jusqu’à 300 € par mois et 3 heures par semaine.', en: 'Example: up to €300 per month and 3 hours per week.' },
+      label: { fr: 'Combien pouvez-vous investir pour améliorer votre activité ?', en: 'How much can you invest to improve your business?' },
+      hint: { fr: 'Un montant une fois, et/ou par mois, plus le temps par semaine. Si vous ne savez pas, laissez vide : je vous proposerai des options pour trois niveaux de budget.', en: 'A one-off amount and/or per month, plus time per week. If you are not sure, leave it empty: I will suggest options for three budget levels.' },
+      example: { fr: 'Exemple : 500 € une fois et jusqu’à 200 € par mois, 3 heures par semaine.', en: 'Example: €500 once and up to €200 per month, 3 hours per week.' },
     },
     {
       id: 'constraints', type: 'textarea', min: 40,
@@ -213,10 +217,25 @@ export const questionnaires: Record<ProductKey, Question[]> = {
 
   prompt: [
     {
-      id: 'activity', type: 'textarea', required: true, min: 160, section: { fr: '1. Votre activité', en: '1. Your business' },
+      id: 'types', type: 'choice', required: true, section: { fr: '1. Vos 2 master prompts', en: '1. Your 2 master prompts' },
+      label: { fr: 'Quels 2 master prompts voulez-vous recevoir ?', en: 'Which 2 master prompts do you want to receive?' },
+      hint: { fr: 'Choisissez-en exactement 2. Chacun est écrit pour votre activité et vous pourrez le coller dans ChatGPT, Claude ou Gemini.', en: 'Choose exactly 2. Each is written for your business and can be pasted into ChatGPT, Claude or Gemini.' },
+    },
+    {
+      id: 'activity', type: 'textarea', required: true, min: 160, section: { fr: '2. Votre activité', en: '2. Your business' },
       label: { fr: 'Votre activité et ce que vous vendez', en: 'Your business and what you sell' },
       hint: { fr: 'Votre métier, vos offres, vos prix si vous le souhaitez, ce qui vous différencie.', en: 'Your trade, your offers, your prices if you wish, what sets you apart.' },
       example: { fr: 'Exemple : je suis coach en nutrition à Lyon. Je vends des programmes de 12 semaines (450 €) et des consultations à 70 €, pour des femmes de 30 à 45 ans.', en: 'Example: I am a nutrition coach in Lyon. I sell 12-week programmes (€450) and consultations at €70, for women aged 30 to 45.' },
+    },
+    {
+      id: 'website', type: 'url',
+      label: { fr: 'L’adresse de votre site (facultatif, très recommandé)', en: 'Your website address (optional, strongly recommended)' },
+      hint: { fr: 'L’IA analyse votre site pour comprendre votre message et votre style, et vous fait des recommandations.', en: 'The AI reads your website to understand your message and style, and makes recommendations.' },
+    },
+    {
+      id: 'linkedin', type: 'url',
+      label: { fr: 'L’adresse de votre LinkedIn (facultatif, très recommandé)', en: 'Your LinkedIn address (optional, strongly recommended)' },
+      hint: { fr: 'Votre profil ou la page de votre entreprise : vos publications montrent comment vous parlez.', en: 'Your profile or company page: your posts show how you speak.' },
     },
     {
       id: 'audience', type: 'textarea', required: true, min: 160,
@@ -224,25 +243,31 @@ export const questionnaires: Record<ProductKey, Question[]> = {
       example: { fr: 'Exemple : des femmes actives, souvent déçues par les régimes. Elles cherchent une méthode durable ; objections : le prix, « je n’ai pas le temps ».', en: 'Example: working women, often disappointed by diets. They want a lasting method; objections: price, “I have no time”.' },
     },
     {
-      id: 'tone', type: 'textarea', required: true, min: 100,
+      id: 'tone', type: 'textarea', required: true, min: 100, section: { fr: '3. Votre marque et votre voix', en: '3. Your brand and voice' },
       label: { fr: 'Votre ton et vos mots', en: 'Your tone and your words' },
       hint: { fr: 'Tutoiement ou vouvoiement, mots que vous employez, mots que vous évitez.', en: 'Informal or formal address, words you use, words you avoid.' },
       example: { fr: 'Exemple : je vouvoie, ton chaleureux et direct, phrases courtes. J’évite « détox », « minceur », les points d’exclamation en série.', en: 'Example: formal “you”, warm and direct tone, short sentences. I avoid “detox”, “slimming”, rows of exclamation marks.' },
     },
     {
-      id: 'examples', type: 'textarea', min: 200,
-      label: { fr: 'Un ou deux textes que vous avez écrits', en: 'One or two texts you have written' },
-      hint: { fr: 'Un e-mail, une publication, un message client. Cela aide à reproduire votre style.', en: 'An email, a post, a customer message. It helps reproduce your style.' },
+      id: 'brand', type: 'textarea', required: true, min: 100,
+      label: { fr: 'Votre marque en 3 adjectifs, et 3 adjectifs qui ne vous ressemblent pas', en: 'Your brand in 3 adjectives, and 3 adjectives that are not you' },
+      hint: { fr: 'Votre personnalité, vos valeurs, ce que vous voulez que les gens ressentent en vous lisant.', en: 'Your personality, your values, what you want people to feel when reading you.' },
+      example: { fr: 'Exemple : chaleureuse, directe, rigoureuse. Jamais moralisatrice, tape-à-l’œil ni « gourou ». Je veux qu’on se sente compris, pas jugé.', en: 'Example: warm, direct, rigorous. Never preachy, flashy or “guru”. I want people to feel understood, not judged.' },
     },
     {
-      id: 'wants', type: 'textarea', required: true, min: 120,
-      label: { fr: 'Ce que vous voulez que l’IA fasse pour vous', en: 'What you want the AI to do for you' },
-      hint: { fr: 'Par exemple : répondre aux messages, écrire des publications, préparer des devis.', en: 'For example: answer messages, write posts, prepare quotes.' },
-      example: { fr: 'Exemple : répondre aux demandes de renseignements, écrire 3 publications Instagram par semaine, reformuler mes comptes rendus de séance.', en: 'Example: answer enquiries, write 3 Instagram posts per week, rewrite my session reports.' },
+      id: 'universe', type: 'textarea', min: 60,
+      label: { fr: 'Votre univers et votre style visuel', en: 'Your universe and visual style' },
+      hint: { fr: 'Couleurs, ambiance, marques ou personnes dont vous vous sentez proche, ce que vous trouvez trop « corporate » ou trop « influenceur ».', en: 'Colours, mood, brands or people you feel close to, what you find too “corporate” or too “influencer”.' },
+      example: { fr: 'Exemple : tons terre et crème, photos naturelles, esprit magazine plutôt que publicité. Proche de l’univers de Jacquemus, loin du ton « coach à paillettes ».', en: 'Example: earthy and cream tones, natural photos, magazine feel rather than advertising. Close to Jacquemus, far from the “glitter coach” tone.' },
+    },
+    {
+      id: 'examples', type: 'textarea', min: 200,
+      label: { fr: 'Un ou deux textes que vous avez écrits', en: 'One or two texts you have written' },
+      hint: { fr: 'Un e-mail, une publication, un message client. L’IA y repère votre rythme et vos expressions pour écrire comme vous.', en: 'An email, a post, a customer message. It helps reproduce your style.' },
     },
     {
       id: 'never', type: 'textarea', min: 60,
-      label: { fr: 'Ce qu’elle ne doit jamais faire', en: 'What it must never do' },
+      label: { fr: 'Ce que l’IA ne doit jamais faire', en: 'What the AI must never do' },
       example: { fr: 'Exemple : donner un avis médical, promettre un résultat chiffré, parler de prix sans me demander.', en: 'Example: give medical advice, promise measurable results, discuss prices without asking me.' },
     },
     {
@@ -250,5 +275,12 @@ export const questionnaires: Record<ProductKey, Question[]> = {
       label: { fr: 'Où allez-vous l’utiliser ?', en: 'Where will you use it?' },
       hint: { fr: 'ChatGPT, Claude, Gemini, e-mails, réseaux sociaux…', en: 'ChatGPT, Claude, Gemini, emails, social media…' },
     },
+    ...promptTypes.flatMap((t) =>
+      t.questions.map((q, i): Question => ({
+        id: q.id, type: 'textarea', required: q.required, min: q.min, when: t.id,
+        section: i === 0 ? { fr: `Pour votre master prompt ${t.name.fr}`, en: `For your ${t.name.en} master prompt` } : undefined,
+        label: q.label, hint: q.hint, example: q.example,
+      })),
+    ),
   ],
 };

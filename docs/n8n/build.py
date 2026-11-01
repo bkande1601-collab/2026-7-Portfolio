@@ -255,17 +255,21 @@ DIAG_SPEC = {
     "resume": "s", "score_global": "i",
     "scores": [{"axe": "s", "score": "i", "commentaire": "s"}],
     "forces": ["s"],
-    "freins": [{"titre": "s", "constat": "s", "cause": "s", "impact": "s"}],
+    "freins": [{"titre": "s", "preuve": "s", "constat": "s", "cause": "s", "impact": "s"}],
     "analyse_expert": {"verdict": "s", "goulot": "s", "lecture": "s", "angle_mort": "s", "opportunite": "s", "risque": "s"},
     "offre": {"resultat": "i", "probabilite": "i", "rapidite": "i", "facilite": "i", "commentaire": "s", "amelioration": "s"},
     "entonnoir": [{"etape": "s", "etat": "s", "constat": "s"}],
     "swot": {"forces": ["s"], "faiblesses": ["s"], "opportunites": ["s"], "menaces": ["s"]},
-    "potentiel": {"heures_par_mois": "i", "revenu_mensuel": "i", "hypotheses": "s"},
-    "pistes": [{"titre": "s", "probleme": "s", "solution": "s", "effet": "s", "effort": "s", "delai": "s", "premier_pas": "s", "impact": "i", "confiance": "i", "facilite": "i"}],
+    "potentiel": {"heures_par_mois": "i", "revenu_mensuel": "i", "calcul": "s", "hypotheses": "s"},
+    "pistes": [{"titre": "s", "probleme": "s", "pourquoi_vous": "s", "solution": "s", "effet": "s", "effort": "s", "delai": "s", "premier_pas": "s", "impact": "i", "confiance": "i", "facilite": "i"}],
     "suite_90_jours": ["s"],
+    "mot_de_binta": "s",
+    "conseils": [{"titre": "s", "idee": "s", "comment": "s", "qui": "s", "cout": "s", "budget": "s"}],
+    "deleguer": [{"tache": "s", "option": "s", "cout": "s", "gain": "s", "quand": "s"}],
+    "avec_binta": [{"service": "s", "constat": "s", "je_ferais": "s", "resultat": "s"}],
     "outils": [{"besoin": "s", "outil": "s", "pourquoi": "s", "cout": "s"}],
-    "plan": [{"periode": "s", "actions": ["s"]}],
-    "indicateurs": [{"indicateur": "s", "cible": "s"}],
+    "plan": [{"periode": "s", "temps": "s", "actions": ["s"], "livrable": "s"}],
+    "indicateurs": [{"indicateur": "s", "depart": "s", "cible": "s"}],
     "a_eviter": ["s"], "questions": ["s"], "note_interne": "s",
 }
 DIAG_PROPS = json.dumps({k: _schema(v) for k, v in DIAG_SPEC.items()}, ensure_ascii=False)
@@ -290,6 +294,9 @@ if ((out.plan ?? []).length < 4) warnings.push('Plan d\'action incomplet (moins 
 if ((out.scores ?? []).length < 6) warnings.push('Scores par axe incomplets');
 if (!out.analyse_expert?.verdict || !out.analyse_expert?.lecture) warnings.push('Analyse de l\'expert incomplète');
 if ((out.entonnoir ?? []).length < 5) warnings.push('Entonnoir incomplet');
+if (!out.mot_de_binta || String(out.mot_de_binta).split(/\s+/).length < 40) warnings.push('Mot de Binta absent ou trop court');
+if ((out.conseils ?? []).length < 4) warnings.push('Moins de 4 conseils');
+if ((out.avec_binta ?? []).length < 1 || (out.avec_binta ?? []).length > 2) warnings.push('Section « avec Binta » : il en faut 1 ou 2');
 if (body.lang === 'fr' && /\b(the|your|and)\b/i.test(String(out.resume).slice(0, 300))) warnings.push('Langue à vérifier (le début ressemble à de l\'anglais)');
 const note = String(out.note_interne ?? '');
 delete out.note_interne;

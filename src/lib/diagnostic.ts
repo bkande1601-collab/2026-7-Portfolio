@@ -5,6 +5,7 @@ import { renderDiagnosticPdf, clean, type DiagResult } from './pdf';
 import { button, callout, esc, ownerEmail, para, sendMail, sendMailId, shell, steps } from './email';
 import { merciUrl, type Order } from './orders';
 import { toLang } from './http';
+import { isPromptResult, promptFiles, sendPromptReview, sendPromptToClient, type PromptResult } from './masterprompt';
 import { autoSendMinutes, deliveryPromise, getAutoSend, type AutoSend } from './settings';
 
 const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
@@ -21,26 +22,31 @@ export function normalizeResult(raw: unknown): DiagResult {
     score_global: num(r.score_global, 0, 100),
     scores: o(r.scores).slice(0, 8).map((x) => ({ axe: str(x.axe, 60), score: num(x.score, 0, 10), commentaire: str(x.commentaire, 160) })),
     forces: strs(r.forces, 4),
-    freins: o(r.freins).slice(0, 4).map((x) => ({ titre: str(x.titre, 90), constat: str(x.constat, 420), cause: str(x.cause, 300), impact: str(x.impact, 300) })),
+    freins: o(r.freins).slice(0, 4).map((x) => ({ titre: str(x.titre, 90), constat: str(x.constat, 420), cause: str(x.cause, 300), impact: str(x.impact, 300), preuve: str(x.preuve, 200) })),
     analyse_expert: ((x) => ({ verdict: str(x.verdict, 360), goulot: str(x.goulot, 520), lecture: str(x.lecture, 1400), angle_mort: str(x.angle_mort, 520), opportunite: str(x.opportunite, 520), risque: str(x.risque, 400) }))((r.analyse_expert ?? {}) as Record<string, unknown>),
     offre: ((x) => ({ resultat: num(x.resultat, 0, 10), probabilite: num(x.probabilite, 0, 10), rapidite: num(x.rapidite, 0, 10), facilite: num(x.facilite, 0, 10), commentaire: str(x.commentaire, 420), amelioration: str(x.amelioration, 420) }))((r.offre ?? {}) as Record<string, unknown>),
     entonnoir: o(r.entonnoir).slice(0, 5).map((x) => ({ etape: str(x.etape, 30), etat: str(x.etat, 10).toLowerCase(), constat: str(x.constat, 220) })),
     swot: ((x) => ({ forces: strs(x.forces, 3, 140), faiblesses: strs(x.faiblesses, 3, 140), opportunites: strs(x.opportunites, 3, 140), menaces: strs(x.menaces, 3, 140) }))((r.swot ?? {}) as Record<string, unknown>),
-    potentiel: ((x) => ({ heures_par_mois: num(x.heures_par_mois, 0, 400), revenu_mensuel: num(x.revenu_mensuel, 0, 1_000_000), hypotheses: str(x.hypotheses, 320) }))((r.potentiel ?? {}) as Record<string, unknown>),
+    potentiel: ((x) => ({ heures_par_mois: num(x.heures_par_mois, 0, 400), revenu_mensuel: num(x.revenu_mensuel, 0, 1_000_000), hypotheses: str(x.hypotheses, 320), calcul: str(x.calcul, 320) }))((r.potentiel ?? {}) as Record<string, unknown>),
     suite_90_jours: strs(r.suite_90_jours, 3, 260),
-    pistes: o(r.pistes).slice(0, 3).map((x) => ({ titre: str(x.titre, 90), probleme: str(x.probleme, 320), solution: str(x.solution, 520), effet: str(x.effet, 320), effort: str(x.effort, 12), premier_pas: str(x.premier_pas, 280), delai: str(x.delai, 18), impact: num(x.impact, 1, 10), confiance: num(x.confiance, 1, 10), facilite: num(x.facilite, 1, 10) })),
+    mot_de_binta: str(r.mot_de_binta, 1800),
+    conseils: o(r.conseils).slice(0, 6).map((x) => ({ titre: str(x.titre, 90), idee: str(x.idee, 420), comment: str(x.comment, 520), qui: str(x.qui, 30), cout: str(x.cout, 50), budget: str(x.budget, 10).toLowerCase() })),
+    deleguer: o(r.deleguer).slice(0, 4).map((x) => ({ tache: str(x.tache, 120), option: str(x.option, 40), cout: str(x.cout, 80), gain: str(x.gain, 220), quand: str(x.quand, 200) })),
+    avec_binta: o(r.avec_binta).slice(0, 2).map((x) => ({ service: str(x.service, 80), constat: str(x.constat, 260), je_ferais: str(x.je_ferais, 460), resultat: str(x.resultat, 260) })),
+    pistes: o(r.pistes).slice(0, 3).map((x) => ({ titre: str(x.titre, 90), probleme: str(x.probleme, 320), solution: str(x.solution, 520), effet: str(x.effet, 320), effort: str(x.effort, 12), premier_pas: str(x.premier_pas, 280), pourquoi_vous: str(x.pourquoi_vous, 320), delai: str(x.delai, 18), impact: num(x.impact, 1, 10), confiance: num(x.confiance, 1, 10), facilite: num(x.facilite, 1, 10) })),
     outils: o(r.outils).slice(0, 6).map((x) => ({ besoin: str(x.besoin, 60), outil: str(x.outil, 50), pourquoi: str(x.pourquoi, 200), cout: str(x.cout, 40) })),
-    plan: o(r.plan).slice(0, 4).map((x) => ({ periode: str(x.periode, 40), actions: strs(x.actions, 4, 220) })),
-    indicateurs: o(r.indicateurs).slice(0, 5).map((x) => ({ indicateur: str(x.indicateur, 140), cible: str(x.cible, 100) })),
+    plan: o(r.plan).slice(0, 4).map((x) => ({ periode: str(x.periode, 40), temps: str(x.temps, 30), actions: strs(x.actions, 4, 340), livrable: str(x.livrable, 200) })),
+    indicateurs: o(r.indicateurs).slice(0, 5).map((x) => ({ indicateur: str(x.indicateur, 140), cible: str(x.cible, 100), depart: str(x.depart, 80) })),
     a_eviter: strs(r.a_eviter, 3, 300),
     questions: strs(r.questions, 3, 300),
   };
 }
 
-export type StoredResult = { result: DiagResult | null; note: string | null; warnings: string[] };
+export type AnyResult = DiagResult | PromptResult;
+export type StoredResult = { result: AnyResult | null; note: string | null; warnings: string[] };
 
 export async function loadResult(orderId: number): Promise<StoredResult & { sentAt: Date | null }> {
-  const r = await db().query<{ result: DiagResult | null; result_note: string | null; result_warnings: string[] | null; client_sent_at: Date | null }>(
+  const r = await db().query<{ result: AnyResult | null; result_note: string | null; result_warnings: string[] | null; client_sent_at: Date | null }>(
     'SELECT result, result_note, result_warnings, client_sent_at FROM answers WHERE order_id = $1',
     [orderId],
   );
@@ -48,7 +54,12 @@ export async function loadResult(orderId: number): Promise<StoredResult & { sent
   return { result: x?.result ?? null, note: x?.result_note ?? null, warnings: x?.result_warnings ?? [], sentAt: x?.client_sent_at ?? null };
 }
 
-export async function pdfFor(order: Order, result: DiagResult) {
+export async function pdfFor(order: Order, result: AnyResult, n = 1) {
+  if (isPromptResult(result)) {
+    const pdfs = (await promptFiles(order, result)).filter((f) => f.filename.endsWith('.pdf'));
+    const f = pdfs[Math.max(0, Math.min(n, pdfs.length) - 1)];
+    return { buf: Buffer.from(f.content, 'base64'), pages: f.pages ?? 0, filename: f.filename, base64: f.content };
+  }
   const lang = toLang(order.lang);
   const out = await renderDiagnosticPdf(result, { name: order.name ?? '', date: new Date(), lang });
   const safe = clean(order.name ?? 'client').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'client';
@@ -57,11 +68,12 @@ export async function pdfFor(order: Order, result: DiagResult) {
 
 const admin = () => `${env('SITE_URL').replace(/\/$/, '') || 'https://bintakande.com'}/admin`;
 
-const prioritiesBlock = (r: DiagResult) =>
-  steps(r.pistes.map((p) => ({ title: esc(p.titre), text: esc(p.premier_pas) })));
+const prioritiesBlock = (r: DiagResult, onDark = false) =>
+  steps(r.pistes.map((p) => ({ title: esc(p.titre), text: esc(p.premier_pas) })), onDark);
 
 /** Mail à Binta : PDF en pièce jointe, avertissements, note interne, mode d'emploi pour envoyer au client. */
-export async function sendReview(order: Order, result: DiagResult, note: string, warnings: string[]): Promise<string | null> {
+export async function sendReview(order: Order, result: AnyResult, note: string, warnings: string[]): Promise<string | null> {
+  if (isPromptResult(result)) return sendPromptReview(order, result, note, warnings);
   const pdf = await pdfFor(order, result);
   const mode = await getAutoSend();
   const auto = warnings.length
@@ -98,7 +110,8 @@ export async function sendReview(order: Order, result: DiagResult, note: string,
 }
 
 /** Mail au client : remerciement + PDF. `to` permet de l'envoyer à Binta pour un test. */
-export async function sendToClient(order: Order, result: DiagResult, to: string, test = false): Promise<boolean> {
+export async function sendToClient(order: Order, result: AnyResult, to: string, test = false): Promise<boolean> {
+  if (isPromptResult(result)) return sendPromptToClient(order, result, to, test);
   const lang = toLang(order.lang);
   const fr = lang === 'fr';
   const pdf = await pdfFor(order, result);
@@ -110,7 +123,7 @@ export async function sendToClient(order: Order, result: DiagResult, to: string,
     body:
       para(fr ? `${first ? `Bonjour ${esc(first)}, m` : 'M'}erci pour votre retour au questionnaire.` : `${first ? `Hello ${esc(first)}, t` : 'T'}hank you for your answers.`) +
       para(fr ? 'Vous trouverez <strong>en pièce jointe le PDF de votre diagnostic</strong> : votre situation, ce qui vous freine, vos trois priorités et un plan d’action sur 30 jours.' : 'You will find <strong>your diagnostic as a PDF attached</strong>: your situation, what is holding you back, your three priorities and a 30-day action plan.') +
-      callout(fr ? 'Vos 3 priorités' : 'Your 3 priorities', prioritiesBlock(result), 'key') +
+      callout(fr ? 'Vos 3 priorités' : 'Your 3 priorities', prioritiesBlock(result, true), 'key') +
       para(fr ? '<strong>Comment l’utiliser</strong>' : '<strong>How to use it</strong>') +
       steps(
         fr
@@ -119,7 +132,8 @@ export async function sendToClient(order: Order, result: DiagResult, to: string,
       ) +
       callout(fr ? 'Envie d’aller plus vite ?' : 'Want to go faster?', fr ? 'Je peux mettre en place ces actions avec vous. Répondez simplement à cet e-mail, ou réservez un échange de 30 minutes.' : 'I can implement these actions with you. Just reply to this email, or book a 30-minute call.', 'info') +
       button(`${origin}/${lang}/book`, fr ? 'Réserver un échange' : 'Book a call'),
-    footer: fr ? 'Ce diagnostic repose uniquement sur vos réponses. Les chiffres cités sont des estimations.' : 'This diagnostic relies only on your answers. Figures quoted are estimates.',
+    footer: fr ? 'Ce diagnostic repose uniquement sur vos réponses. Les chiffres cités sont des estimations.<br>Une question ? Répondez simplement à cet e-mail.' : 'This diagnostic relies only on your answers. Figures quoted are estimates.<br>A question? Simply reply to this email.',
+    contact: 'contact@beccsstudio.com',
   });
   return sendMail({
     to,
@@ -148,7 +162,7 @@ export async function sendQuestionnaireLink(order: Order, to: string, test = fal
 }
 
 /** Envoie le PDF au client une seule fois (réservation atomique), puis prévient Binta. Renvoie true si envoyé. */
-export async function deliverToClient(order: Order, result: DiagResult, auto: boolean): Promise<boolean> {
+export async function deliverToClient(order: Order, result: AnyResult, auto: boolean): Promise<boolean> {
   if (!order.email) return false;
   const claim = await db().query('UPDATE answers SET client_sent_at = now(), client_sent_to = $2 WHERE order_id = $1 AND client_sent_at IS NULL RETURNING 1', [order.id, order.email]);
   if (!claim.rowCount) return false;
@@ -160,7 +174,7 @@ export async function deliverToClient(order: Order, result: DiagResult, auto: bo
   if (auto) {
     await sendMail({
       to: ownerEmail(),
-      subject: `Diagnostic envoyé au client : ${clean(order.name || order.email)}`,
+      subject: `${isPromptResult(result) ? 'Master prompts' : 'Diagnostic'} envoyé au client : ${clean(order.name || order.email)}`,
       html: shell({
         preheader: 'Envoi automatique effectué.',
         title: 'Diagnostic envoyé',
@@ -179,7 +193,7 @@ export async function runAutoSend(): Promise<number> {
   return runDue(autoSendMinutes(mode as AutoSend));
 }
 
-type Due = Order & { result: DiagResult };
+type Due = Order & { result: AnyResult };
 async function runDue(minutes: number): Promise<number> {
   const r = await db().query<Due>(
     `SELECT o.*, a.result FROM answers a JOIN orders o ON o.id = a.order_id

@@ -1,0 +1,73 @@
+---
+import Base from '../layouts/Base.astro';
+import { questionnaires } from '../config/questionnaires';
+const qs = questionnaires.prompt.filter((q) => !q.when);
+const typeQs = questionnaires.prompt.filter((q) => q.when);
+const sections = [
+  { t: 'Rôle', d: 'Tu es l’assistante de Camille, coach sportive indépendante à Lyon. Tu écris à sa place sur Instagram, tu réponds aux messages privés et aux demandes de renseignements. Tu parles toujours en son nom, à la première personne.' },
+  { t: 'Contexte', d: 'Camille propose des séances en petit groupe (39 € par mois) et du coaching individuel (89 € par mois), avec une séance d’essai à 10 €. Elle se différencie par une approche douce, sans régime ni pression.' },
+  { t: 'Public', d: 'Des femmes de 30 à 50 ans qui reprennent le sport après une pause, souvent après une grossesse. Elles ont peur de ne pas être à la hauteur. Leurs objections fréquentes : le prix, le manque de temps, la gêne de débuter devant les autres.' },
+  { t: 'Identité de marque et voix', d: 'Personnalité : chaleureuse, directe, rigoureuse. Jamais moralisatrice, tape-à-l’œil ni « gourou ». Conviction : on reprend le sport en se sentant compris, pas jugé. Univers : tons terre et crème, esprit magazine plutôt que publicité, loin du ton « coach à paillettes ». Ton : doux à l’accueil, concret pour expliquer, calme face à une réclamation, jamais insistant en relance. Tutoiement, phrases de 12 mots en moyenne, pas de points d’exclamation en série, un emoji au maximum, pas d’humour sur le corps. À employer : « à ton rythme », « pas à pas », « tu as le droit de recommencer », « on y va ensemble ». À bannir : « objectifs », « brûler des calories », « sans excuses », « transformation » (trop promesse). Dit comme ça : « 3 ans de pause, c’est courant, on reprend doucement. » Jamais comme ça : « Plus d’excuses, il est temps de te bouger ! » En cas de doute sur le ton, relis cette section avant de répondre.' },
+  { t: 'Missions', d: '1. Répondre aux messages privés et proposer la séance d’essai. 2. Écrire 3 publications Instagram par semaine. 3. Reformuler les comptes rendus de séance en messages clairs pour les clientes.' },
+  { t: 'Règles', d: 'Ne donne jamais de conseil médical ni de régime. Ne promets jamais de perte de poids. Ne parle pas de prix sans qu’on te le demande. Pour une blessure ou un cas particulier, propose un appel avec Camille.' },
+  { t: 'Format', d: 'Messages de 3 phrases maximum, une idée par message, une seule action proposée à la fin. Publications : une accroche, 4 lignes, un appel à l’action.' },
+  { t: 'Exemple de réponse', d: 'Message reçu : « Je n’ai pas fait de sport depuis 3 ans, je ne sais pas si j’ai ma place. » Réponse : « Tu as tout à fait ta place ici, et 3 ans de pause, c’est plus courant que tu ne le crois. On y va à ton rythme, pas à pas. Je te propose une séance d’essai à 10 €, on se voit jeudi à 18 h ? »' },
+];
+---
+<Base lang="fr" page="products" title="Aperçu master prompt" description="" noindex>
+<section style="padding-top:120px">
+<div class="wrap" style="max-width:900px">
+  <span class="kicker">Aperçu local, non publié</span>
+  <h1 style="font-size:clamp(2rem,4vw,3rem)">2 master prompts à 9,99 €</h1>
+  <p class="lead">1. Les questions posées après l’achat. 2. Ce que la personne reçoit par e-mail.</p>
+
+  <h2 style="margin-top:48px">1. Les {qs.length} questions</h2>
+  <ol class="aq">
+    {qs.map((q, i) => (
+      <li>
+        {q.section && <span class="aq-sec">{q.section.fr}</span>}
+        <b>{q.label.fr}{q.required ? ' *' : ''}</b>
+        {q.hint && <span class="aq-hint">{q.hint.fr}</span>}
+        {q.example && <span class="aq-ex">{q.example.fr}</span>}
+        <span class="aq-meta">{q.type === 'text' ? 'Une ligne' : 'Zone de texte'}{q.min ? ` · conseillé : ${q.min} caractères minimum` : ''}{q.required ? ' · obligatoire' : ' · facultatif'}</span>
+      </li>
+    ))}
+  </ol>
+  <p class="lead" style="margin-top:20px">Puis {typeQs.length} questions propres aux 2 types choisis (4 par type), par exemple pour Vente : {typeQs.filter((q) => q.when === 'sales').map((q) => q.label.fr).join(' / ')}</p>
+
+  <h2 style="margin-top:56px">2. Ce que la personne reçoit</h2>
+  <p class="lead" style="margin-top:6px">Un e-mail avec ses 2 master prompts, prêts à coller, et un court mode d’emploi. Exemple ci-dessous : un master prompt Service client écrit pour Camille. Le second, au choix (Vente, SEO, Contenu…), suit la même structure.</p>
+  <div class="mail">
+    <div class="mail-h"><span>De : Binta Kande</span><span>Objet : Votre master prompt est prêt</span></div>
+    <p>Bonjour Camille,</p>
+    <p>Voici votre master prompt, écrit à partir de vos réponses. Copiez tout le texte de l’encadré ci-dessous.</p>
+    <div class="mail-doc">
+      <b class="mail-t">Master prompt de Camille</b>
+      {sections.map((x) => <p class="mail-s"><em>{x.t}</em>{x.d}</p>)}
+    </div>
+    <p><b>Mode d’emploi</b></p>
+    <ol><li>Copiez le master prompt.</li><li>Collez-le au début d’une conversation, ou dans les instructions de votre assistant (ChatGPT, Claude, Gemini).</li><li>Écrivez ensuite votre demande : l’IA répond dans votre ton.</li></ol>
+    <p>Un doute, une retouche à faire ? Répondez simplement à cet e-mail.</p>
+    <p>Binta</p>
+  </div>
+</div>
+</section>
+</Base>
+<style is:global>
+.aq{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:14px;counter-reset:q}
+.aq li{counter-increment:q;position:relative;padding:20px 22px 20px 60px;border-radius:16px;background:var(--surface);border:1px solid var(--line);display:grid;gap:6px}
+.aq li::before{content:counter(q);position:absolute;left:20px;top:20px;font-family:var(--font-head);font-weight:900;color:var(--violet);font-size:1.3rem}
+.aq-sec{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--rouille)}
+.aq b{font-family:var(--font-head);color:var(--heading)}
+.aq-hint{color:var(--muted);font-size:.92rem}
+.aq-ex{font-size:.9rem;background:var(--bg-2);border-radius:10px;padding:8px 12px;color:var(--text)}
+.aq-meta{font-size:.8rem;color:var(--violet);font-weight:600}
+.mail{margin-top:20px;padding:28px;border-radius:20px;background:#fff;border:1px solid var(--line)}
+.mail-h{display:flex;flex-direction:column;gap:2px;padding-bottom:14px;margin-bottom:16px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted)}
+.mail p{margin:0 0 12px}
+.mail-doc{background:var(--bg);border-left:4px solid var(--violet);border-radius:12px;padding:18px 20px;margin:14px 0 18px}
+.mail-t{display:block;font-family:var(--font-head);color:var(--heading);margin-bottom:10px;font-size:1.1rem}
+.mail-s{display:grid;grid-template-columns:110px 1fr;gap:12px;font-size:.92rem;padding:8px 0;border-top:1px dashed var(--line-2)}
+.mail-s em{font-style:normal;font-weight:800;color:var(--violet)}
+@media(max-width:700px){.mail-s{grid-template-columns:1fr;gap:2px}}
+</style>

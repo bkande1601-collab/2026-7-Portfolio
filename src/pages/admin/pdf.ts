@@ -17,7 +17,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
   const o = await db().query<Order>('SELECT * FROM orders WHERE id = $1', [id]);
   const { result } = await loadResult(id);
   if (!o.rows[0] || !result) return json({ error: 'no_result' }, 404);
-  const pdf = await pdfFor(o.rows[0], result);
+  const pdf = await pdfFor(o.rows[0], result, Number(url.searchParams.get('n')) || 1); // n = 1 ou 2 pour un master prompt
   return new Response(new Uint8Array(pdf.buf), {
     headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': `inline; filename="${pdf.filename}"`, 'Cache-Control': 'no-store' },
   });

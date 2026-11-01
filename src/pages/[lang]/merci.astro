@@ -5,6 +5,7 @@ import { hasDb, db } from '../../lib/db';
 import { hasStripe, isProduct } from '../../lib/stripe';
 import { syncOrder, productName } from '../../lib/orders';
 import { questionnaires } from '../../config/questionnaires';
+import { PICK, promptTypes } from '../../config/masterPrompts';
 import { deliveryPromise } from '../../lib/settings';
 
 export const prerender = false;
@@ -20,7 +21,11 @@ let product: 'diagnostic' | 'prompt' | null = null;
 const refaire = Astro.url.searchParams.get('refaire') === '1';
 let prefill: Record<string, string> = {};
 
-if (hasDb() && hasStripe() && /^cs_[A-Za-z0-9_]+$/.test(sessionId)) {
+const devPreview = import.meta.env.DEV ? Astro.url.searchParams.get('apercu') : null; // aperçu local du formulaire, absent en production
+if (devPreview === 'prompt' || devPreview === 'diagnostic') {
+  product = devPreview;
+  state = 'form';
+} else if (hasDb() && hasStripe() && /^cs_[A-Za-z0-9_]+$/.test(sessionId)) {
   try {
     const order = await syncOrder(sessionId);
     if (!order) state = 'unknown';
@@ -45,7 +50,9 @@ const L = {
   kicker: fr ? 'Merci pour votre commande' : 'Thank you for your order',
   title: fr ? 'Quelques questions pour préparer votre résultat' : 'A few questions to prepare your result',
   lead: fr ? 'Prenez 5 minutes. Plus vos réponses sont précises, plus votre résultat l’est.' : 'Take 5 minutes. The more precise your answers, the more precise your result.',
-  banner: fr ? 'Plus vous donnez d’informations, meilleur sera votre audit.' : 'The more information you give, the better your audit.',
+  banner: product === 'prompt' ? (fr ? 'Plus vous donnez d’informations, meilleurs seront vos master prompts.' : 'The more information you give, the better your master prompts.') : (fr ? 'Plus vous donnez d’informations, meilleur sera votre audit.' : 'The more information you give, the better your audit.'),
+  pickLeft: fr ? 'choisi' : 'chosen',
+  pickInvalid: fr ? 'Choisissez exactement 2 master prompts.' : 'Please choose exactly 2 master prompts.',
   bannerText: fr ? 'Chaque détail compte : des chiffres, des exemples, des noms d’outils. Une réponse de 3 mots donne un conseil générique ; une réponse de 3 phrases donne un conseil sur mesure. Un exemple est affiché dans chaque champ pour vous guider. Vos réponses sont enregistrées sur votre appareil au fur et à mesure : vous pouvez faire une pause.' : 'Every detail counts: numbers, examples, tool names. A 3-word answer gives generic advice; a 3-sentence answer gives tailored advice. An example is shown in each field to guide you. Your answers are saved on your device as you go: you can take a break.',
   short: fr ? 'On vous recommande d’écrire plus : ajoutez des détails (chiffres, exemples) pour un résultat plus précis. Vous pouvez quand même envoyer.' : 'We recommend writing more: add details (numbers, examples) for a more precise result. You can still send as is.',
   good: fr ? 'Très bien, c’est précis.' : 'Great, that is precise.',
@@ -93,25 +100,40 @@ const L = {
         <div class="q-banner">
           <strong>{L.banner}</strong>
           <p>{L.bannerText}</p>
-          <div class="q-progress" aria-live="polite"><span id="q-count">0</span>/{questions.length} {L.progress}<i><b id="q-bar"></b></i></div>
+          <div class="q-progress" aria-live="polite"><span id="q-count">0</span>/<span id="q-total">{questions.filter((q) => !q.when).length}</span> {L.progress}<i><b id="q-bar"></b></i></div>
         </div>
         <form class="form" id="q-form" novalidate data-session={sessionId} data-warn={L.warnSubmit}>
           {questions.map((q, i) => (
-            <>
+            <div class="q-item" data-when={q.when} hidden={Boolean(q.when)}>
               {q.section && (i === 0 || questions[i - 1].section?.fr !== q.section.fr) && <h2 class="q-sec">{q.section[lang]}</h2>}
-              <div class="field">
-                <label for={`q-${q.id}`}>
-                  {q.label[lang]} {!q.required && <span>({L.optional})</span>}
-                </label>
-                {q.hint && <p class="q-hint">{q.hint[lang]}</p>}
-                {q.type === 'textarea' ? (
-                  <textarea id={`q-${q.id}`} name={q.id} rows="4" data-required={q.required ? '1' : ''} data-min={q.min ?? ''} maxlength="6000" placeholder={q.example?.[lang] ?? ''}>{prefill[q.id] ?? ''}</textarea>
-                ) : (
-                  <input id={`q-${q.id}`} name={q.id} type="text" data-required={q.required ? '1' : ''} data-min={q.min ?? ''} maxlength="6000" placeholder={q.example?.[lang] ?? ''} value={prefill[q.id] ?? ''} />
-                )}
-                <p class="q-note" data-for={q.id} aria-live="polite"></p>
-              </div>
-            </>
+              {q.type === 'choice' ? (
+                <fieldset class="field q-pick" id="q-types" data-pick={PICK}>
+                  <legend>{q.label[lang]} <span class="q-pickcount"><b id="q-pickn">0</b>/{PICK} {L.pickLeft}</span></legend>
+                  {q.hint && <p class="q-hint">{q.hint[lang]}</p>}
+                  <div class="q-cards">
+                    {promptTypes.map((t) => (
+                      <label class="q-card">
+                        <input type="checkbox" name="types" value={t.id} />
+                        <span class="q-card-b"><strong>{t.name[lang]}</strong><em>{t.tagline[lang]}</em><small>{t.gets[lang]}</small></span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              ) : (
+                <div class="field">
+                  <label for={`q-${q.id}`}>
+                    {q.label[lang]} {!q.required && <span>({L.optional})</span>}
+                  </label>
+                  {q.hint && <p class="q-hint">{q.hint[lang]}</p>}
+                  {q.type === 'textarea' ? (
+                    <textarea id={`q-${q.id}`} name={q.id} rows="4" data-required={q.required ? '1' : ''} data-min={q.min ?? ''} maxlength="6000" placeholder={q.example?.[lang] ?? ''}>{prefill[q.id] ?? ''}</textarea>
+                  ) : (
+                    <input id={`q-${q.id}`} name={q.id} type="text" data-required={q.required ? '1' : ''} data-min={q.min ?? ''} maxlength="6000" placeholder={q.example?.[lang] ?? ''} value={prefill[q.id] ?? ''} />
+                  )}
+                  <p class="q-note" data-for={q.id} aria-live="polite"></p>
+                </div>
+              )}
+            </div>
           ))}
           <p class="q-advice" id="q-adv" aria-live="polite"></p>
           <p class="form-msg" id="q-msg" role="alert" aria-live="polite"></p>
@@ -136,7 +158,7 @@ const L = {
     </div>
   </section>
 
-  <script type="application/json" id="q-i18n" set:html={JSON.stringify({ err: L.err, invalid: L.invalid, send: L.send, sending: L.sending, short: L.short, good: L.good, chars: L.chars, lang })} />
+  <script type="application/json" id="q-i18n" set:html={JSON.stringify({ err: L.err, invalid: L.invalid, send: L.send, sending: L.sending, short: L.short, good: L.good, chars: L.chars, pickInvalid: L.pickInvalid, lang })} />
 </Base>
 
 <style>
@@ -153,6 +175,20 @@ const L = {
   .q-advice { margin: 18px 0 0; font-size: .92rem; font-weight: 600; color: #9a6700; }
   .q-advice:empty { display: none; }
   .q-note.good { color: #1f7a4d; }
+  .q-item[hidden] { display: none; }
+  .q-pick { border: 0; padding: 0; margin: 0 0 8px; min-width: 0; }
+  .q-pick legend { font-weight: 700; color: var(--heading); padding: 0; margin-bottom: 4px; }
+  .q-pickcount { font-weight: 600; font-size: .85rem; color: var(--violet); margin-left: 6px; }
+  .q-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 12px; margin-top: 10px; }
+  .q-card { position: relative; display: block; cursor: pointer; }
+  .q-card input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .q-card-b { display: flex; flex-direction: column; gap: 5px; height: 100%; padding: 16px 18px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface-2); transition: border-color .2s var(--ease), background .2s var(--ease), opacity .2s; }
+  .q-card-b strong { color: var(--heading); font-size: 1.05rem; }
+  .q-card-b em { font-style: normal; font-size: .88rem; color: var(--text); }
+  .q-card-b small { font-size: .8rem; color: var(--muted); }
+  .q-card input:checked + .q-card-b { border-color: var(--violet); background: rgba(105, 76, 172, .1); }
+  .q-card input:focus-visible + .q-card-b { outline: 3px solid var(--violet); outline-offset: 2px; }
+  .q-card input:disabled + .q-card-b { opacity: .45; cursor: not-allowed; }
   textarea::placeholder, input::placeholder { color: var(--taupe); font-style: italic; opacity: .85; }
   textarea:focus::placeholder { opacity: .45; }
 </style>
@@ -164,22 +200,32 @@ const L = {
     const success = document.getElementById('q-success')!;
     const btn = document.getElementById('q-submit') as HTMLButtonElement;
     const t = JSON.parse(document.getElementById('q-i18n')!.textContent || '{}');
-    const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea'));
+    const allFields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input:not([type=checkbox]), textarea'));
+    const picks = Array.from(form.querySelectorAll<HTMLInputElement>('input[name=types]'));
+    const pickMax = picks.length ? Number(form.querySelector<HTMLElement>('#q-types')!.dataset.pick) : 0;
+    // champs réellement affichés (les questions d'un type non choisi sont masquées)
+    const visible = () => allFields.filter((el) => !el.closest('.q-item[hidden]'));
+    const chosen = () => picks.filter((p) => p.checked).map((p) => p.value);
     const draftKey = `q-draft:${form.dataset.session}`;
 
     // brouillon enregistré sur l'appareil (jamais envoyé tant que le formulaire n'est pas validé)
     try {
       const saved = JSON.parse(localStorage.getItem(draftKey) || '{}');
-      fields.forEach((el) => { if (!el.value && saved[el.name]) el.value = saved[el.name]; });
+      allFields.forEach((el) => { if (!el.value && saved[el.name]) el.value = saved[el.name]; });
+      if (typeof saved.types === 'string') picks.forEach((p) => { p.checked = saved.types.split(',').includes(p.value); });
     } catch {}
 
-    const shortCount = () => fields.filter((el) => el.dataset.min && el.value.trim() && el.value.trim().length < Number(el.dataset.min)).length;
+    const shortCount = () => visible().filter((el) => el.dataset.min && el.value.trim() && el.value.trim().length < Number(el.dataset.min)).length;
 
     function refresh(el?: HTMLInputElement | HTMLTextAreaElement) {
-      const done = fields.filter((f) => f.value.trim()).length;
+      const vis = visible();
+      const done = vis.filter((f) => f.value.trim()).length + (picks.length && chosen().length === pickMax ? 1 : 0);
+      const total = vis.length + (picks.length ? 1 : 0);
       document.getElementById('q-count')!.textContent = String(done);
-      (document.getElementById('q-bar') as HTMLElement).style.width = `${Math.round((done / fields.length) * 100)}%`;
-      const list = el ? [el] : fields;
+      const totalEl = document.getElementById('q-total');
+      if (totalEl) totalEl.textContent = String(total);
+      (document.getElementById('q-bar') as HTMLElement).style.width = `${Math.round((done / Math.max(total, 1)) * 100)}%`;
+      const list = el ? [el] : vis;
       list.forEach((f) => {
         const note = form!.querySelector<HTMLElement>(`.q-note[data-for="${f.name}"]`);
         if (!note) return;
@@ -192,28 +238,51 @@ const L = {
       });
     }
 
-    fields.forEach((el) => el.addEventListener('input', () => {
-      refresh(el);
-      adv.textContent = shortCount() >= 3 ? (form.dataset.warn || '') : '';
+    const saveDraft = () => {
       try {
         const data: Record<string, string> = {};
-        fields.forEach((f) => { if (f.value) data[f.name] = f.value; });
+        allFields.forEach((f) => { if (f.value) data[f.name] = f.value; });
+        if (picks.length) data.types = chosen().join(',');
         localStorage.setItem(draftKey, JSON.stringify(data));
       } catch {}
+    };
+    allFields.forEach((el) => el.addEventListener('input', () => {
+      refresh(el);
+      adv.textContent = shortCount() >= 3 ? (form.dataset.warn || '') : '';
+      saveDraft();
     }));
+    // choix des 2 master prompts : au maximum 2, et seules les questions des types choisis s'affichent
+    const syncPicks = () => {
+      const on = chosen();
+      picks.forEach((p) => { p.disabled = !p.checked && on.length >= pickMax; });
+      form.querySelectorAll<HTMLElement>('.q-item[data-when]').forEach((box) => { box.hidden = !on.includes(box.dataset.when!); });
+      const n = document.getElementById('q-pickn');
+      if (n) n.textContent = String(on.length);
+      refresh();
+    };
+    picks.forEach((p) => p.addEventListener('change', () => { syncPicks(); saveDraft(); }));
     const adv = document.getElementById('q-adv')!;
-    refresh();
+    syncPicks();
     adv.textContent = shortCount() >= 3 ? (form.dataset.warn || '') : '';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const answers: Record<string, string> = {};
       let missing: HTMLElement | null = null;
-      fields.forEach((el) => {
+      visible().forEach((el) => {
         answers[el.name] = el.value.trim();
         if (el.dataset.required && !el.value.trim() && !missing) missing = el;
       });
       msg.className = 'form-msg';
+      if (picks.length) {
+        answers.types = chosen().join(',');
+        if (chosen().length !== pickMax) {
+          msg.textContent = t.pickInvalid;
+          msg.classList.add('err');
+          document.getElementById('q-types')!.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+      }
       if (missing) {
         msg.textContent = t.invalid;
         msg.classList.add('err');
