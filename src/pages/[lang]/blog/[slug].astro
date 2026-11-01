@@ -138,6 +138,7 @@ const shareTitle = encodeURIComponent(x.title);
               <aside class="note-box">
                 <b>{s.note.title}</b>
                 <p>{s.note.text}</p>
+                {s.note.href && <a class="note-link" href={href(lang, s.note.href)}>{s.note.cta ?? b.read} →</a>}
               </aside>
             ) : (
               <>

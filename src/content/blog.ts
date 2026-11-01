@@ -5,6 +5,10 @@
  * Une section peut avoir : un titre (`h`), des paragraphes (`p`), une liste (`list`),
  * un encadré de service (`service`, voir les clés dans `blog.services` de fr.ts et en.ts).
  * `resource` : le slug d'une ressource gratuite de src/content/resources.json (PDF envoyé par e-mail).
+ *
+ * Gabarit complet (en bref, sommaire, prompts en terminal, FAQ, sources, données structurées) :
+ * voir src/content/blog-prompts.ts, et docs/modele-article-blog.md pour la checklist d'un bon article.
+ * Pour compléter un article existant (description, en bref, FAQ, sources) : src/content/blog-extra.ts.
  */
 export type Prompt = { title: string; use: string; text: string; tip?: string };
 export type Section = {
@@ -17,7 +21,7 @@ export type Section = {
   /** prompts à copier, présentés comme dans un terminal */
   prompts?: Prompt[];
   /** encadré mis en avant */
-  note?: { title: string; text: string };
+  note?: { title: string; text: string; /** page du site vers laquelle renvoyer (ex. blog/prompts-gratuits-seo-reseaux-vente) */ href?: string; cta?: string };
 };
 export type Faq = { q: string; a: string };
 export type Source = { label: string; url: string };
@@ -55,9 +59,9 @@ export type Post = {
 };
 
 import { promptsPost } from './blog-prompts';
+import { withExtra } from './blog-extra';
 
-export const posts: Post[] = [
-  promptsPost,
+const basePosts: Post[] = [
   /* ------------------------------------------------------------------ 1 */
   {
     slug: 'premieres-automatisations',
@@ -450,3 +454,6 @@ export const posts: Post[] = [
     },
   },
 ];
+
+/** Articles, du plus récent au plus ancien. `blog-extra.ts` ajoute à chacun : en bref, FAQ, sources et méthode. */
+export const posts: Post[] = [promptsPost, ...basePosts.map(withExtra)];

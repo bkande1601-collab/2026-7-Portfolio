@@ -4757,3 +4757,5 @@ html.trailer-on body {
 @media (max-width: 800px) {
   .sc { grid-template-columns: 1fr; }
 }
+
+.note-box .note-link { display: inline-block; margin-top: 12px; color: #fff; font-weight: 700; text-underline-offset: 3px; }

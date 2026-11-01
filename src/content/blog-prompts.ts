@@ -14,7 +14,7 @@ export const promptsPost: Post = {
   fr: {
     tag: 'Prompts gratuits',
     title: '9 prompts gratuits à copier-coller pour le SEO, les réseaux sociaux et la vente',
-    seoTitle: '9 prompts gratuits : SEO, réseaux sociaux et vente',
+    seoTitle: '9 prompts gratuits : SEO, réseaux et vente',
     description: '9 prompts gratuits à copier-coller pour le SEO, les réseaux sociaux et la vente, avec la méthode pour bien prompter en 5 minutes et un guide PDF offert.',
     excerpt: 'SEO, réseaux sociaux, vente : 9 prompts prêts à coller dans ChatGPT, Claude ou Gemini, et la méthode pour écrire les vôtres en 5 minutes.',
     takeaways: [
