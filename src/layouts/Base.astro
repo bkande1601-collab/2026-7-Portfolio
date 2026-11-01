@@ -29,8 +29,10 @@ interface Props {
   rawTitle?: string;
   /** données structurées (JSON-LD) propres à la page */
   jsonLd?: object[];
+  /** page de service : ajoute les données structurées « Service » */
+  service?: boolean;
 }
-const { lang, page = '', title, description, noindex = false, buybar = false, buybarOnly, ogImage, ogType = 'website', published, modified, rawTitle, jsonLd = [] } = Astro.props;
+const { lang, page = '', title, description, noindex = false, buybar = false, buybarOnly, ogImage, ogType = 'website', published, modified, rawTitle, jsonLd = [], service = false } = Astro.props;
 const umamiUrl = (import.meta.env.PUBLIC_UMAMI_URL ?? '').replace(/\/$/, '');
 const umamiId = import.meta.env.PUBLIC_UMAMI_ID ?? '';
 const c = t(lang);
@@ -40,6 +42,7 @@ const pageDesc = description ?? c.meta.description;
 const origin = Astro.site ? Astro.site.origin : '';
 const pageUrl = `${origin}${href(lang, page)}`;
 const img = (ogImage ?? '/og/default.png').startsWith('http') ? (ogImage as string) : `${origin}${ogImage ?? '/og/default.png'}`;
+const serviceLd = service ? [{ '@context': 'https://schema.org', '@type': 'Service', name: title ?? pageTitle, description: pageDesc, url: pageUrl, provider: { '@type': 'ProfessionalService', name: site.name, url: origin }, areaServed: 'FR', availableLanguage: ['fr', 'en'] }] : [];
 const org = { '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: origin, logo: `${origin}/apple-touch-icon.png`, email: 'hello@bintakande.com' };
 ---
 
@@ -56,7 +59,10 @@ const org = { '@context': 'https://schema.org', '@type': 'Organization', name: s
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="alternate" hreflang="fr" href={`${origin}${href('fr', page)}`} />
     <link rel="alternate" hreflang="en" href={`${origin}${href('en', page)}`} />
+    <link rel="alternate" hreflang="x-default" href={`${origin}${href('fr', page)}`} />
     <link rel="canonical" href={`${origin}${href(lang, page)}`} />
+    {site.verification.google && <meta name="google-site-verification" content={site.verification.google} />}
+    {site.verification.bing && <meta name="msvalidate.01" content={site.verification.bing} />}
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:url" content={pageUrl} />
@@ -76,7 +82,7 @@ const org = { '@context': 'https://schema.org', '@type': 'Organization', name: s
     {ogType === 'article' && <meta property="article:author" content={site.name} />}
     {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />}
     <script type="application/ld+json" set:html={JSON.stringify(org)} />
-    {jsonLd.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+    {[...serviceLd, ...jsonLd].map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
     {umamiUrl && umamiId && <script defer src={`${umamiUrl}/script.js`} data-website-id={umamiId}></script>}
     <script is:inline>
       document.documentElement.classList.add('js');

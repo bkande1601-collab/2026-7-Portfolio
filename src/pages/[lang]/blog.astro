@@ -12,9 +12,11 @@ const lang = Astro.params.lang as Lang;
 const c = t(lang);
 const b = c.blog;
 const [first, ...rest] = posts;
+const origin = Astro.site ? Astro.site.origin : '';
+const blogLd = { '@context': 'https://schema.org', '@type': 'Blog', name: `${c.nav.blog} | Binta Kande`, url: `${origin}/${lang}/blog`, inLanguage: lang, blogPost: posts.map((p) => ({ '@type': 'BlogPosting', headline: p[lang].title, url: `${origin}/${lang}/blog/${p.slug}`, datePublished: p.date })) };
 ---
 
-<Base lang={lang} page="blog" title={c.nav.blog} description={b.hero.sub}>
+<Base lang={lang} page="blog" title={c.nav.blog} description={b.hero.sub} jsonLd={[blogLd]}>
   <section class="page-hero">
     <div class="wrap">
       <span class="kicker">{b.hero.kicker}</span>

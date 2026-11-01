@@ -68,6 +68,12 @@ export const site = {
     linkedin: '',
   },
 
+  /**
+   * Codes de vérification des moteurs de recherche. Collez la valeur « content » de la balise
+   * que Google Search Console (méthode « Balise HTML ») ou Bing Webmaster Tools vous donne.
+   */
+  verification: { google: '', bing: '' },
+
   /** Ajoutez un fichier si besoin, sinon laissez comme ça. */
   analytics: '',
 } as const;

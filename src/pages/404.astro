@@ -7,7 +7,7 @@ const lang = Astro.url.pathname.startsWith('/en') ? 'en' : 'fr';
 const c = t(lang);
 ---
 
-<Base lang={lang} page="" title="404">
+<Base lang={lang} page="" title="404" noindex>
   <section class="page-hero" style="min-height:60vh">
     <div class="wrap">
       <span class="kicker">404</span>

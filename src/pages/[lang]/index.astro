@@ -18,9 +18,27 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 const c = t(lang);
 const h = c.home;
+const origin = Astro.site ? Astro.site.origin : '';
+const sameAs = [site.links.linkedin, site.links.github].filter(Boolean);
+const homeLd = [
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: `${origin}/${lang}`, inLanguage: lang },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    name: site.name,
+    url: `${origin}/${lang}`,
+    image: `${origin}/og/default.png`,
+    description: c.meta.description,
+    email: 'hello@bintakande.com',
+    areaServed: 'FR',
+    availableLanguage: ['fr', 'en'],
+    serviceType: ['Automatisation', 'Agents IA', 'Création de site web', 'Marketing digital'],
+    ...(sameAs.length ? { sameAs } : {}),
+  },
+];
 ---
 
-<Base lang={lang} page="">
+<Base lang={lang} page="" jsonLd={homeLd}>
   <!-- 1. Accroche + photo (ou vidéo) -->
   <section class="hero">
     <div class="wrap hero-grid">

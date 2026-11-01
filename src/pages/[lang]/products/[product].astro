@@ -4,7 +4,7 @@ import Base from '../../../layouts/Base.astro';
 import CtaBand from '../../../components/CtaBand.astro';
 import Crumb from '../../../components/Crumb.astro';
 import { t, em, href, langs, type Lang } from '../../../content';
-import { formatPrice, stripeLinks, type PriceKey } from '../../../config/site';
+import { formatPrice, prices, stripeLinks, type PriceKey } from '../../../config/site';
 
 export function getStaticPaths() {
   const keys = ['diagnostic', 'prompt'];
@@ -22,10 +22,20 @@ const r = p.report;
 const d = p.promptDemo;
 const score = Math.round((r.axes.reduce((a, x) => a + x.s, 0) / r.axes.length) * 10);
 const C = 2 * Math.PI * 52;
+const origin = Astro.site ? Astro.site.origin : '';
+const productLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: it.name,
+  description: it.line,
+  image: `${origin}/og/default.png`,
+  brand: { '@type': 'Brand', name: 'Binta Kande' },
+  offers: { '@type': 'Offer', url: `${origin}${href(lang, `products/${key}`)}`, priceCurrency: 'EUR', price: String(prices[key as 'diagnostic' | 'prompt'].amount), availability: 'https://schema.org/InStock', itemCondition: 'https://schema.org/NewCondition' },
+};
 const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).toFixed(1).replace('.', lang === 'fr' ? ',' : '.');
 ---
 
-<Base buybar buybarOnly={key} lang={lang} page={`products/${key}`} title={it.name} description={it.line}>
+<Base buybar buybarOnly={key} lang={lang} page={`products/${key}`} title={it.name} description={it.line} jsonLd={[productLd]}>
   <section class="page-hero has-photo">
     <div class="wrap hero-split">
       <div class="hero-text">
