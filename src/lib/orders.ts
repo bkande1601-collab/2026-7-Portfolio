@@ -16,6 +16,8 @@ export type Order = {
   email: string | null;
   name: string | null;
   phone?: string | null;
+  /** master prompt : les 2 types choisis avant le paiement, séparés par une virgule */
+  prompt_types?: string | null;
   country?: string | null;
   amount: number;
   currency: string;
@@ -36,11 +38,11 @@ const toLang = (v: unknown): Lang => (v === 'en' ? 'en' : 'fr');
 export const merciUrl = (lang: string, sessionId: string) =>
   `${siteOrigin()}/${lang}/merci?session_id=${encodeURIComponent(sessionId)}`;
 
-export async function createPending(sessionId: string, product: ProductKey, lang: Lang) {
+export async function createPending(sessionId: string, product: ProductKey, lang: Lang, promptTypes?: string[]) {
   await ensureSchema();
   await db().query(
-    `INSERT INTO orders (session_id, product, lang) VALUES ($1, $2, $3) ON CONFLICT (session_id) DO NOTHING`,
-    [sessionId, product, lang],
+    `INSERT INTO orders (session_id, product, lang, prompt_types) VALUES ($1, $2, $3, $4) ON CONFLICT (session_id) DO NOTHING`,
+    [sessionId, product, lang, promptTypes?.length ? promptTypes.join(',') : null],
   );
 }
 

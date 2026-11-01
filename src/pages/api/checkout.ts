@@ -3,6 +3,7 @@ import { stripe, hasStripe, resolvePrice, isProduct, siteOrigin } from '../../li
 import { hasDb } from '../../lib/db';
 import { createPending } from '../../lib/orders';
 import { json, readJson, toLang } from '../../lib/http';
+import { PICK, promptTypeIds } from '../../config/masterPrompts';
 
 export const prerender = false;
 
@@ -11,6 +12,14 @@ export const POST: APIRoute = async ({ request }) => {
   if (!body || !isProduct(body.product)) return json({ error: 'bad_request' }, 400);
   const product = body.product;
   const lang = toLang(body.lang);
+
+  // master prompt : l'acheteur a choisi ses 2 types avant de payer (facultatif ici, redemandé sur la page de remerciement sinon)
+  let types: string[] = [];
+  if (product === 'prompt' && body.types !== undefined) {
+    const raw = Array.isArray(body.types) ? body.types : [];
+    types = [...new Set(raw.map((x) => String(x)).filter((x) => promptTypeIds.includes(x)))];
+    if (types.length !== PICK) return json({ error: 'bad_types' }, 400);
+  }
 
   const price = hasStripe() ? await resolvePrice(product) : '';
   const origin = siteOrigin();
@@ -38,13 +47,13 @@ export const POST: APIRoute = async ({ request }) => {
         font_family: 'inter',
         logo: { type: 'url', url: `${origin}/brand/logo-checkout.png` },
       },
-      metadata: { product, lang },
-      payment_intent_data: { metadata: { product, lang } },
+      metadata: { product, lang, ...(types.length ? { types: types.join(',') } : {}) },
+      payment_intent_data: { metadata: { product, lang, ...(types.length ? { types: types.join(',') } : {}) } },
       success_url: `${origin}/${lang}/merci?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/${lang}/products/${product}`,
     });
     if (!session.url) return json({ error: 'no_url' }, 502);
-    if (hasDb()) await createPending(session.id, product, lang).catch(() => console.error('checkout: pending order not saved'));
+    if (hasDb()) await createPending(session.id, product, lang, types).catch(() => console.error('checkout: pending order not saved'));
     return json({ url: session.url });
   } catch (e) {
     // Le message d'erreur Stripe ne contient pas de secret (la clé y apparaît masquée)

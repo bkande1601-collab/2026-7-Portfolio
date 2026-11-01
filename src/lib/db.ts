@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 CREATE INDEX IF NOT EXISTS orders_payment_intent ON orders (payment_intent);
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS phone text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS prompt_types text;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS country text;
 CREATE TABLE IF NOT EXISTS answers (
   order_id integer PRIMARY KEY REFERENCES orders(id) ON DELETE CASCADE,

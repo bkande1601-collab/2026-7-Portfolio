@@ -5,6 +5,8 @@ import CtaBand from '../../../components/CtaBand.astro';
 import Crumb from '../../../components/Crumb.astro';
 import { t, em, href, langs, type Lang } from '../../../content';
 import { formatPrice, prices, stripeLinks, type PriceKey } from '../../../config/site';
+import { promptTypes, PICK } from '../../../config/masterPrompts';
+import { promptPreviews } from '../../../config/promptPreviews';
 
 export function getStaticPaths() {
   const keys = ['diagnostic', 'prompt'];
@@ -32,6 +34,53 @@ const productLd = {
   brand: { '@type': 'Brand', name: 'Binta Kande' },
   offers: { '@type': 'Offer', url: `${origin}${href(lang, `products/${key}`)}`, priceCurrency: 'EUR', price: String(prices[key as 'diagnostic' | 'prompt'].amount), availability: 'https://schema.org/InStock', itemCondition: 'https://schema.org/NewCondition' },
 };
+const fr = lang === 'fr';
+const checkoutOn = import.meta.env.PUBLIC_CHECKOUT === 'on';
+const PT = fr
+  ? {
+      denseKicker: 'Ce que vous recevez vraiment',
+      denseTitle: 'Un master prompt, ce n’est pas une phrase. C’est un dossier de 15 sections.',
+      denseLead: 'Chaque master prompt fait plus de 4 000 mots, soit plusieurs pages de PDF denses, écrites pour votre activité, vos clients et votre voix. Vous le collez une fois : l’IA travaille ensuite comme un expert qui vous connaît déjà.',
+      stats: [['4 000+', 'mots par master prompt'], ['15', 'sections, du rôle au contrôle qualité'], ['2', 'PDF prêts à copier-coller'], ['+ bonus', 'analyse de votre site et de votre LinkedIn']],
+      file: 'master-prompt-vente.txt',
+      more: 'Et 4 600 mots de plus : méthode d’expert, 11 gabarits, 6 exemples complets, règles, contrôle qualité…',
+      sectionsTitle: 'Les 15 sections de chaque master prompt',
+      sections: ['Comment lire le document', 'Rôle et expertise', 'Mission et objectifs', 'Contexte de votre entreprise', 'Vos clients et leurs objections', 'Identité de marque et voix', 'Méthode d’expert', 'Bibliothèque de tâches', '8 à 12 gabarits prêts à l’emploi', 'Au moins 5 exemples complets', 'Règles et limites', 'Questions préalables', 'Format de sortie', 'Contrôle qualité', 'Mémoire et itération'],
+      chooseKicker: 'Étape 1 sur 3',
+      chooseTitle: 'Choisissez vos 2 master prompts',
+      chooseLead: 'Sept spécialités. Vous en prenez deux, pour le prix d’un seul produit. Ouvrez « Voir un extrait » pour lire un vrai passage.',
+      steps: ['Vous choisissez 2 master prompts', 'Vous payez en sécurité', 'Vous répondez au questionnaire, puis vous recevez vos 2 PDF'],
+      extract: 'Voir un extrait',
+      chosen: 'choisi',
+      pick: 'Choisissez 2 master prompts pour continuer',
+      go: 'Je valide mon choix et je paie',
+      soon: 'Bientôt disponible',
+      err: 'Le paiement est indisponible pour le moment. Réessayez dans un instant.',
+      yourChoice: 'Votre choix :',
+      none: 'aucun pour l’instant',
+    }
+  : {
+      denseKicker: 'What you actually receive',
+      denseTitle: 'A master prompt is not one sentence. It is a 15-section file.',
+      denseLead: 'Each master prompt runs over 4,000 words, several dense PDF pages written for your business, your customers and your voice. You paste it once: the AI then works like an expert who already knows you.',
+      stats: [['4,000+', 'words per master prompt'], ['15', 'sections, from role to quality check'], ['2', 'PDFs ready to copy and paste'], ['+ bonus', 'review of your website and LinkedIn']],
+      file: 'master-prompt-sales.txt',
+      more: 'And 4,600 more words: expert method, 11 templates, 6 full examples, rules, quality check…',
+      sectionsTitle: 'The 15 sections of every master prompt',
+      sections: ['How to read the document', 'Role and expertise', 'Mission and goals', 'Your business context', 'Your customers and their objections', 'Brand identity and voice', 'Expert method', 'Task library', '8 to 12 ready-to-use templates', 'At least 5 complete examples', 'Rules and limits', 'Questions to ask first', 'Output format', 'Quality check', 'Memory and iteration'],
+      chooseKicker: 'Step 1 of 3',
+      chooseTitle: 'Choose your 2 master prompts',
+      chooseLead: 'Seven specialities. You take two, for the price of a single product. Open “See an excerpt” to read a real passage.',
+      steps: ['You choose 2 master prompts', 'You pay securely', 'You answer the questionnaire, then receive your 2 PDFs'],
+      extract: 'See an excerpt',
+      chosen: 'chosen',
+      pick: 'Choose 2 master prompts to continue',
+      go: 'Confirm my choice and pay',
+      soon: 'Coming soon',
+      err: 'Payment is unavailable right now. Please try again in a moment.',
+      yourChoice: 'Your choice:',
+      none: 'none yet',
+    };
 const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).toFixed(1).replace('.', lang === 'fr' ? ',' : '.');
 ---
 
@@ -51,6 +100,62 @@ const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).
       <img class="hero-photo" src="/photos/binta-accueil-violet.webp" alt="Binta Kande en haut violet, les bras croisés" width="1108" height="1313" />
     </div>
   </section>
+
+  {key === 'prompt' && (
+    <>
+      <section class="pp-dense">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="kicker">{PT.denseKicker}</span>
+            <h2>{PT.denseTitle}</h2>
+            <p class="lead">{PT.denseLead}</p>
+          </div>
+          <div class="pp-stats reveal">
+            {PT.stats.map(([n, l]) => <div><strong>{n}</strong><span>{l}</span></div>)}
+          </div>
+          <div class="pp-win reveal" aria-label={PT.file}>
+            <div class="pp-bar"><i></i><i></i><i></i><span>{PT.file}</span></div>
+            <pre class="pp-code" set:html={promptPreviews.sales[lang].replace(/&/g, '&amp;').replace(/</g, '&lt;').split('\n').filter((l) => !l.startsWith('…')).map((l, n) => `<span class="ln">${n + 1}</span>${l.startsWith('##') ? `<b>${l}</b>` : l.startsWith('…') ? `<em>${l}</em>` : l}`).join('\n')}></pre>
+            <p class="pp-more">{PT.more}</p>
+          </div>
+          <h3 class="pp-h3 reveal">{PT.sectionsTitle}</h3>
+          <ol class="pp-sections reveal">
+            {PT.sections.map((x) => <li>{x}</li>)}
+          </ol>
+        </div>
+      </section>
+
+      <section id="choisir" class="pp-choose">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="kicker">{PT.chooseKicker}</span>
+            <h2>{PT.chooseTitle}</h2>
+            <p class="lead">{PT.chooseLead}</p>
+            <ol class="pp-flow">{PT.steps.map((x, n) => <li class={n === 0 ? 'on' : ''}><b>{n + 1}</b>{x}</li>)}</ol>
+          </div>
+          <div class="pp-grid" id="pp-grid" data-pick={PICK}>
+            {promptTypes.map((x) => (
+              <div class="pp-card">
+                <label>
+                  <input type="checkbox" name="pp" value={x.id} />
+                  <span class="pp-box" aria-hidden="true"></span>
+                  <span class="pp-card-b"><strong>{x.name[lang]}</strong><em>{x.tagline[lang]}</em><small>{x.gets[lang]}</small></span>
+                </label>
+                <details>
+                  <summary>{PT.extract}</summary>
+                  <pre class="pp-code pp-mini" set:html={promptPreviews[x.id][lang].replace(/&/g, '&amp;').replace(/</g, '&lt;').split('\n').map((l) => (l.startsWith('##') ? `<b>${l}</b>` : l.startsWith('…') ? `<em>${l}</em>` : l)).join('\n')}></pre>
+                </details>
+              </div>
+            ))}
+          </div>
+          <div class="pp-cta" id="pp-cta" data-checkout={checkoutOn ? 'on' : ''} data-lang={lang} data-err={PT.err} data-pick-msg={PT.pick} data-none={PT.none} data-names={JSON.stringify(Object.fromEntries(promptTypes.map((x) => [x.id, x.name[lang]])))}>
+            <p><span>{PT.yourChoice}</span> <b id="pp-sel">{PT.none}</b> · <span id="pp-n">0</span>/{PICK} {PT.chosen}</p>
+            <button class="btn btn-primary" type="button" id="pp-go" disabled data-go={PT.go} data-soon={PT.soon}>{PT.pick}</button>
+          </div>
+        </div>
+      </section>
+    </>
+  )}
 
   <section style="padding-top:clamp(32px,5vw,64px)">
     <div class="wrap split" style="align-items:start">
@@ -297,4 +402,105 @@ const ice = (x: { i: number; c: number; f: number }) => ((x.i + x.c + x.f) / 3).
   </section>
 
   <CtaBand lang={lang} title={p.finalTitle} text={p.finalText} />
+
+  <script>
+    const grid = document.getElementById('pp-grid');
+    const cta = document.getElementById('pp-cta');
+    const go = document.getElementById('pp-go') as HTMLButtonElement | null;
+    if (grid && cta && go) {
+      const max = Number(grid.dataset.pick || 2);
+      const boxes = Array.from(grid.querySelectorAll<HTMLInputElement>('input[name=pp]'));
+      const names = JSON.parse(cta.dataset.names || '{}') as Record<string, string>;
+      const on = () => boxes.filter((b) => b.checked).map((b) => b.value);
+      const sync = () => {
+        const sel = on();
+        boxes.forEach((b) => { b.disabled = !b.checked && sel.length >= max; b.closest('.pp-card')?.classList.toggle('is-on', b.checked); });
+        document.getElementById('pp-n')!.textContent = String(sel.length);
+        document.getElementById('pp-sel')!.textContent = sel.length ? sel.map((i) => names[i]).join(' + ') : (cta.dataset.none || '');
+        const ready = sel.length === max;
+        go.disabled = !ready || (!cta.dataset.checkout);
+        go.textContent = !cta.dataset.checkout ? (go.dataset.soon || '') : ready ? (go.dataset.go || '') : (cta.dataset.pickMsg || '');
+        cta.classList.toggle('ready', ready);
+        try { sessionStorage.setItem('pp-pick', sel.join(',')); } catch {}
+      };
+      try { (sessionStorage.getItem('pp-pick') || '').split(',').forEach((v) => { const b = boxes.find((x) => x.value === v); if (b && boxes.filter((x) => x.checked).length < max) b.checked = true; }); } catch {}
+      boxes.forEach((b) => b.addEventListener('change', sync));
+      sync();
+      go.addEventListener('click', async () => {
+        const sel = on();
+        if (sel.length !== max) return;
+        const label = go.textContent;
+        go.disabled = true;
+        try {
+          const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product: 'prompt', lang: cta.dataset.lang, types: sel }) });
+          const data = await res.json();
+          if (!res.ok || !data.url) throw new Error('checkout');
+          location.assign(data.url);
+        } catch {
+          go.disabled = false;
+          go.textContent = label;
+          alert(cta.dataset.err);
+        }
+      });
+    }
+  </script>
+
+  <style is:global>
+    .pp-dense { background: var(--violet-deep); color: #fbf7ee; }
+    .pp-dense h2, .pp-dense .kicker { color: #fbf7ee; }
+    .pp-dense .kicker { color: #c6b8e4; }
+    .pp-dense .lead { color: #e4d9f1; }
+    .pp-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 8px 0 34px; }
+    .pp-stats div { background: rgba(255,255,255,.07); border: 1px solid rgba(198,184,228,.3); border-radius: 16px; padding: 18px; }
+    .pp-stats strong { display: block; font-family: var(--font-head); font-size: clamp(1.8rem, 3.4vw, 2.6rem); line-height: 1; color: #fff; }
+    .pp-stats span { display: block; margin-top: 8px; color: #c6b8e4; font-size: .92rem; }
+    .pp-win { background: #1b1230; border-radius: 16px; overflow: hidden; border: 1px solid rgba(198,184,228,.25); box-shadow: 0 22px 60px rgba(0,0,0,.35); }
+    .pp-bar { display: flex; align-items: center; gap: 7px; padding: 12px 16px; background: #261a42; }
+    .pp-bar i { width: 11px; height: 11px; border-radius: 50%; background: #6a56a0; }
+    .pp-bar i:nth-child(1) { background: #be5626; }
+    .pp-bar span { margin-left: 10px; font: 600 .82rem ui-monospace, SFMono-Regular, Menlo, monospace; color: #c6b8e4; }
+    .pp-code { margin: 0; padding: 18px 20px; font: .86rem/1.75 ui-monospace, SFMono-Regular, Menlo, monospace; color: #e9e1f7; white-space: pre-wrap; overflow-wrap: anywhere; background: transparent; }
+    .pp-code b { color: #f0b48f; font-weight: 700; }
+    .pp-code em { color: #9b8ac4; font-style: normal; }
+    .pp-code .ln { display: inline-block; width: 2.2em; margin-right: 12px; color: #6a56a0; text-align: right; user-select: none; }
+    .pp-more { margin: 0; padding: 12px 20px 16px; color: #c6b8e4; font-size: .9rem; border-top: 1px dashed rgba(198,184,228,.3); }
+    .pp-h3 { margin: 40px 0 14px; font-size: 1.15rem; color: #fbf7ee; }
+    .pp-sections { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 18px; counter-reset: s; }
+    .pp-sections li { counter-increment: s; display: flex; gap: 10px; align-items: baseline; color: #e4d9f1; font-size: .95rem; }
+    .pp-sections li::before { content: counter(s, decimal-leading-zero); font: 700 .78rem ui-monospace, Menlo, monospace; color: #f0b48f; }
+    .pp-choose { background: var(--bg); }
+    .pp-flow { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+    .pp-flow li { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-size: .9rem; }
+    .pp-flow li b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--lilas); color: var(--violet-deep); font-size: .8rem; }
+    .pp-flow li.on { border-color: var(--violet); }
+    .pp-flow li.on b { background: var(--violet); color: #fff; }
+    .pp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; margin-top: 26px; align-items: start; }
+    .pp-card { background: #fff; border: 2px solid var(--line); border-radius: 18px; overflow: hidden; transition: border-color .15s, box-shadow .15s; }
+    .pp-card.is-on { border-color: var(--violet); box-shadow: 0 8px 28px rgba(105,76,172,.22); }
+    .pp-card label { display: flex; gap: 14px; padding: 18px; cursor: pointer; }
+    .pp-card input { position: absolute; opacity: 0; pointer-events: none; }
+    .pp-card input:disabled + .pp-box + .pp-card-b { opacity: .5; }
+    .pp-card input:focus-visible + .pp-box { outline: 3px solid var(--violet); outline-offset: 2px; }
+    .pp-box { flex: none; width: 26px; height: 26px; margin-top: 2px; border-radius: 8px; border: 2px solid var(--violet); display: grid; place-items: center; background: #fff; }
+    .pp-card.is-on .pp-box { background: var(--violet); }
+    .pp-card.is-on .pp-box::after { content: '✓'; color: #fff; font-weight: 800; font-size: .95rem; }
+    .pp-card-b { display: grid; gap: 4px; }
+    .pp-card-b strong { font-family: var(--font-head); font-size: 1.15rem; color: var(--heading); }
+    .pp-card-b em { font-style: normal; color: var(--violet); font-weight: 600; font-size: .92rem; }
+    .pp-card-b small { color: var(--muted); font-size: .9rem; line-height: 1.5; }
+    .pp-card details { border-top: 1px solid var(--line); background: var(--bg-2); }
+    .pp-card summary { cursor: pointer; padding: 12px 18px; font-weight: 700; font-size: .9rem; color: var(--violet); }
+    .pp-mini { background: #1b1230; font-size: .78rem; line-height: 1.65; }
+    .pp-cta { position: sticky; bottom: calc(var(--buybar-h, 76px) + 12px); margin-top: 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: var(--violet-deep); color: #fbf7ee; border-radius: 18px; padding: 14px 18px; box-shadow: 0 14px 40px rgba(43,29,22,.3); z-index: 5; }
+    .pp-cta p { margin: 0; font-size: .95rem; }
+    .pp-cta p span:first-child { color: #c6b8e4; }
+    .pp-cta .btn { background: #f6f0e4; color: var(--violet-deep); border: 0; }
+    .pp-cta .btn:disabled { opacity: .6; cursor: not-allowed; }
+    .pp-cta.ready .btn { background: var(--rouille); color: #fff; }
+    @media (max-width: 820px) {
+      .pp-stats { grid-template-columns: repeat(2, 1fr); }
+      .pp-sections { grid-template-columns: 1fr; }
+      .pp-cta { flex-direction: column; align-items: stretch; text-align: center; }
+    }
+  </style>
 </Base>

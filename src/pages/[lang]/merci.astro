@@ -20,6 +20,7 @@ let state: 'unconfigured' | 'unknown' | 'pending' | 'form' | 'done' | 'error' = 
 let product: 'diagnostic' | 'prompt' | null = null;
 const refaire = Astro.url.searchParams.get('refaire') === '1';
 let prefill: Record<string, string> = {};
+let preTypes = ''; // master prompt : types déjà choisis avant le paiement
 
 const devPreview = import.meta.env.DEV ? Astro.url.searchParams.get('apercu') : null; // aperçu local du formulaire, absent en production
 if (devPreview === 'prompt' || devPreview === 'diagnostic') {
@@ -32,6 +33,7 @@ if (devPreview === 'prompt' || devPreview === 'diagnostic') {
     else if (order.status === 'pending' || order.status === 'failed' || order.status === 'expired') state = 'pending';
     else if (isProduct(order.product)) {
       product = order.product;
+      preTypes = order.prompt_types ?? '';
       const a = await db().query<{ data: { id: string; value: string }[] }>('SELECT data FROM answers WHERE order_id = $1', [order.id]);
       if (a.rowCount && refaire) prefill = Object.fromEntries(a.rows[0].data.map((x) => [x.id, x.value]));
       state = a.rowCount && !refaire ? 'done' : 'form';
@@ -107,7 +109,7 @@ const L = {
             <div class="q-item" data-when={q.when} hidden={Boolean(q.when)}>
               {q.section && (i === 0 || questions[i - 1].section?.fr !== q.section.fr) && <h2 class="q-sec">{q.section[lang]}</h2>}
               {q.type === 'choice' ? (
-                <fieldset class="field q-pick" id="q-types" data-pick={PICK}>
+                <fieldset class="field q-pick" id="q-types" data-pick={PICK} data-pre={preTypes}>
                   <legend>{q.label[lang]} <span class="q-pickcount"><b id="q-pickn">0</b>/{PICK} {L.pickLeft}</span></legend>
                   {q.hint && <p class="q-hint">{q.hint[lang]}</p>}
                   <div class="q-cards">
@@ -207,12 +209,15 @@ const L = {
     const visible = () => allFields.filter((el) => !el.closest('.q-item[hidden]'));
     const chosen = () => picks.filter((p) => p.checked).map((p) => p.value);
     const draftKey = `q-draft:${form.dataset.session}`;
+    // choix fait avant le paiement : déjà coché, modifiable
+    const pre = picks.length ? (form.querySelector<HTMLElement>('#q-types')!.dataset.pre || '') : '';
+    if (pre) picks.forEach((p) => { p.checked = pre.split(',').includes(p.value); });
 
     // brouillon enregistré sur l'appareil (jamais envoyé tant que le formulaire n'est pas validé)
     try {
       const saved = JSON.parse(localStorage.getItem(draftKey) || '{}');
       allFields.forEach((el) => { if (!el.value && saved[el.name]) el.value = saved[el.name]; });
-      if (typeof saved.types === 'string') picks.forEach((p) => { p.checked = saved.types.split(',').includes(p.value); });
+      if (typeof saved.types === 'string' && saved.types) picks.forEach((p) => { p.checked = saved.types.split(',').includes(p.value); });
     } catch {}
 
     const shortCount = () => visible().filter((el) => el.dataset.min && el.value.trim() && el.value.trim().length < Number(el.dataset.min)).length;
