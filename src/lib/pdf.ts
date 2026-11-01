@@ -12,12 +12,18 @@ export type DiagResult = {
   scores: { axe: string; score: number; commentaire: string }[];
   forces: string[];
   freins: { titre: string; constat: string; cause: string; impact: string }[];
-  pistes: { titre: string; probleme: string; solution: string; effet: string; effort: string; premier_pas: string; delai?: string }[];
+  pistes: { titre: string; probleme: string; solution: string; effet: string; effort: string; premier_pas: string; delai?: string; impact?: number; confiance?: number; facilite?: number }[];
   outils: { besoin: string; outil: string; pourquoi: string; cout: string }[];
   plan: { periode: string; actions: string[] }[];
   indicateurs: { indicateur: string; cible: string }[];
   a_eviter: string[];
   questions?: string[];
+  analyse_expert?: { verdict: string; goulot: string; lecture: string; angle_mort: string; opportunite: string; risque: string };
+  offre?: { resultat: number; probabilite: number; rapidite: number; facilite: number; commentaire: string; amelioration: string };
+  entonnoir?: { etape: string; etat: string; constat: string }[];
+  swot?: { forces: string[]; faiblesses: string[]; opportunites: string[]; menaces: string[] };
+  potentiel?: { heures_par_mois: number; revenu_mensuel: number; hypotheses: string };
+  suite_90_jours?: string[];
 };
 
 export type PdfMeta = { name: string; date: Date; lang: 'fr' | 'en' };
@@ -42,8 +48,8 @@ export function clean(s: unknown): string {
 }
 
 const L = {
-  fr: { title: 'Diagnostic de votre business', for: 'Préparé pour', brief: 'En bref', score: 'Score de maturité', forces: 'Vos points forts', freins: 'Ce qui vous freine', pistes: 'Vos 3 priorités', problem: 'Le problème', solution: 'La solution', effect: 'L’effet attendu', first: 'Votre premier pas', effort: 'Effort', tools: 'Les outils recommandés', need: 'Besoin', tool: 'Outil', why: 'Pourquoi', cost: 'Coût', plan: 'Votre plan d’action sur 30 jours', kpi: 'Les chiffres à suivre', target: 'Cible', avoid: 'À éviter', clarify: 'Points à clarifier', next: 'Et maintenant ?', nextText: 'Choisissez l’action de la semaine 1 et faites-la aujourd’hui. Si vous voulez que je la mette en place avec vous, répondez simplement à l’e-mail qui accompagne ce document ou écrivez à hello@bintakande.com.', est: 'Les chiffres donnés sont des estimations, à confirmer sur votre terrain.', page: 'Page', of: 'sur', cause: 'Cause', impact: 'Conséquence', diag: 'Conséquence' },
-  en: { title: 'Your business diagnostic', for: 'Prepared for', brief: 'In brief', score: 'Maturity score', forces: 'Your strengths', freins: 'What is holding you back', pistes: 'Your 3 priorities', problem: 'The problem', solution: 'The solution', effect: 'Expected effect', first: 'Your first step', effort: 'Effort', tools: 'Recommended tools', need: 'Need', tool: 'Tool', why: 'Why', cost: 'Cost', plan: 'Your 30-day action plan', kpi: 'Numbers to track', target: 'Target', avoid: 'Pitfalls to avoid', clarify: 'Points to clarify', next: 'What now?', nextText: 'Pick the week-1 action and do it today. If you would like me to implement it with you, just reply to the email that came with this document or write to hello@bintakande.com.', est: 'Figures given are estimates, to be confirmed in your own context.', page: 'Page', of: 'of', cause: 'Cause', impact: 'Consequence', diag: 'Consequence' },
+  fr: { title: 'Diagnostic de votre business', for: 'Préparé pour', brief: 'En bref', score: 'Score de maturité', forces: 'Vos points forts', freins: 'Ce qui vous freine', pistes: 'Vos 3 priorités', problem: 'Le problème', solution: 'La solution', effect: 'L’effet attendu', first: 'Votre premier pas', effort: 'Effort', tools: 'Les outils recommandés', need: 'Besoin', tool: 'Outil', why: 'Pourquoi', cost: 'Coût', plan: 'Votre plan d’action sur 30 jours', kpi: 'Les chiffres à suivre', target: 'Cible', avoid: 'À éviter', clarify: 'Points à clarifier', next: 'Et maintenant ?', nextText: 'Choisissez l’action de la semaine 1 et faites-la aujourd’hui. Si vous voulez que je la mette en place avec vous, répondez simplement à l’e-mail qui accompagne ce document ou écrivez à hello@bintakande.com.', est: 'Les chiffres donnés sont des estimations, à confirmer sur votre terrain.', expert: 'Analyse business experte', expertTitle: 'Le regard de l’expert', goulot: 'Le goulot d’étranglement', lecture: 'Lecture de fond', blind: 'Votre angle mort', opp: 'L’opportunité cachée', risk: 'Le risque si vous ne faites rien', funnel: 'Votre entonnoir de clients', offer: 'Votre offre passée au crible', swot: 'Forces, faiblesses, opportunités, menaces', matrix: 'Quelle piste en premier ?', potential: 'Le potentiel estimé', hours: 'heures récupérables par mois', revenue: 'de chiffre d’affaires en plus par mois', after: 'Et après : les mois 2 et 3', states: { fort: 'Fort', moyen: 'Moyen', faible: 'Faible' } as Record<string, string>, ov: ['Résultat espéré', 'Probabilité d’y arriver', 'Rapidité du résultat', 'Facilité pour le client'], sw: ['Forces', 'Faiblesses', 'Opportunités', 'Menaces'], do1: 'À faire d’abord', est2: 'Estimation', page: 'Page', of: 'sur', cause: 'Cause', impact: 'Conséquence', diag: 'Conséquence' },
+  en: { title: 'Your business diagnostic', for: 'Prepared for', brief: 'In brief', score: 'Maturity score', forces: 'Your strengths', freins: 'What is holding you back', pistes: 'Your 3 priorities', problem: 'The problem', solution: 'The solution', effect: 'Expected effect', first: 'Your first step', effort: 'Effort', tools: 'Recommended tools', need: 'Need', tool: 'Tool', why: 'Why', cost: 'Cost', plan: 'Your 30-day action plan', kpi: 'Numbers to track', target: 'Target', avoid: 'Pitfalls to avoid', clarify: 'Points to clarify', next: 'What now?', nextText: 'Pick the week-1 action and do it today. If you would like me to implement it with you, just reply to the email that came with this document or write to hello@bintakande.com.', est: 'Figures given are estimates, to be confirmed in your own context.', expert: 'Expert business analysis', expertTitle: 'The expert’s view', goulot: 'The bottleneck', lecture: 'The deeper reading', blind: 'Your blind spot', opp: 'The hidden opportunity', risk: 'The risk if you do nothing', funnel: 'Your customer funnel', offer: 'Your offer under the microscope', swot: 'Strengths, weaknesses, opportunities, threats', matrix: 'Which lever first?', potential: 'Estimated potential', hours: 'hours recoverable per month', revenue: 'extra revenue per month', after: 'What next: months 2 and 3', states: { fort: 'Strong', moyen: 'Medium', faible: 'Weak' } as Record<string, string>, ov: ['Desired outcome', 'Likelihood of success', 'Speed of results', 'Ease for the customer'], sw: ['Strengths', 'Weaknesses', 'Opportunities', 'Threats'], do1: 'Do first', est2: 'Estimate', page: 'Page', of: 'of', cause: 'Cause', impact: 'Consequence', diag: 'Consequence' },
 };
 
 const logoPath = () => [join(process.cwd(), 'public', 'email', 'logo.png'), join(process.cwd(), 'dist', 'client', 'email', 'logo.png')].find((p) => existsSync(p));
@@ -75,8 +81,8 @@ function render(res: DiagResult, meta: PdfMeta, k: number): Promise<{ buf: Buffe
     y = 30;
   };
   const ensure = (need: number) => { if (y + need > bottom) newPage(); };
-  const heading = (label: string) => {
-    ensure(46);
+  const heading = (label: string, minBody = 110) => {
+    ensure(34 + minBody); // un titre ne reste jamais seul en bas de page
     doc.rect(PAGE.m, y + 3, 5, fs(17)).fill(C.violet);
     text(label, PAGE.m + 14, y, W - 14, 16, C.deep, 'b');
     y += fs(16) + 12;
@@ -169,6 +175,96 @@ function render(res: DiagResult, meta: PdfMeta, k: number): Promise<{ buf: Buffe
     y += hh + 14;
   }
 
+
+  /* ----- entonnoir ----- */
+  if (res.entonnoir?.length) {
+    heading(t.funnel);
+    const n = res.entonnoir.length;
+    const gap = 8;
+    const cw = (W - gap * (n - 1)) / n;
+    const col = (e: string) => (e === 'fort' ? { bg: C.okBg, fg: C.ok } : e === 'faible' ? { bg: C.warm, fg: C.cannelle } : { bg: C.lilas, fg: C.violet });
+    ensure(60);
+    res.entonnoir.forEach((e, i) => {
+      const c = col(e.etat);
+      const x = PAGE.m + i * (cw + gap);
+      doc.roundedRect(x, y, cw, 52, 10).fill(c.bg);
+      text(e.etape, x + 6, y + 10, cw - 12, 8.5, C.deep, 'b', 1, { align: 'center' });
+      text((t.states[e.etat] ?? e.etat).toUpperCase(), x + 6, y + 30, cw - 12, 8, c.fg, 'b', 1, { align: 'center', characterSpacing: 0.8 });
+    });
+    y += 62;
+    res.entonnoir.forEach((e) => {
+      const c = col(e.etat);
+      const line = `${e.etape} : ${e.constat}`;
+      const lh = h(line, 9, W - 18, 'r', 2) + 4;
+      ensure(lh);
+      doc.circle(PAGE.m + 4, y + 5, 3).fill(c.fg);
+      text(line, PAGE.m + 16, y, W - 18, 9, C.text, 'r', 2);
+      y += lh;
+    });
+    y += 10;
+  }
+
+  /* ----- l'encadré de l'expert ----- */
+  const ex = res.analyse_expert;
+  if (ex?.verdict) {
+    const iw = W - 48;
+    const parts: [string, string][] = ([[t.goulot, ex.goulot], [t.lecture, ex.lecture], [t.blind, ex.angle_mort], [t.opp, ex.opportunite], [t.risk, ex.risque]] as [string, string][]).filter(([, v]) => v);
+    const verdictH = h(ex.verdict, 12, iw, 'b', 3);
+    const partsH = parts.reduce((n, [, v]) => n + 14 + h(v, 9.5, iw, 'r', 2.5) + 8, 0);
+    const hh = 70 + verdictH + 22 + partsH;
+    ensure(Math.min(hh, 330));
+    if (y + hh > bottom) {
+      // carte trop haute pour la page restante : on la découpe en deux
+      newPage();
+    }
+    const top2 = y;
+    doc.roundedRect(PAGE.m, top2, W, hh, 14).fill(C.deep);
+    doc.roundedRect(PAGE.m, top2, W, 6, 3).fill(C.violet);
+    const tw = tag(t.expert.toUpperCase(), PAGE.m + 24, top2 + 22, C.violet, '#fbf7ee');
+    void tw;
+    text(t.expertTitle, PAGE.m + 24, top2 + 44, iw, 17, '#fbf7ee', 'b');
+    text(ex.verdict, PAGE.m + 24, top2 + 70, iw, 12, '#e4d9f1', 'b', 3);
+    let yy = top2 + 70 + verdictH + 14;
+    doc.moveTo(PAGE.m + 24, yy).lineTo(PAGE.m + W - 24, yy).lineWidth(0.8).stroke('#6a56a0');
+    yy += 10;
+    for (const [lbl, v] of parts) {
+      text(lbl.toUpperCase(), PAGE.m + 24, yy, iw, 7.5, C.lilasStrong, 'b', 2, { characterSpacing: 0.8 });
+      yy += 12;
+      text(v, PAGE.m + 24, yy, iw, 9.5, '#f1ebfa', 'r', 2.5);
+      yy += h(v, 9.5, iw, 'r', 2.5) + 8;
+    }
+    y = top2 + hh + 16;
+  }
+
+  /* ----- offre (équation de valeur) ----- */
+  if (res.offre?.commentaire) {
+    heading(t.offer);
+    const o = res.offre;
+    const vals = [o.resultat, o.probabilite, o.rapidite, o.facilite];
+    const bw = (W - 40) / 2;
+    const textH = h(o.commentaire, 9.5, W - 36, 'r', 2) + (o.amelioration ? h(o.amelioration, 9.5, W - 52, 'b', 2) + 20 : 0);
+    const hh = 24 + 2 * 34 + textH + 18;
+    ensure(hh);
+    doc.roundedRect(PAGE.m, y, W, hh, 12).fill(C.card);
+    vals.forEach((v, i) => {
+      const x = PAGE.m + 18 + (i % 2) * (bw + 4);
+      const yy = y + 16 + Math.floor(i / 2) * 34;
+      text(t.ov[i], x, yy, bw - 40, 9, C.deep, 'b');
+      text(`${v}/10`, x + bw - 40, yy, 36, 9, C.violet, 'b', 2, { align: 'right' });
+      doc.roundedRect(x, yy + 14, bw - 4, 5, 2.5).fill(C.line);
+      doc.roundedRect(x, yy + 14, Math.max(5, ((bw - 4) * Math.max(0, Math.min(10, v))) / 10), 5, 2.5).fill(v >= 7 ? C.ok : v >= 4 ? C.violet : C.cannelle);
+    });
+    let yy = y + 16 + 2 * 34 + 2;
+    text(o.commentaire, PAGE.m + 18, yy, W - 36, 9.5, C.text, 'r', 2);
+    yy += h(o.commentaire, 9.5, W - 36, 'r', 2) + 8;
+    if (o.amelioration) {
+      const ah = h(o.amelioration, 9.5, W - 52, 'b', 2) + 12;
+      doc.roundedRect(PAGE.m + 14, yy, W - 28, ah, 8).fill(C.okBg);
+      text(o.amelioration, PAGE.m + 22, yy + 6, W - 52, 9.5, '#1c4a30', 'b', 2);
+    }
+    y += hh + 12;
+  }
+
   /* ----- freins ----- */
   heading(t.freins);
   res.freins?.forEach((f, i) => {
@@ -188,6 +284,33 @@ function render(res: DiagResult, meta: PdfMeta, k: number): Promise<{ buf: Buffe
   });
   y += 4;
 
+
+  /* ----- SWOT ----- */
+  const sw = res.swot;
+  if (sw && (sw.forces.length || sw.faiblesses.length || sw.opportunites.length || sw.menaces.length)) {
+    heading(t.swot);
+    const cells: [string, string[], string, string][] = [[t.sw[0], sw.forces, C.okBg, C.ok], [t.sw[1], sw.faiblesses, C.warm, C.cannelle], [t.sw[2], sw.opportunites, C.lilas, C.violet], [t.sw[3], sw.menaces, '#e9e4f2', C.deep]];
+    const cw = (W - 10) / 2;
+    for (let r = 0; r < 2; r++) {
+      const pair = cells.slice(r * 2, r * 2 + 2);
+      const rh = Math.max(...pair.map(([, items]) => items.reduce((n, it) => n + h(it, 9, cw - 34, 'r', 1.5) + 4, 0) + 32));
+      ensure(rh);
+      pair.forEach(([lbl, items, bg, fg], c) => {
+        const x = PAGE.m + c * (cw + 10);
+        doc.roundedRect(x, y, cw, rh, 12).fill(bg);
+        text(lbl.toUpperCase(), x + 16, y + 12, cw - 32, 8, fg, 'b', 2, { characterSpacing: 1 });
+        let yy = y + 28;
+        for (const it of items) {
+          doc.circle(x + 20, yy + 5, 2).fill(fg);
+          text(it, x + 30, yy, cw - 34, 9, C.text, 'r', 1.5);
+          yy += h(it, 9, cw - 34, 'r', 1.5) + 4;
+        }
+      });
+      y += rh + 10;
+    }
+    y += 4;
+  }
+
   /* ----- pistes ----- */
   heading(t.pistes);
   res.pistes?.forEach((p, i) => {
@@ -202,6 +325,7 @@ function render(res: DiagResult, meta: PdfMeta, k: number): Promise<{ buf: Buffe
     text(String(i + 1), PAGE.m + 10, y + 19, 28, 14, '#fbf7ee', 'b', 0, { align: 'center' });
     text(p.titre, PAGE.m + 50, y + 14, w - 90, 12, C.deep, 'b');
     tag(`${t.effort} : ${p.effort}${p.delai ? ` · ${p.delai}` : ''}`.slice(0, 40), PAGE.m + W - 150, y + 14, C.lilas, C.violet);
+    if (p.impact) tag(`ICE ${(((p.impact ?? 0) + (p.confiance ?? 0) + (p.facilite ?? 0)) / 3).toFixed(1)}`, PAGE.m + W - 150, y + 36, C.okBg, C.ok);
     let yy = y + 16 + h(p.titre, 12, w - 90, 'b') + 6;
     for (const [lbl, v] of rows) {
       font('b').fontSize(fs(9.5)).fillColor(C.violet).text(`${clean(lbl)} : `, PAGE.m + 50, yy, { width: w, continued: true, lineGap: 2 });
@@ -213,6 +337,63 @@ function render(res: DiagResult, meta: PdfMeta, k: number): Promise<{ buf: Buffe
     y += hh + 8;
   });
   y += 4;
+
+
+  /* ----- matrice impact / facilité ----- */
+  if (res.pistes?.some((p) => p.impact)) {
+    heading(t.matrix);
+    const mh = 190;
+    ensure(mh);
+    doc.roundedRect(PAGE.m, y, W, mh, 12).fill(C.card);
+    const px = PAGE.m + 40, py = y + 16, pw = 250, ph = 140;
+    doc.rect(px, py, pw, ph).fill('#ffffff');
+    doc.rect(px + pw / 2, py, pw / 2, ph / 2).fill(C.lilas);
+    doc.rect(px, py, pw / 2, ph / 2).fill('#efe8f8');
+    doc.rect(px + pw / 2, py + ph / 2, pw / 2, ph / 2).fill('#f6f1fb');
+    doc.rect(px, py, pw, ph).lineWidth(1).stroke(C.line);
+    text(t.do1.toUpperCase(), px + pw / 2 + 6, py + 6, pw / 2 - 12, 7, C.violet, 'b', 1, { characterSpacing: 0.6, align: 'right' });
+    text('IMPACT', PAGE.m + 6, py + ph / 2 - 6, 30, 7, C.muted, 'b', 0, { align: 'center' });
+    text(meta.lang === 'fr' ? 'Difficile  ->  Facile' : 'Hard  ->  Easy', px, py + ph + 6, pw, 7.5, C.muted, 'r', 0, { align: 'center' });
+    res.pistes.forEach((p, i) => {
+      if (!p.impact) return;
+      const cx = px + ((Math.max(1, Math.min(10, p.facilite ?? 5)) - 0.5) / 10) * pw;
+      const cy = py + ph - ((Math.max(1, Math.min(10, p.impact)) - 0.5) / 10) * ph;
+      doc.circle(cx, cy, 11).fill(C.violet);
+      text(String(i + 1), cx - 11, cy - 5, 22, 10, '#fbf7ee', 'b', 0, { align: 'center' });
+    });
+    let ly = py + 4;
+    const lx = px + pw + 24;
+    res.pistes.forEach((p, i) => {
+      const ice = (((p.impact ?? 0) + (p.confiance ?? 0) + (p.facilite ?? 0)) / 3).toFixed(1);
+      doc.circle(lx + 8, ly + 8, 8).fill(C.violet);
+      text(String(i + 1), lx, ly + 4, 16, 8, '#fbf7ee', 'b', 0, { align: 'center' });
+      text(p.titre, lx + 24, ly, PAGE.m + W - lx - 34, 9, C.deep, 'b', 1.5);
+      const th = h(p.titre, 9, PAGE.m + W - lx - 34, 'b', 1.5);
+      text(`ICE ${ice}/10  ·  ${p.effort}`, lx + 24, ly + th + 1, PAGE.m + W - lx - 34, 8, C.muted, 'r');
+      ly += th + 26;
+    });
+    y += mh + 12;
+  }
+
+  /* ----- potentiel ----- */
+  const pot = res.potentiel;
+  if (pot && (pot.heures_par_mois > 0 || pot.revenu_mensuel > 0)) {
+    heading(t.potential);
+    const tiles: [string, string][] = [];
+    if (pot.heures_par_mois > 0) tiles.push([`${pot.heures_par_mois} h`, t.hours]);
+    if (pot.revenu_mensuel > 0) tiles.push([`+${new Intl.NumberFormat(meta.lang === 'fr' ? 'fr-FR' : 'en-GB').format(pot.revenu_mensuel).replace(/\s/g, ' ')} EUR`, t.revenue]);
+    const cw = (W - 12 * (tiles.length - 1)) / tiles.length;
+    const hh = 72 + (pot.hypotheses ? h(pot.hypotheses, 8.5, W, 'i', 1.5) + 8 : 0);
+    ensure(hh);
+    tiles.forEach(([big, lbl], i) => {
+      const x = PAGE.m + i * (cw + 12);
+      doc.roundedRect(x, y, cw, 64, 12).fill(C.deep);
+      text(big, x, y + 10, cw, 24, '#fbf7ee', 'b', 0, { align: 'center' });
+      text(lbl, x + 8, y + 42, cw - 16, 8.5, C.lilasStrong, 'r', 1, { align: 'center' });
+    });
+    if (pot.hypotheses) text(`${t.est2} : ${pot.hypotheses}`, PAGE.m, y + 70, W, 8.5, C.muted, 'i', 1.5);
+    y += hh + 10;
+  }
 
   /* ----- outils ----- */
   if (res.outils?.length) {
@@ -261,6 +442,22 @@ function render(res: DiagResult, meta: PdfMeta, k: number): Promise<{ buf: Buffe
       }
     });
     y += rh + 12;
+  }
+
+
+  if (res.suite_90_jours?.length) {
+    const iw = W - 44;
+    const hh = res.suite_90_jours.reduce((n, a) => n + h(a, 9.5, iw - 16, 'r', 2) + 5, 0) + 40;
+    ensure(hh);
+    doc.roundedRect(PAGE.m, y, W, hh, 12).fill(C.card).lineWidth(1).stroke(C.line);
+    text(t.after.toUpperCase(), PAGE.m + 20, y + 14, iw, 8.5, C.violet, 'b', 2, { characterSpacing: 1 });
+    let yy = y + 32;
+    for (const a of res.suite_90_jours) {
+      doc.circle(PAGE.m + 24, yy + 5, 2.5).fill(C.violet);
+      text(a, PAGE.m + 36, yy, iw - 16, 9.5, C.text, 'r', 2);
+      yy += h(a, 9.5, iw - 16, 'r', 2) + 5;
+    }
+    y += hh + 12;
   }
 
   /* ----- indicateurs ----- */
@@ -337,8 +534,13 @@ function render(res: DiagResult, meta: PdfMeta, k: number): Promise<{ buf: Buffe
 /** Rend le PDF ; si le contenu dépasse 5 pages, on réduit progressivement la taille du texte. */
 export async function renderDiagnosticPdf(res: DiagResult, meta: PdfMeta): Promise<{ buf: Buffer; pages: number }> {
   let out = await render(res, meta, 1);
-  for (const k of [0.93, 0.87, 0.82, 0.77]) {
-    if (out.pages <= 5) break;
+  // visé : 4 à 6 pages. Trop court : texte un peu plus grand ; trop long : texte resserré.
+  for (const k of [1.07, 1.14]) {
+    if (out.pages >= 4) break;
+    out = await render(res, meta, k);
+  }
+  for (const k of [0.94, 0.88, 0.83, 0.78, 0.74]) {
+    if (out.pages <= 6) break;
     out = await render(res, meta, k);
   }
   return out;
